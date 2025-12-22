@@ -24,7 +24,7 @@
 	href="http://localhost/SIST_FILA/css/opt-default.css">
 <link rel="stylesheet"
 	href="http://localhost/SIST_FILA/css/swiper-bundle.css">
-
+  
 <link rel="stylesheet" href="http://localhost/SIST_FILA/css/layout.css">
 <link rel="stylesheet" href="http://localhost/SIST_FILA/css/product.css">
 <link rel="stylesheet" href="http://localhost/SIST_FILA/css/sub.css">
