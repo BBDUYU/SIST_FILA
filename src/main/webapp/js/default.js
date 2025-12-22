@@ -59,7 +59,7 @@
 			
 			la.vTab();
 		},
-		// 2023-04-11 異붽� 
+		// 2023-04-11 추가 
 		layer: {
 			init: function(){
 				la.layer.glbLyr();
@@ -170,7 +170,7 @@
 			}		
 			
 
-			// 2024-08-05 異붽�
+			// 2024-08-05 추가
 			if($('.goods .other-box').length){
 				$('.goods .other-box').each(function(idx){
 					$(this).addClass('_go0' + idx);
@@ -218,7 +218,7 @@
 				$('body').removeClass('_bg_on');
 			});
 
-			// 2025-03-20 �щ씪�대뱶 異붽�
+			// 2025-03-20 슬라이드 추가
 			if($('.side-menu-box .preview__slider').length){
 				$('.side-menu-box .preview__slider').each(function () {
 					var totalSlide = $(this).find('.swiper-slide').length;
@@ -314,14 +314,14 @@
 				const tabBoxs = document.querySelectorAll('.goods-bt .event_list_box > div');
 
 				const tabScroll = ()=> {
-					const wSt = document.querySelector('html').scrollTop; // 釉뚮씪�곗� �ㅽ겕濡� �꾩튂
+					const wSt = document.querySelector('html').scrollTop; // 브라우저 스크롤 위치
 
 					for(let i = 0; i < tabBtns.length; i++){			
-						if(wSt < tabBoxs[0].offsetTop - 190){ // �ㅽ겕濡� �꾩튂媛� 泥ル쾲吏� 諛뺤뒪 �꾩튂蹂대떎 ��쑝硫�
+						if(wSt < tabBoxs[0].offsetTop - 190){ // 스크롤 위치가 첫번째 박스 위치보다 낮으면
 							for(tabBtn of tabBtns){
 								tabBtn.classList.remove('on');
 							}
-						}else if(wSt > tabBoxs[i].offsetTop - 190){ // �ㅽ겕濡� �꾩튂媛� 媛� 諛뺤뒪留덈떎 �꾩튂�� �덉쑝硫�?
+						}else if(wSt > tabBoxs[i].offsetTop - 190){ // 스크롤 위치가 각 박스마다 위치해 있으면?
 							for(tabBtn of tabBtns){
 								tabBtn.classList.remove('on');
 							}
@@ -337,7 +337,7 @@
 		},
 	};
 
-	// 2025-04-16 硫붿씤由щ돱�� goodsOver(); �몄텧��
+	// 2025-04-16 메인리뉴얼 goodsOver(); 호출용
 	window.MyApp = window.MyApp || {};
 	MyApp.la = la;
 
@@ -391,13 +391,13 @@
 						//obj.html(total_qty);
 					}
 					else if(type=='nothing') {
-						alert("議댁옱�섏��딅뒗�쒗뭹�낅땲��.");	
+						alert("존재하지않는제품입니다.");	
 					}
 					else if(type=='error') {
-						alert("�쒖뒪�쒖삤瑜섏엯�덈떎 [err03]");
+						alert("시스템오류입니다 [err03]");
 					}	
 					else if(type=='login') {
-						alert("濡쒓렇�� �� �댁슜媛��ν빀�덈떎.");
+						alert("로그인 후 이용가능합니다.");
 						location.href = "/member/login.asp"
 					}	
 		          }
@@ -407,7 +407,7 @@
 		}
 	}
 
-	/* #HJ 201704 異붽� */
+	/* #HJ 201704 추가 */
 	function globalMenu() {
 		jQuery.ajax({
 			type: "POST",
@@ -420,69 +420,69 @@
 				var point = data.point;
 				var wishcnt = data.wishcnt;
 				var joinText; 
-						joinText = "<a href='https://www.fila.co.kr/member/join_intro.asp''>�뚯썝媛���</a>";
+						joinText = "<a href='https://www.fila.co.kr/member/join_intro.asp''>회원가입</a>";
 						joinText = joinText + "<div class='layer_join'>";
-						joinText = joinText + "<h3>吏�湲� <span>FILA ONE</span> �뚯썝�� �섎㈃</h3>";
+						joinText = joinText + "<h3>지금 <span>FILA ONE</span> 회원이 되면</h3>";
 						joinText = joinText + "<ul>";
-						joinText = joinText + "<li><span>10,000</span>�좉퇋媛��� 留뚯썝 荑좏룿 �쒓났</li>";
-						joinText = joinText + "<li><span>Point</span>硫ㅻ쾭�� �곷┰ �쒗깮</li>";
-						joinText = joinText + "<li><span>Coupon</span>湲곕뀗��/ �깃툒蹂� 荑좏룿�쒓났</li>";
+						joinText = joinText + "<li><span>10,000</span>신규가입 만원 쿠폰 제공</li>";
+						joinText = joinText + "<li><span>Point</span>멤버십 적립 혜택</li>";
+						joinText = joinText + "<li><span>Coupon</span>기념일/ 등급별 쿠폰제공</li>";
 						joinText = joinText + "</ul>";
 						joinText = joinText + "<div class='btn_box'>";
-						joinText = joinText + "<a href='https://www.fila.co.kr/member/join_intro.asp' class='btn_join'>�뚯썝媛���</a>";
-						joinText = joinText + "<a href='http://www.fila.co.kr/customer/membership2.asp' class='btn_benefit'>�� 留롮� �쒗깮 蹂닿린</a>";
+						joinText = joinText + "<a href='https://www.fila.co.kr/member/join_intro.asp' class='btn_join'>회원가입</a>";
+						joinText = joinText + "<a href='http://www.fila.co.kr/customer/membership2.asp' class='btn_benefit'>더 많은 혜택 보기</a>";
 						joinText = joinText + "</div>";
 						joinText = joinText + "</div>";
 	
 				if (login == 1) { 
-						jQuery("#globalMenu1").html("<a href='/mypage/mypage.asp'>留덉씠�섏씠吏�</a>");
-						jQuery("#globalMenu2").html("<a href='/mypage/myOrder.asp'>二쇰Ц/諛곗넚</a>");
-						jQuery("#globalMenu3").html("<a href='/mypage/qna.asp'>1:1臾몄쓽</a>");
-						jQuery("#globalMenu4").html("<a href='/mypage/coupon.asp'>荑좏룿</a><strong><a href='/mypage/coupon.asp'>" + coupon + "媛�</a></strong>");
-						jQuery("#globalMenu5").html("<a href='/mypage/point.asp'>�ъ씤��</a><strong><a href='/mypage/point.asp'>" + point + "P</a></strong>");
-						jQuery("#globalMenu7").html("<a href='/mypage/wishlist.asp'>�꾩떆由ъ뒪��</a><strong><a href='/mypage/wishlist.asp'>" + wishcnt + "媛�</a></strong>");						
-						jQuery("#globalMenu8").html("<a href='/specialoffer/list.asp'>�대깽��</a>");
+						jQuery("#globalMenu1").html("<a href='/mypage/mypage.asp'>마이페이지</a>");
+						jQuery("#globalMenu2").html("<a href='/mypage/myOrder.asp'>주문/배송</a>");
+						jQuery("#globalMenu3").html("<a href='/mypage/qna.asp'>1:1문의</a>");
+						jQuery("#globalMenu4").html("<a href='/mypage/coupon.asp'>쿠폰</a><strong><a href='/mypage/coupon.asp'>" + coupon + "개</a></strong>");
+						jQuery("#globalMenu5").html("<a href='/mypage/point.asp'>포인트</a><strong><a href='/mypage/point.asp'>" + point + "P</a></strong>");
+						jQuery("#globalMenu7").html("<a href='/mypage/wishlist.asp'>위시리스트</a><strong><a href='/mypage/wishlist.asp'>" + wishcnt + "개</a></strong>");						
+						jQuery("#globalMenu8").html("<a href='/specialoffer/list.asp'>이벤트</a>");
 						jQuery("#globalMenu5").show();
 						jQuery("#globalMenu6").show();
 						jQuery("#globalMenu7").show();
-						jQuery("#globalMenu1m").html("<a href='/member/logout.asp'>濡쒓렇�꾩썐</a>");
-						jQuery("#globalMenu2m").html("<a href='/mypage/mypage.asp'>留덉씠�섏씠吏�</a>");
-						jQuery("#globalMenu3m").html("<a href='/mypage/myOrder.asp'>二쇰Ц/諛곗넚</a>");					
-						jQuery("#globalMenu4m").html("<a href='/customer/notice.asp'>怨좉컼�쇳꽣</a>");
+						jQuery("#globalMenu1m").html("<a href='/member/logout.asp'>로그아웃</a>");
+						jQuery("#globalMenu2m").html("<a href='/mypage/mypage.asp'>마이페이지</a>");
+						jQuery("#globalMenu3m").html("<a href='/mypage/myOrder.asp'>주문/배송</a>");					
+						jQuery("#globalMenu4m").html("<a href='/customer/notice.asp'>고객센터</a>");
 						jQuery("#cart_cnt").attr("data-num",cart);
 				}
 				else {
-						jQuery("#globalMenu1").html("<a href='/member/login.asp'>濡쒓렇��</a>");
+						jQuery("#globalMenu1").html("<a href='/member/login.asp'>로그인</a>");
 						//jQuery("#globalMenu2").html(joinText);
-						jQuery("#globalMenu2").html("<a href='/member/join_intro.asp' >�뚯썝媛���</a>");
-						jQuery("#globalMenu3").html("<a href='/member/searchIDPW.asp'>�꾩씠�� 쨌 鍮꾨�踰덊샇 李얘린</a>");
-						jQuery("#globalMenu8").html("<a href='/specialoffer/list.asp'>�대깽��</a>");
-						//jQuery("#globalMenu4").html("<a href='/member/guest.asp'>鍮꾪쉶�� 二쇰Ц議고쉶</a>");
+						jQuery("#globalMenu2").html("<a href='/member/join_intro.asp' >회원가입</a>");
+						jQuery("#globalMenu3").html("<a href='/member/searchIDPW.asp'>아이디 · 비밀번호 찾기</a>");
+						jQuery("#globalMenu8").html("<a href='/specialoffer/list.asp'>이벤트</a>");
+						//jQuery("#globalMenu4").html("<a href='/member/guest.asp'>비회원 주문조회</a>");
 						jQuery("#globalMenu4").html("");
 						jQuery("#globalMenu5").hide();
 						jQuery("#globalMenu6").hide();
 						jQuery("#globalMenu7").hide();
-						jQuery("#globalMenu1m").html("<a href='/member/login.asp'>濡쒓렇��</a>");
-						jQuery("#globalMenu2m").html("<a href='https://www.fila.co.kr/member/join_intro.asp'>�뚯썝媛���</a>");				
-						jQuery("#globalMenu3m").html("<a href='/mypage/myOrder.asp'>二쇰Ц/諛곗넚</a>");					
-						jQuery("#globalMenu4m").html("<a href='/customer/notice.asp'>怨좉컼�쇳꽣</a>");
+						jQuery("#globalMenu1m").html("<a href='/member/login.asp'>로그인</a>");
+						jQuery("#globalMenu2m").html("<a href='https://www.fila.co.kr/member/join_intro.asp'>회원가입</a>");				
+						jQuery("#globalMenu3m").html("<a href='/mypage/myOrder.asp'>주문/배송</a>");					
+						jQuery("#globalMenu4m").html("<a href='/customer/notice.asp'>고객센터</a>");
 						jQuery("#cart_cnt").attr("data-num",cart);
 				}			
 			},
 			error: function(e) {
-						jQuery("#globalMenu1").html("<a href='/member/login.asp'>濡쒓렇��</a>");
+						jQuery("#globalMenu1").html("<a href='/member/login.asp'>로그인</a>");
 						//jQuery("#globalMenu2").html(joinText);
-						jQuery("#globalMenu2").html("<a href='/member/join_intro.asp' >�뚯썝媛���</a>");
-						jQuery("#globalMenu3").html("<a href='/member/searchIDPW.asp'>�꾩씠�� 쨌 鍮꾨�踰덊샇 李얘린</a>");
-						//jQuery("#globalMenu4").html("<a href='/member/guest.asp'>鍮꾪쉶�� 二쇰Ц議고쉶</a>");
+						jQuery("#globalMenu2").html("<a href='/member/join_intro.asp' >회원가입</a>");
+						jQuery("#globalMenu3").html("<a href='/member/searchIDPW.asp'>아이디 · 비밀번호 찾기</a>");
+						//jQuery("#globalMenu4").html("<a href='/member/guest.asp'>비회원 주문조회</a>");
 						jQuery("#globalMenu4").html("");
 						jQuery("#globalMenu5").hide();
 						jQuery("#globalMenu6").hide();
 						jQuery("#globalMenu7").hide();
-						jQuery("#globalMenu1m").html("<a href='/member/login.asp'>濡쒓렇��</a>");
-						jQuery("#globalMenu2m").html("<a href='https://www.fila.co.kr/member/join_intro.asp'>�뚯썝媛���</a>");				
-						jQuery("#globalMenu3m").html("<a href='/mypage/myOrder.asp'>二쇰Ц/諛곗넚</a>");					
-						jQuery("#globalMenu4m").html("<a href='/customer/notice.asp'>怨좉컼�쇳꽣</a>");
+						jQuery("#globalMenu1m").html("<a href='/member/login.asp'>로그인</a>");
+						jQuery("#globalMenu2m").html("<a href='https://www.fila.co.kr/member/join_intro.asp'>회원가입</a>");				
+						jQuery("#globalMenu3m").html("<a href='/mypage/myOrder.asp'>주문/배송</a>");					
+						jQuery("#globalMenu4m").html("<a href='/customer/notice.asp'>고객센터</a>");
 						jQuery("#cart_cnt").attr("data-num","0");
 			}
 		});	
@@ -517,7 +517,7 @@ function initXMLHttp()
 }   
 
 
-//AS議고쉶�� �곸뼱 �レ옄留� 媛���
+//AS조회용 영어 숫자만 가능
 function ReturnAsVal(obj,val) {
     obj.value = obj.value.replace(/[^a-zA-Z0-9]/g, '');
     
@@ -546,15 +546,15 @@ function searchRun2() {
 	var gnbFormObj = document.searchForm2;
 	var FormObj = document.searchFormReal;	
 
-	if(gnbFormObj.searchItem.value=="" || gnbFormObj.searchItem.value == "寃��됱뼱瑜� �낅젰�섏꽭��") {
-		alert("寃��됱뼱瑜� �낅젰�섏꽭��.");
+	if(gnbFormObj.searchItem.value=="" || gnbFormObj.searchItem.value == "검색어를 입력하세요") {
+		alert("검색어를 입력하세요.");
 		gnbFormObj.searchItem.value = "";
 		gnbFormObj.searchItem.focus();
 		return;
 	}
 	else {
 		tempItem = escape(gnbFormObj.searchItem.value);
-		if (tempItem == "寃��됱뼱瑜� �낅젰�섏꽭��.") { 
+		if (tempItem == "검색어를 입력하세요.") { 
 			tempItem = "";
 			gnbFormObj.searchItem.value = "";
 		}
@@ -571,15 +571,15 @@ function searchRun3() {
 	var gnbFormObj = document.searchForm3;
 	var FormObj = document.searchFormReal;	
 
-	if(gnbFormObj.searchItem.value=="" || gnbFormObj.searchItem.value == "寃��됱뼱瑜� �낅젰�섏꽭��") {
-		alert("寃��됱뼱瑜� �낅젰�섏꽭��.");
+	if(gnbFormObj.searchItem.value=="" || gnbFormObj.searchItem.value == "검색어를 입력하세요") {
+		alert("검색어를 입력하세요.");
 		gnbFormObj.searchItem.value = "";
 		gnbFormObj.searchItem.focus();
 		return;
 	}
 	else {
 		tempItem = escape(gnbFormObj.searchItem.value);
-		if (tempItem == "寃��됱뼱瑜� �낅젰�섏꽭��.") { 
+		if (tempItem == "검색어를 입력하세요.") { 
 			tempItem = "";
 			gnbFormObj.searchItem.value = "";
 		}
@@ -614,7 +614,7 @@ function snsConnect(ss){
 }
 function snsClear(v1,v2){
 	if (v1 != "" && v2 != ""){
-		if(confirm("�곕룞�� �댁젣�섏떆寃좎뒿�덇퉴?")){
+		if(confirm("연동을 해제하시겠습니까?")){
 			dataFrame.location.href = "/member/snsClear.asp?v1=" + v1 + "&v2=" + v2;
 		}
 	}
@@ -715,7 +715,7 @@ function changeToProcess(){
 	}
 }
 
-//@�대떦�쇱쟾泥닿��ъ슜
+//@해당폼전체검사용
 function ReturnNumberVal(obj,val) {
     obj.value = obj.value.replace(/[^0-9]/g, '');
     
@@ -730,7 +730,7 @@ function ReturnNumberVal(obj,val) {
     */
 }
 
-//�쇱そ�� 遺숈� 0 �쒓굅
+//왼쪽에 붙은 0 제거
 function pointNumberVal(obj){
 	if (obj.value.length > 1){
 		obj.value = obj.value.replace(/(^0+)/, "");
@@ -753,11 +753,11 @@ jQuery(document).on("click", ".sWordRemove", function(e){
 		success: function(data) {
 			if(data.result == ""){
 				$(".latest__list").empty();
-				$(".latest__list").append('<li class="no_search_list">理쒓렐 寃��됱뼱媛� �놁뒿�덈떎.</li>');
+				$(".latest__list").append('<li class="no_search_list">최근 검색어가 없습니다.</li>');
 			}
 		}
 	})
-	//寃��됱뼱 �⑥븘�덉쓣 寃쎌슦 �덉씠�� �� �ロ엳�꾨줉
+	//검색어 남아있을 경우 레이어 안 닫히도록
 	//if ( jQuery(".sWordRemove").length > 2 ) {
 	//	e.stopPropagation();
 	//}
@@ -771,7 +771,7 @@ function wordRemoveAll(){
 		dataType : "JSON",
 		success: function(data) {
 			$(".latest__list").empty();
-			$(".latest__list").append('<li class="no_search_list">理쒓렐 寃��됱뼱媛� �놁뒿�덈떎.</li>');
+			$(".latest__list").append('<li class="no_search_list">최근 검색어가 없습니다.</li>');
 		}
 	})
 
@@ -788,7 +788,7 @@ jQuery(document).on("click", ".toDayViewRemove", function(e){
 		success: function(data) {
 			if(data.result == ""){
 				$(".todayViewList").empty();
-				$(".todayViewList").append('<div class="tg-txt-box"><p>理쒓렐 蹂� �곹뭹�� �놁뒿�덈떎.</p>	</div>');
+				$(".todayViewList").append('<div class="tg-txt-box"><p>최근 본 상품이 없습니다.</p>	</div>');
 			}
 		}
 	})
@@ -803,13 +803,13 @@ function todayViewRemoveAll(){
 		dataType : "JSON",
 		success: function(data) {
 				$(".todayViewList").empty();
-				$(".todayViewList").append('<div class="tg-txt-box"><p>理쒓렐 蹂� �곹뭹�� �놁뒿�덈떎.</p>	</div>');
+				$(".todayViewList").append('<div class="tg-txt-box"><p>최근 본 상품이 없습니다.</p>	</div>');
 		}
 	})
 
 }
 
-	//'''LHS 20220121	'''�ㅻ뒛�꾩갑 諛곗넚�좎씤 荑좏룿
+	//'''LHS 20220121	'''오늘도착 배송할인 쿠폰
 	function todayCouponDown(){
 		cpnUrl = "/event/todayCoupon/coupon_down.asp";
 
@@ -822,7 +822,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -844,7 +844,7 @@ function todayViewRemoveAll(){
 	}
 
 
-	//20240514 荑좏룿x �뚮┝�좎껌
+	//20240514 쿠폰x 알림신청
 	function groobee240514(){
 		if ($("#promoCheck").is(":checked")){
 
@@ -860,7 +860,7 @@ function todayViewRemoveAll(){
 					var msg = data.msg;
 
 					if (result == 9) { 
-						alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+						alert("로그인 후 이용해 주세요.");
 						top.location.href=msg;
 					}
 					if (result == 2) { 
@@ -891,13 +891,13 @@ function todayViewRemoveAll(){
 			});	
 
 		}else{
-			alert("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.")
+			alert("SMS 마케팅 수신동의에 동의해주세요.")
 			//$('body').addClass('cfm--open');
-			//$('.eventCmt').html("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.");
+			//$('.eventCmt').html("SMS 마케팅 수신동의에 동의해주세요.");
 		}
 	}
 
-	//20240320 荑좏룿x �먯궛�곗쭠 �뚮┝�좎껌
+	//20240320 쿠폰x 두산티징 알림신청
 	function doosanAlrim2024(){
 		if ($("#promoCheck").is(":checked")){
 
@@ -913,7 +913,7 @@ function todayViewRemoveAll(){
 					var msg = data.msg;
 
 					if (result == 9) { 
-						alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+						alert("로그인 후 이용해 주세요.");
 						top.location.href=msg;
 					}
 					if (result == 2) { 
@@ -944,14 +944,14 @@ function todayViewRemoveAll(){
 			});	
 
 		}else{
-			alert("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.")
+			alert("SMS 마케팅 수신동의에 동의해주세요.")
 			//$('body').addClass('cfm--open');
-			//$('.eventCmt').html("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.");
+			//$('.eventCmt').html("SMS 마케팅 수신동의에 동의해주세요.");
 		}
 	}
 
 
-	//20240604 荑좏룿x �뚮┝�좎껌
+	//20240604 쿠폰x 알림신청
 	function ojosConfirm(){
 		loginUrl = "/member/ajaxGlobalMenu.asp"
 		jQuery.ajax({
@@ -962,7 +962,7 @@ function todayViewRemoveAll(){
 			success: function(logindata) {
 				idName = logindata.idname;
 				if (idName == ""){
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href="/member/login.asp";
 				}else{
 					if ($("#promoCheck").is(":checked")){
@@ -979,7 +979,7 @@ function todayViewRemoveAll(){
 								var msg = data.msg;
 
 								if (result == 9) { 
-									alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+									alert("로그인 후 이용해 주세요.");
 									top.location.href=msg;
 								}
 								if (result == 2) { 
@@ -1010,9 +1010,9 @@ function todayViewRemoveAll(){
 						});	
 
 					}else{
-						alert("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.")
+						alert("SMS 마케팅 수신동의에 동의해주세요.")
 						//$('body').addClass('cfm--open');
-						//$('.eventCmt').html("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.");
+						//$('.eventCmt').html("SMS 마케팅 수신동의에 동의해주세요.");
 					}
 				}
 			},
@@ -1023,7 +1023,7 @@ function todayViewRemoveAll(){
 
 	}
 
-	//20240612 荑좏룿x �뚮┝�좎껌
+	//20240612 쿠폰x 알림신청
 	function mw2406Confirm(){
 		loginUrl = "/member/ajaxGlobalMenu.asp"
 		jQuery.ajax({
@@ -1034,7 +1034,7 @@ function todayViewRemoveAll(){
 			success: function(logindata) {
 				idName = logindata.idname;
 				if (idName == ""){
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href="/member/login.asp";
 				}else{
 					if ($("#promoCheck").is(":checked")){
@@ -1051,7 +1051,7 @@ function todayViewRemoveAll(){
 								var msg = data.msg;
 
 								if (result == 9) { 
-									alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+									alert("로그인 후 이용해 주세요.");
 									top.location.href=msg;
 								}
 								if (result == 2) { 
@@ -1082,9 +1082,9 @@ function todayViewRemoveAll(){
 						});	
 
 					}else{
-						alert("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.")
+						alert("SMS 마케팅 수신동의에 동의해주세요.")
 						//$('body').addClass('cfm--open');
-						//$('.eventCmt').html("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.");
+						//$('.eventCmt').html("SMS 마케팅 수신동의에 동의해주세요.");
 					}
 				}
 			},
@@ -1096,7 +1096,7 @@ function todayViewRemoveAll(){
 	}
 
 
-	//'''LHS 20240701	'''湲고쉷�� 移댁뭅�� �뚯튇 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20240701	'''기획전 카카오 플친 쿠폰다운로드
 	function groobee240701(){
 		cpnUrl = "/event/groobee/20240701_result.asp";
 
@@ -1109,7 +1109,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1130,7 +1130,7 @@ function todayViewRemoveAll(){
 	}
 
 
-	//20240712 荑좏룿x �뚮┝�좎껌
+	//20240712 쿠폰x 알림신청
 	function groobee240712(){
 		loginUrl = "/member/ajaxGlobalMenu.asp"
 		jQuery.ajax({
@@ -1141,7 +1141,7 @@ function todayViewRemoveAll(){
 			success: function(logindata) {
 				idName = logindata.idname;
 				if (idName == ""){
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href="/member/login.asp";
 				}else{
 					if ($("#promoCheck").is(":checked")){
@@ -1158,7 +1158,7 @@ function todayViewRemoveAll(){
 								var msg = data.msg;
 
 								if (result == 9) { 
-									alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+									alert("로그인 후 이용해 주세요.");
 									top.location.href=msg;
 								}
 								if (result == 2) { 
@@ -1189,9 +1189,9 @@ function todayViewRemoveAll(){
 						});	
 
 					}else{
-						alert("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.")
+						alert("SMS 마케팅 수신동의에 동의해주세요.")
 						//$('body').addClass('cfm--open');
-						//$('.eventCmt').html("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.");
+						//$('.eventCmt').html("SMS 마케팅 수신동의에 동의해주세요.");
 					}
 				}
 			},
@@ -1202,7 +1202,7 @@ function todayViewRemoveAll(){
 
 	}
 
-	//20240719 荑좏룿x �뚮┝�좎껌
+	//20240719 쿠폰x 알림신청
 	function groobee240719(){
 		loginUrl = "/member/ajaxGlobalMenu.asp"
 		jQuery.ajax({
@@ -1213,7 +1213,7 @@ function todayViewRemoveAll(){
 			success: function(logindata) {
 				idName = logindata.idname;
 				if (idName == ""){
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href="/member/login.asp";
 				}else{
 					if ($("#promoCheck").is(":checked")){
@@ -1230,7 +1230,7 @@ function todayViewRemoveAll(){
 								var msg = data.msg;
 
 								if (result == 9) { 
-									alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+									alert("로그인 후 이용해 주세요.");
 									top.location.href=msg;
 								}
 								if (result == 2) { 
@@ -1261,9 +1261,9 @@ function todayViewRemoveAll(){
 						});	
 
 					}else{
-						alert("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.")
+						alert("SMS 마케팅 수신동의에 동의해주세요.")
 						//$('body').addClass('cfm--open');
-						//$('.eventCmt').html("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.");
+						//$('.eventCmt').html("SMS 마케팅 수신동의에 동의해주세요.");
 					}
 				}
 			},
@@ -1274,7 +1274,7 @@ function todayViewRemoveAll(){
 
 	}
 
-	//20240807 荑좏룿x �뚮┝�좎껌
+	//20240807 쿠폰x 알림신청
 	function groobee240807(){
 		loginUrl = "/member/ajaxGlobalMenu.asp"
 		jQuery.ajax({
@@ -1285,7 +1285,7 @@ function todayViewRemoveAll(){
 			success: function(logindata) {
 				idName = logindata.idname;
 				if (idName == ""){
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href="/member/login.asp";
 				}else{
 					if ($("#promoCheck").is(":checked")){
@@ -1302,7 +1302,7 @@ function todayViewRemoveAll(){
 								var msg = data.msg;
 
 								if (result == 9) { 
-									alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+									alert("로그인 후 이용해 주세요.");
 									top.location.href=msg;
 								}
 								if (result == 2) { 
@@ -1333,9 +1333,9 @@ function todayViewRemoveAll(){
 						});	
 
 					}else{
-						alert("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.")
+						alert("SMS 마케팅 수신동의에 동의해주세요.")
 						//$('body').addClass('cfm--open');
-						//$('.eventCmt').html("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.");
+						//$('.eventCmt').html("SMS 마케팅 수신동의에 동의해주세요.");
 					}
 				}
 			},
@@ -1346,7 +1346,7 @@ function todayViewRemoveAll(){
 
 	}
 
-	//20240812 荑좏룿x �뚮┝�좎껌
+	//20240812 쿠폰x 알림신청
 	function groobee240812(){
 		loginUrl = "/member/ajaxGlobalMenu.asp"
 		jQuery.ajax({
@@ -1357,7 +1357,7 @@ function todayViewRemoveAll(){
 			success: function(logindata) {
 				idName = logindata.idname;
 				if (idName == ""){
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href="/member/login.asp";
 				}else{
 					if ($("#promoCheck").is(":checked")){
@@ -1374,7 +1374,7 @@ function todayViewRemoveAll(){
 								var msg = data.msg;
 
 								if (result == 9) { 
-									alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+									alert("로그인 후 이용해 주세요.");
 									top.location.href=msg;
 								}
 								if (result == 2) { 
@@ -1405,9 +1405,9 @@ function todayViewRemoveAll(){
 						});	
 
 					}else{
-						alert("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.")
+						alert("SMS 마케팅 수신동의에 동의해주세요.")
 						//$('body').addClass('cfm--open');
-						//$('.eventCmt').html("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.");
+						//$('.eventCmt').html("SMS 마케팅 수신동의에 동의해주세요.");
 					}
 				}
 			},
@@ -1418,7 +1418,7 @@ function todayViewRemoveAll(){
 
 	}
 
-	//'''LHS 20240813	'''湲고쉷�� 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20240813	'''기획전 쿠폰다운로드
 	function groobee240813(){
 		cpnUrl = "/event/groobee/20240813_result.asp";
 
@@ -1431,7 +1431,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1451,7 +1451,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//20240906 荑좏룿x �뚮┝�좎껌
+	//20240906 쿠폰x 알림신청
 	function groobee240906(){
 		loginUrl = "/member/ajaxGlobalMenu.asp"
 		jQuery.ajax({
@@ -1462,7 +1462,7 @@ function todayViewRemoveAll(){
 			success: function(logindata) {
 				idName = logindata.idname;
 				if (idName == ""){
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href="/member/login.asp";
 				}else{
 					if ($("#promoCheck").is(":checked")){
@@ -1479,7 +1479,7 @@ function todayViewRemoveAll(){
 								var msg = data.msg;
 
 								if (result == 9) { 
-									alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+									alert("로그인 후 이용해 주세요.");
 									top.location.href=msg;
 								}
 								if (result == 2) { 
@@ -1501,7 +1501,7 @@ function todayViewRemoveAll(){
 						});	
 
 					}else{
-						alert("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.")
+						alert("SMS 마케팅 수신동의에 동의해주세요.")
 					}
 				}
 			},
@@ -1512,7 +1512,7 @@ function todayViewRemoveAll(){
 
 	}
 
-	//'''LHS 20241001	'''湲고쉷�� 移댁뭅�� �뚯튇 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20241001	'''기획전 카카오 플친 쿠폰다운로드
 	function groobee241001(){
 		cpnUrl = "/event/groobee/20241001_result.asp";
 
@@ -1525,7 +1525,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1545,7 +1545,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//'''LHS 20241101	'''湲고쉷�� �ㅼ쫰 11�� 荑좏룿�� 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20241101	'''기획전 키즈 11월 쿠폰팩 쿠폰다운로드
 	function groobee241101(){
 		cpnUrl = "/event/groobee/20241101_result.asp";
 
@@ -1558,7 +1558,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1578,7 +1578,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//20241118 荑좏룿x �뚮┝�좎껌
+	//20241118 쿠폰x 알림신청
 	function groobee241121(){
 		loginUrl = "/member/ajaxGlobalMenu.asp"
 		jQuery.ajax({
@@ -1589,7 +1589,7 @@ function todayViewRemoveAll(){
 			success: function(logindata) {
 				idName = logindata.idname;
 				if (idName == ""){
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href="/member/login.asp";
 				}else{
 					if ($("#promoCheck").is(":checked")){
@@ -1606,7 +1606,7 @@ function todayViewRemoveAll(){
 								var msg = data.msg;
 
 								if (result == 9) { 
-									alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+									alert("로그인 후 이용해 주세요.");
 									top.location.href=msg;
 								}
 								if (result == 2) { 
@@ -1628,7 +1628,7 @@ function todayViewRemoveAll(){
 						});	
 
 					}else{
-						alert("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.")
+						alert("SMS 마케팅 수신동의에 동의해주세요.")
 					}
 				}
 			},
@@ -1639,7 +1639,7 @@ function todayViewRemoveAll(){
 
 	}
 
-	//'''LHS 20250106	'''湲고쉷�� �ㅼ썙�� 荑좏룿�ㅼ슫濡쒕뱶 
+	//'''LHS 20250106	'''기획전 키워드 쿠폰다운로드 
 	function groobee250106(){
 		cpnUrl = "/event/groobee/20250106_result.asp";
 		var keyword = $("#keywordCpn").val();
@@ -1653,7 +1653,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1673,7 +1673,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//'''LHS 20250101	'''湲고쉷�� 移댁뭅�� �뚯튇 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20250101	'''기획전 카카오 플친 쿠폰다운로드
 	function groobee250101(){
 		cpnUrl = "/event/groobee/20250101_result.asp";
 
@@ -1686,7 +1686,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1706,7 +1706,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//'''LHS 20250116	'''湲고쉷�� 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20250116	'''기획전 쿠폰다운로드
 	function groobee250116(){
 		cpnUrl = "/event/groobee/20250116_result.asp";
 
@@ -1719,7 +1719,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1739,7 +1739,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//'''LHS 20250422	'''湲고쉷�� 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20250422	'''기획전 쿠폰다운로드
 	function groobee250422(){
 		cpnUrl = "/event/groobee/20250422_result.asp";
 
@@ -1752,7 +1752,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1772,7 +1772,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//'''LHS 20250512	'''湲고쉷�� 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20250512	'''기획전 쿠폰다운로드
 	function groobee250512(){
 		cpnUrl = "/event/groobee/20250512_result.asp";
 
@@ -1785,7 +1785,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1805,7 +1805,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//'''LHS 20250630	'''湲고쉷�� 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20250630	'''기획전 쿠폰다운로드
 	function groobee250630(){
 		cpnUrl = "/event/groobee/20250630_result.asp";
 
@@ -1818,7 +1818,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1837,7 +1837,7 @@ function todayViewRemoveAll(){
 			}
 		});	
 	}
-	//'''LHS 20250721	'''湲고쉷�� 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20250721	'''기획전 쿠폰다운로드
 	function groobee250721(){
 		cpnUrl = "/event/groobee/20250721_result.asp";
 
@@ -1850,7 +1850,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1870,7 +1870,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//'''LHS 20250912	'''湲고쉷�� 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20250912	'''기획전 쿠폰다운로드
 	function groobee250915(){
 		cpnUrl = "/event/groobee/20250915_result.asp";
 
@@ -1883,7 +1883,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1903,7 +1903,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//'''LHS 20250912	'''湲고쉷�� 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20250912	'''기획전 쿠폰다운로드
 	function groobee250915_2(){
 		cpnUrl = "/event/groobee/20250915_2_result.asp";
 
@@ -1916,7 +1916,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1936,7 +1936,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//'''LHS 20250917	'''湲고쉷�� 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20250917	'''기획전 쿠폰다운로드
 	function groobee250919(mode){
 		cpnUrl = "/event/groobee/20250919_result.asp";
 
@@ -1950,7 +1950,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -1970,7 +1970,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//'''LHS 20251030	'''湲고쉷�� 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20251030	'''기획전 쿠폰다운로드
 	function groobee251030(){
 		cpnUrl = "/event/groobee/20251030_result.asp";
 
@@ -1983,7 +1983,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -2003,7 +2003,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//'''LHS 20251216	'''湲고쉷�� 荑좏룿�ㅼ슫濡쒕뱶
+	//'''LHS 20251216	'''기획전 쿠폰다운로드
 	function groobee251216(){
 		cpnUrl = "/event/groobee/20251216_result.asp";
 
@@ -2016,7 +2016,7 @@ function todayViewRemoveAll(){
 				var msg = data.msg;
 
 				if (result == 9) { 
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href=msg;
 				}
 				if (result == 2) { 
@@ -2036,7 +2036,7 @@ function todayViewRemoveAll(){
 		});	
 	}
 
-	//20251218 荑좏룿x �뚮┝�좎껌
+	//20251218 쿠폰x 알림신청
 	function groobee251218(){
 		loginUrl = "/member/ajaxGlobalMenu.asp"
 		jQuery.ajax({
@@ -2047,7 +2047,7 @@ function todayViewRemoveAll(){
 			success: function(logindata) {
 				idName = logindata.idname;
 				if (idName == ""){
-					alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+					alert("로그인 후 이용해 주세요.");
 					top.location.href="/member/login.asp";
 				}else{
 					if ($("#promoCheck").is(":checked")){
@@ -2064,7 +2064,7 @@ function todayViewRemoveAll(){
 								var msg = data.msg;
 
 								if (result == 9) { 
-									alert("濡쒓렇�� �� �댁슜�� 二쇱꽭��.");
+									alert("로그인 후 이용해 주세요.");
 									top.location.href=msg;
 								}
 								if (result == 2) { 
@@ -2086,7 +2086,7 @@ function todayViewRemoveAll(){
 						});	
 
 					}else{
-						alert("SMS 留덉��� �섏떊�숈쓽�� �숈쓽�댁＜�몄슂.")
+						alert("SMS 마케팅 수신동의에 동의해주세요.")
 					}
 				}
 			},
@@ -2098,8 +2098,8 @@ function todayViewRemoveAll(){
 	}
 
 
-// 洹몃（鍮� 異붿쿇 �곹뭹 �섏떊 怨� �몄텧 泥섎━瑜� �꾪븳 �꾩닔 �ㅽ겕由쏀듃 �⑥닔
-// �⑥닔紐� 蹂�寃� 遺덇�
+// 그루비 추천 상품 수신 과 노출 처리를 위한 필수 스크립트 함수
+// 함수명 변경 불가
 var goodspno = "";
 var goodspno2 = "";
 var ValgorithmCd = "";
@@ -2113,9 +2113,9 @@ goodspno = "";
 goodspno2 = "";
 console.log(campaignKey);
 console.log(goodsArray);
-	//�λ컮援щ땲 異붿쿇�곹뭹 , 硫붿씤 異붿쿇�곹뭹
+	//장바구니 추천상품 , 메인 추천상품
 	if (campaignKey == "RE738f096310d14a80aa0e6c99d11f9b43" ){
-		//�λ컮援щ땲 �앹뾽
+		//장바구니 팝업
 		for(key in goodsArray) {
 			for (key2 in goodsArray[key]){
 				if (goodspno == ""){
@@ -2132,7 +2132,7 @@ console.log(goodsArray);
 		VcampaignKey = campaignKey;
 
 		//"RE738f096310d14a80aa0e6c99d11f9b43"
-		  // 異붿쿇 �곹뭹 �몄텧 泥섎━
+		  // 추천 상품 노출 처리
 		  var groobeeObj;
 		  groobeeObj = {
 			  algorithmCd : algorithmCd,
@@ -2145,28 +2145,28 @@ console.log(goodsArray);
 	}else{
 		mode = "view";
 		if (campaignKey == "RE7b06443a1835447885f5397a2ad35ea3"){
-			//�곸꽭 �곷떒
+			//상세 상단
 			tagID = "";
 		}else if(campaignKey == "RE3ba0cf1effa6490f9216acae3703cba5///" || campaignKey == "REe82aabcd847a42ec827f14aebd7dacd41" || campaignKey == "REe82aabcd847a42ec827f14aebd7dacd4") {
-			//�곸꽭 �섎떒
+			//상세 하단
 			tagID = "recopickProduct";
 			mode = "MAINDIVCART"
 		}else if(campaignKey == "REc35a1dc7440342d7a61c65d4e92b2fd9///" || campaignKey == "RE63da5c31590d4fe9bb342b6d5c72c2a2" || campaignKey == "REf70e838c71bf4db080614ac8405f5fe1" || campaignKey == "REc0b801fec2a44867b7cfad920d94b778///"){
-			//寃��됲럹�댁�,�ㅻ뒛 蹂� �곹뭹,�꾩떆由ъ뒪��, �λ컮援щ땲
+			//검색페이지,오늘 본 상품,위시리스트, 장바구니
 			tagID = "recopickProduct";
 			mode = "MAINDIVCART"
 		}else if(campaignKey == "REd9c4a9844e4a43d6b5c5cb1cc570b743" || campaignKey == "RE9fe4a0d8b08149d2ad955d0983e89c17" || campaignKey == "RE8f31195d88214821946733f00d611266"){
-			//湲고쉷�� �곸꽭,二쇰Ц�꾨즺, 二쇰Ц�곸꽭
+			//기획전 상세,주문완료, 주문상세
 			tagID = "recopickProduct";
 			mode = "MAINDIV"
 		}else if(campaignKey == "REae0d8912d1c34563a8f031af8b2a0181"){
-			//2021-08-19 1n1�곸꽭 �곷떒
+			//2021-08-19 1n1상세 상단
 			tagID = "recopickProduct";
 		}else if(campaignKey == "REa8d64c1e7c7045cdaa9557c4ae83e07b"){
-			//2021-08-19 1n1�곸꽭 �섎떒
+			//2021-08-19 1n1상세 하단
 			tagID = "";
 		}else if(campaignKey == "REa6ff915f494d46eca43851470022812f///"){
-			//2021-09-16 KIDS Items you�셪l like
+			//2021-09-16 KIDS Items you’ll like
 			tagID = "recopickProduct";
 			mode = "MAINDIV"
 		}else if(campaignKey == "RE3ca54f07932b48b8857a8c1182dcacde"){
@@ -2174,11 +2174,11 @@ console.log(goodsArray);
 			tagID = "recopickProduct";
 			mode = "MAINDIV"
 		}else if (campaignKey == "REdcc67e4f8778494eac3e99f4ee2f7a5c///"){
-			//硫붿씤異붿쿇
+			//메인추천
 			tagID = "recopickProduct";
 			mode = "MAINDIVCART"
 		}else if (campaignKey == "RE116ac5cf56024f5dbd474f9e4f8eb95a" )	{
-			//�곸꽭 �섎떒2
+			//상세 하단2
 			tagID = "recopickProduct2";
 			mode = "MAINDIVCART"
 		}else{
@@ -2199,7 +2199,7 @@ console.log(goodsArray);
 		ValgorithmCd2 = algorithmCd;
 		VcampaignKey2 = campaignKey;
 
-		  // 異붿쿇 �곹뭹 �몄텧 泥섎━
+		  // 추천 상품 노출 처리
 		  var groobeeObj;
 		  groobeeObj = {
 			  algorithmCd : algorithmCd,
@@ -2215,10 +2215,10 @@ console.log(goodsArray);
 	}
 
 }
-// 異붿쿇 �곹뭹 �대┃ �� �몄텧 �섎뒗 �ㅽ겕由쏀듃 �⑥닔
-// �⑥닔紐� �먯쑀 �묒꽦
+// 추천 상품 클릭 시 호출 되는 스크립트 함수
+// 함수명 자유 작성
 function clickGroobeeProduct (algorithmCd, campaignKey, goodsNo) {
-  // 異붿쿇 �곹뭹 �대┃ 泥섎━
+  // 추천 상품 클릭 처리
   var groobeeObj;
   groobeeObj = {
     algorithmCd : algorithmCd,
@@ -2230,8 +2230,8 @@ function clickGroobeeProduct (algorithmCd, campaignKey, goodsNo) {
   } 
   groobee.send("CL", groobeeObj);
 
-  // �섏씠吏� �대룞 泥섎━
-// [�붽퀬媛앹궗 �묒꽦 �곸뿭 code��
+  // 페이지 이동 처리
+// [✔고객사 작성 영역 code…
 
 }
 
@@ -2282,7 +2282,7 @@ function GetCartInsiderView(tagID,campaignId,variationId,goodsNo,mode){
 
 
 function checkoutbtn_getback() {
-	var str = '<a href="javascript:pay_checkout();void(0);" class="btn_bg__bk on">援щℓ�섍린</a>';
+	var str = '<a href="javascript:pay_checkout();void(0);" class="btn_bg__bk on">구매하기</a>';
 	jQuery("#checkoutbtn").html(str);
 }
 
@@ -2300,7 +2300,7 @@ function sWordHistory(){
 
 
 jQuery(function(){
-	// �섎웾 鍮쇨린
+	// 수량 빼기
 	jQuery(document).on("click",  "#vpop99 button[id^=qtyMinusW]", function() {
 
 		var maxStock = jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") != undefined ?jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") : ProductStockLimitNumber ; 
@@ -2314,24 +2314,25 @@ jQuery(function(){
 		qtyVal = qtyVal < minStock ? minStock : qtyVal ;
 		obj.val( qtyVal );
 		var val7 = document.form99.cartPrice.value;
-		$("#ctoprice").html(PrintComma(val7*qtyVal)+"��");
+		$("#ctoprice").html(PrintComma(val7*qtyVal)+"원");
 	})
-	// �섎웾 �뷀븯湲�
+	// 수량 더하기
 	jQuery(document).on("click",  "#vpop99 button[id^=qtyPlusW]", function() {
 		var maxStock = jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") != undefined ?jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") : ProductStockLimitNumber ; 
 		var minStock = maxStock > 0 ? 1 : 0 ;
+		
 		//console.log(11);
 		var obj = jQuery(this).prev( "input[id^=ProductQuantityW]" ); 
 		var qtyVal = obj.val(); 
 		qtyVal = jQuery.isNumeric(qtyVal) ? qtyVal : minStock ;
 		qtyVal++;
 		if (qtyVal > maxStock) { 
-			alert(maxStock + "媛� 源뚯�留� 二쇰Ц 媛��ν빀�덈떎");
+			alert(maxStock + "개 까지만 주문 가능합니다");
 		}
 		qtyVal = qtyVal > maxStock ? maxStock : qtyVal ;
 		obj.val( qtyVal );
 		var val7 = document.form99.cartPrice.value;
-		$("#ctoprice").html(PrintComma(val7*qtyVal)+"��");
+		$("#ctoprice").html(PrintComma(val7*qtyVal)+"원");
 	})
 	jQuery(document).on("blur", "#vpop99 input[id^=ProductQuantityW]", function() {
 		var maxStock = jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") != undefined ?jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") : ProductStockLimitNumber ; 
@@ -2341,17 +2342,18 @@ jQuery(function(){
 		var obj = jQuery(this);
 		var val = obj.val();
 		if (val > maxStock) { 
-			alert(maxStock + "媛� 源뚯�留� 二쇰Ц 媛��ν빀�덈떎");
+			alert(maxStock + "개 까지만 주문 가능합니다");
 		}
 		!regex.test( val ) ? obj.val( minStock ) : "" ;
 
 		val < minStock ? obj.val( minStock ) : "" ;
 		val > maxStock ? obj.val( maxStock ) : "" ;
 		var val7 = document.form99.cartPrice.value;
-		$("#ctoprice").html(PrintComma(val7*qtyVal)+"��");
+		$("#ctoprice").html(PrintComma(val7*qtyVal)+"원");
 	})
 
 	//'''20250307 searchHistoryAjax
 	sWordHistory();
 })
+
 
