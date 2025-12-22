@@ -242,7 +242,7 @@ $(document).on('click', '.search-open__btn', function () {
 									<div>
 										<p class="tit">추천 검색어</p>
 									</div>
-
+   
 									<div>
 										<ul>
 
