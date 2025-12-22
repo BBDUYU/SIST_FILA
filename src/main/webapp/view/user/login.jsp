@@ -843,7 +843,7 @@ cre('send','Pageview');
 			function doBizmsg() {
 				var kakaoPop = window.open("about:blank","kakaoPop","width=350,height=550")
 				var frm = document.formbiz;
-				frm.submit();
+				frm.submit();   
 			}
 			</script>
 
