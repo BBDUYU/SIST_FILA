@@ -32,6 +32,7 @@ public class CategoriesServlet extends HttpServlet {
             conn = ConnectionProvider.getConnection();
             categoriesDAO dao = categoriesDAO.getInstance();
 
+ 
             if (uri.endsWith("main.ss")) {
 
                 ArrayList<categoriesDTO> list =
