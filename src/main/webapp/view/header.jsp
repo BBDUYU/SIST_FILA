@@ -202,7 +202,7 @@ $(document).on('click', '.search-open__btn', function () {
 										<p class="update-txt">19:00 업데이트</p>
 									</div>
 
-									<div>
+									<div> 
 										<ul>
 
 											<li><a
