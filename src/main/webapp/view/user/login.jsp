@@ -839,7 +839,7 @@ cre('send','Pageview');
 			</button>
 
 			<script src="https://bizmessage.kakao.com/chat/includeScript"></script>
-			<script type="text/javascript">
+			<script type="text/javascript">  
 			function doBizmsg() {
 				var kakaoPop = window.open("about:blank","kakaoPop","width=350,height=550")
 				var frm = document.formbiz;
