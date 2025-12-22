@@ -5,19 +5,20 @@ Oracle + Tomcat JNDI(DataSource) 연동 프로젝트
 
 프로젝트 파일 구조
 
+```text
 SIST_FILA/
 ├─ README.md
-├─ build/                       # 빌드 결과물
+├─ build/
 ├─ src/
 │  └─ main/
 │     ├─ java/
 │     │  └─ com/
-│     │     ├─ util/            # DB 연결 및 공통 유틸 클래스
-│     │     │  ├─ ConnectionProvider.java  # JNDI 기반 DB 연결 관리
-│     │     │  ├─ Cookies.java             
+│     │     ├─ util/
+│     │     │  ├─ ConnectionProvider.java
+│     │     │  ├─ Cookies.java
 │     │     │  └─ JdbcUtil.java
 │     │     │
-│     │     └─ products/        # Model, Controller
+│     │     └─ products/
 │     │        ├─ productsDAO.java
 │     │        ├─ productsDTO.java
 │     │        └─ productsServlet.java
@@ -27,11 +28,11 @@ SIST_FILA/
 │        ├─ js/
 │        │
 │        ├─ META-INF/
-│        │  ├─ context.xml      # JNDI DataSource 설정
+│        │  ├─ context.xml
 │        │  └─ MANIFEST.MF
 │        │
-│        ├─ view/               # JSP View 기능별 분리
-│        │  ├─ admin/           
+│        ├─ view/
+│        │  ├─ admin/
 │        │  ├─ event/
 │        │  ├─ product/
 │        │  └─ user/
@@ -51,5 +52,6 @@ SIST_FILA/
 │              ├─ ojdbc6.jar
 │              └─ tomcat-dbcp.jar
 │
-└─ Servers/                     # Eclipse Tomcat 서버 설정
+└─ Servers/
+
 
