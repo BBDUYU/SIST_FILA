@@ -29,6 +29,7 @@
 <link rel="stylesheet" href="http://localhost/SIST_FILA/css/product.css">
 <link rel="stylesheet" href="http://localhost/SIST_FILA/css/sub.css">
 
+
 <script src="http://localhost/SIST_FILA/js/TweenMax.js"></script>
 <script src="http://localhost/SIST_FILA/js/jquery-1.12.4.js"></script>
 <script src="http://localhost/SIST_FILA/js/mighty.base.1.5.7.js"></script>
@@ -56,7 +57,7 @@ $(document).on('click', '.search-open__btn', function () {
 
 </script>
 </head>
-<body class="hd__style1 _style_main">
+<body>
 
 
 	<header id="header">
