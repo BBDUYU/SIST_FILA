@@ -13,12 +13,12 @@ SIST_FILA/
 │  └─ main/
 │     ├─ java/
 │     │  └─ com/
-│     │     ├─ util/
-│     │     │  ├─ ConnectionProvider.java
+│     │     ├─ util/      # DB 연결 및 공통 유틸 클래스
+│     │     │  ├─ ConnectionProvider.java    # JNDI 기반 DB 연결 관리
 │     │     │  ├─ Cookies.java
 │     │     │  └─ JdbcUtil.java
 │     │     │
-│     │     └─ products/
+│     │     └─ products/  # Model, Controller
 │     │        ├─ productsDAO.java
 │     │        ├─ productsDTO.java
 │     │        └─ productsServlet.java
@@ -28,10 +28,10 @@ SIST_FILA/
 │        ├─ js/
 │        │
 │        ├─ META-INF/
-│        │  ├─ context.xml
+│        │  ├─ context.xml # JNDI DataSource 설정
 │        │  └─ MANIFEST.MF
 │        │
-│        ├─ view/
+│        ├─ view/          # JSP View 기능별 분리
 │        │  ├─ admin/
 │        │  ├─ event/
 │        │  ├─ product/
@@ -52,6 +52,6 @@ SIST_FILA/
 │              ├─ ojdbc6.jar
 │              └─ tomcat-dbcp.jar
 │
-└─ Servers/
+└─ Servers/                 # Eclipse Tomcat 서버 설정
 
 
