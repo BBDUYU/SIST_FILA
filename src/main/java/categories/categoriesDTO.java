@@ -1,4 +1,4 @@
-package products;
+package categories;
 
 
 import java.util.Date;
@@ -12,15 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class productsDTO {
-	private String product_id;
+public class categoriesDTO {
 	private int category_id;
 	private String name;
-	private String description;
-	private int price;
-	private int view_count;
+	private int parent_id;
+	private int depth;
 	private Date created_at;
 	private Date updated_at;
-	private String status;
-	private int discount_rate;
+	private int use_yn;
 }
