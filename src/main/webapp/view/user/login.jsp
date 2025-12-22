@@ -111,7 +111,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 		/*
 		* 광고차단시 이벤트콜백 작동
 		* 2018.07.03 - gtag 이벤트콜백 검증추가
-		* 박재영
+		* 
 		*/
 		function gtag(){
 			var a = arguments,o = "object",f = "function", g = window.gaData;
