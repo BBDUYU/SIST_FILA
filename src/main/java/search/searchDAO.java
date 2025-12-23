@@ -43,10 +43,13 @@ public class searchDAO {
      */
     public ArrayList<searchDTO> selectTopKeywords(Connection conn, int limit) throws SQLException {
         ArrayList<searchDTO> list = new ArrayList<>();
-        String sql = "SELECT KEYWORD_ID, KEYWORD, SEARCH_COUNT, LAST_SEARCH_DATE " +
-                     "FROM SEARCH_KEYWORDS " +
-                     "ORDER BY SEARCH_COUNT DESC " +
-                     "FETCH FIRST ? ROWS ONLY";
+        
+        // Oracle 11g 이하는 정렬 후 ROWNUM으로 잘라내는 서브쿼리 방식을 써야 합니다.
+        String sql = "SELECT * FROM ( " +
+                     "  SELECT KEYWORD_ID, KEYWORD, SEARCH_COUNT, LAST_SEARCH_DATE " +
+                     "  FROM SEARCH_KEYWORDS " +
+                     "  ORDER BY SEARCH_COUNT DESC " +
+                     ") WHERE ROWNUM <= ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, limit);
@@ -56,13 +59,13 @@ public class searchDAO {
                             .keyword_id(rs.getInt("KEYWORD_ID"))
                             .keyword(rs.getString("KEYWORD"))
                             .search_count(rs.getInt("SEARCH_COUNT"))
-                            .last_search_date(rs.getDate("LAST_SEARCH_DATE"))
+                            // rs.getDate는 시/분/초가 잘릴 수 있으므로 필요시 rs.getTimestamp 사용
+                            .last_search_date(rs.getTimestamp("LAST_SEARCH_DATE")) 
                             .build();
                     list.add(dto);
                 }
             }
         }
-
         return list;
     }
 }

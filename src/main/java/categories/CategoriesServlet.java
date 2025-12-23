@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.util.ConnectionProvider;
 import com.util.JdbcUtil;
 
+import search.searchDAO;
+import search.searchDTO;
+
 @WebServlet("*.mm")
 public class CategoriesServlet extends HttpServlet {
 
@@ -40,6 +43,11 @@ public class CategoriesServlet extends HttpServlet {
 
                 request.setAttribute("list", list);
 
+                searchDAO sDao = searchDAO.getInstance();
+                // 상위 10개 혹은 원하는 개수만큼 조회
+                ArrayList<searchDTO> popularKeywords = sDao.selectTopKeywords(conn, 10);
+                request.setAttribute("popularKeywords", popularKeywords);
+                
                 String path = "/view/header.jsp";
                 RequestDispatcher dispatcher =
                         request.getRequestDispatcher(path);
