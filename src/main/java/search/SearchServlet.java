@@ -1,10 +1,8 @@
-package categories;
+package search;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.util.ArrayList;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.util.ConnectionProvider;
 import com.util.JdbcUtil;
 
-@WebServlet("*.mm")
-public class CategoriesServlet extends HttpServlet {
+@WebServlet("*.ss")
+public class SearchServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,21 +28,21 @@ public class CategoriesServlet extends HttpServlet {
 
         try {
             conn = ConnectionProvider.getConnection();
-            categoriesDAO dao = categoriesDAO.getInstance();
+            searchDAO dao = searchDAO.getInstance();
 
  
-            if (uri.endsWith("main.mm")) {
+            if (uri.endsWith("record.ss")) {
+                String keyword = request.getParameter("keyword");
+                if(keyword != null && !keyword.isEmpty()) {
+                    dao.upsertKeyword(conn, keyword);
+                }
 
-                ArrayList<categoriesDTO> list =
-                        dao.selectCategoryList(conn);
-
-                request.setAttribute("list", list);
-
-                String path = "/view/header.jsp";
-                RequestDispatcher dispatcher =
-                        request.getRequestDispatcher(path);
-                dispatcher.forward(request, response);
+                // JSON으로 결과 반환
+                response.setContentType("application/json; charset=UTF-8");
+                response.getWriter().write("{\"status\":\"ok\"}");
+                return;
             }
+
 
         } catch (Exception e) {
             e.printStackTrace();

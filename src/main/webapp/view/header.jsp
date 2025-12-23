@@ -25,10 +25,11 @@
 	href="http://localhost/SIST_FILA/css/opt-default.css">
 <link rel="stylesheet"
 	href="http://localhost/SIST_FILA/css/swiper-bundle.css">
-
+  
 <link rel="stylesheet" href="http://localhost/SIST_FILA/css/layout.css">
 <link rel="stylesheet" href="http://localhost/SIST_FILA/css/product.css">
 <link rel="stylesheet" href="http://localhost/SIST_FILA/css/sub.css">
+
 
 <script src="http://localhost/SIST_FILA/js/TweenMax.js"></script>
 <script src="http://localhost/SIST_FILA/js/jquery-1.12.4.js"></script>
@@ -60,6 +61,7 @@ $(document).on('click', '.cancel__btn', function () {
 </script>
 
 </head>
+
 <body class="hd__style1 _style_main"> <!-- hover했을 때 class사라지게해야됨 -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -74,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	    if(e.target.closest('li')) body.classList.remove('_bg_on');
 	  });
 	});
-
 
   </script>
 
@@ -252,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
 										<p class="update-txt">19:00 업데이트</p>
 									</div>
 
-									<div>
+									<div> 
 										<ul>
 
 											<li><a
