@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
 <!DOCTYPE html>
@@ -53,11 +54,29 @@ $(document).on('click', '.search-open__btn', function () {
 	    });
 	  }, 300);
 	});
-
+$(document).on('click', '.cancel__btn', function () {
+    $('body').removeClass('search--open');
+});
 </script>
-</head>
-<body class="hd__style1 _style_main">
 
+</head>
+<body class="hd__style1 _style_main"> <!-- hover했을 때 class사라지게해야됨 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	  const body = document.body;
+
+	  // 이벤트 위임: #header nav 내부의 li에 마우스 enter/leave 시 동작
+	  document.querySelector('#header nav').addEventListener('mouseover', (e) => {
+	    if(e.target.closest('li')) body.classList.add('_bg_on');
+	  });
+
+	  document.querySelector('#header nav').addEventListener('mouseout', (e) => {
+	    if(e.target.closest('li')) body.classList.remove('_bg_on');
+	  });
+	});
+
+
+  </script>
 
 	<header id="header">
 		<!-- logo -->
@@ -133,8 +152,8 @@ $(document).on('click', '.search-open__btn', function () {
 
 			<div class="util-search">
 				<button type="button" class="search-open__btn">search</button>
-				<form action="javascript:searchRun2();" name="searchForm2"
-					method="get" autocomplete="off">
+				<form action="#" name="searchForm2"
+					method="get" autocomplete="off" onsubmit="searchRun2(); return false;">
 					<!-- search layer -->
 					<div class="search__layer">
 
@@ -164,7 +183,7 @@ $(document).on('click', '.search-open__btn', function () {
 										name="searchsCateNo" id="searchsCateNo" value="">
 
 									<button type="button" class="search__btn"
-										onclick="javascript:searchRun2();void(0);">search</button>
+										onclick="searchRun2();">search</button> 
 								</div>
 
 								<button type="button" class="cancel__btn">취소</button>
@@ -185,10 +204,41 @@ $(document).on('click', '.search-open__btn', function () {
 									</div>
 
 									<div>
-										<ul class="latest__list" id="sWordHistory">
-											<li class="no_search_list">최근 검색어가 없습니다.</li>
-										</ul>
+										<%
+										    // 쿠키에서 recentSearch 가져오기
+										    String recentSearch = "";
+										    javax.servlet.http.Cookie[] cookies = request.getCookies();
+										    if (cookies != null) {
+										        for (javax.servlet.http.Cookie c : cookies) {
+										            if ("recentSearch".equals(c.getName())) {
+										                recentSearch = java.net.URLDecoder.decode(c.getValue(), "UTF-8");
+										                break;
+										            }
+										        }
+										    }
+										    // request scope에 저장해서 JSTL에서 사용
+										    request.setAttribute("recentSearch", recentSearch);
+										%>
+									
+									<ul class="latest__list" id="sWordHistory">
+									    <c:choose>
+									        <c:when test="${not empty recentSearch}">
+									            <c:forEach var="word" items="${fn:split(recentSearch, ',')}">
+									                <li data-sword="${word}">
+									                    <a href="/search/search_result.asp?sWord=${fn:escapeXml(word)}">${word}</a>
+									                    <button type="button" class="delete__btn sWordRemove btn_remove">delete</button>
+									                </li>
+									            </c:forEach>
+									        </c:when>
+									        <c:otherwise>
+									            <li class="no_search_list">최근 검색어가 없습니다.</li>
+									        </c:otherwise>
+									    </c:choose>
+									</ul>
 
+
+
+										
 									</div>
 								</div>
 								<!-- //최근 검색어 -->
@@ -796,6 +846,46 @@ $(document).on('click', '.search-open__btn', function () {
 		</div>
 		<!-- //util -->
 	</header>
+
+<script>
+function searchRun2() {
+    const searchItem = document.getElementById("searchItem2").value;
+    if (!searchItem) return;
+
+    // 쿠키에 최근 검색어 저장 (예: 최대 5개)
+   	let recent = getCookie("recentSearch") || "";
+	let list = recent ? recent.split(",") : [];
+
+
+    // 중복 제거
+    if (!list.includes(searchItem)) {
+        list.unshift(searchItem);
+        if (list.length > 5) list.pop();
+    }
+
+    setCookie("recentSearch", list.join(","), 7); // 7일 저장
+    updateSearchHistory(list);
+}
+
+// 쿠키 읽기/쓰기
+function setCookie(name, value, days) {
+    const encodedValue = encodeURIComponent(value); // <- 값 인코딩
+    const d = new Date();
+    d.setTime(d.getTime() + (days*24*60*60*1000));
+    document.cookie = name + "=" + encodedValue + ";path=/;expires=" + d.toUTCString();
+}
+
+
+function getCookie(name) {
+    const value = "; " + document.cookie;
+    const parts = value.split("; " + name + "=");
+    if(parts.length === 2) return decodeURIComponent(parts.pop().split(";").shift()); // <- 디코딩
+    return "";
+}
+
+
+
+</script>
 
 
 
