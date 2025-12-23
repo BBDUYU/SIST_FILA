@@ -2,7 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html>
@@ -324,449 +324,67 @@ document.addEventListener('DOMContentLoaded', () => {
 													class="goods__slider swiper swiper-initialized swiper-horizontal swiper-pointer-events swiper-free-mode">
 													<div class="swiper-wrapper ins-preview-wrapper-"
 														id="headerProduct" aria-live="polite">
-														<div class="goods swiper-slide swiper-slide-active"
-															data-val="1" role="group" aria-label="1 / 12">
-															<div class="photo">
-																<div class="before">
-																	<a href="/product/view.asp?ProductNo=61373"
-																		onclick="clickGroobeeProduct('','','61373')"> <img
-																		src="//filacdn.styleship.com/filaproduct2/data/productimages/a/3/FS261OD03X009_613.jpg"
-																		alt="">
-																	</a>
-																</div>
-																<button type="button" class="wish__btn  wish"
-																	data-wish="61373" wish="">wish</button>
-																<!-- 활성화시 클래스 on -->
-
-															</div>
-
-															<div class="info">
-																<a href="/product/view.asp?ProductNo=61373"
-																	onclick="clickGroobeeProduct('','','61373')">
-																	<div class="top">
-																		<p class="category">공용</p>
-
-																		<div class="tag"></div>
-																	</div>
-
-																	<p class="name">휠라 리트모 슬릭 버건디</p>
-																	<div class="price">
-
-																		<p class="sale">119,000원</p>
-
-																	</div>
-																</a>
-															</div>
-														</div>
-
-
-														<div class="goods swiper-slide swiper-slide-next"
-															data-val="1" role="group" aria-label="2 / 12">
-															<div class="photo">
-																<div class="before">
-																	<a href="/product/view.asp?ProductNo=61311"
-																		onclick="clickGroobeeProduct('','','61311')"> <img
-																		src="//filacdn.styleship.com/filaproduct2/data/productimages/a/3/FS261OD03X087_219.jpg"
-																		alt="">
-																	</a>
-																</div>
-																<button type="button" class="wish__btn  wish"
-																	data-wish="61311" wish="">wish</button>
-																<!-- 활성화시 클래스 on -->
-
-															</div>
-
-															<div class="info">
-																<a href="/product/view.asp?ProductNo=61311"
-																	onclick="clickGroobeeProduct('','','61311')">
-																	<div class="top">
-																		<p class="category">공용</p>
-
-																		<div class="tag"></div>
-																	</div>
-
-																	<p class="name">&lt;한소희 착용&gt; 휠라 에샤페 초코</p>
-																	<div class="price">
-
-																		<p class="sale">119,000원</p>
-
-																	</div>
-																</a>
-															</div>
-														</div>
-
-
-														<div class="goods swiper-slide" data-val="1" role="group"
-															aria-label="3 / 12">
-															<div class="photo">
-																<div class="before">
-																	<a href="/product/view.asp?ProductNo=61276"
-																		onclick="clickGroobeeProduct('','','61276')"> <img
-																		src="//filacdn.styleship.com/filaproduct2/data/productimages/a/3/FS254BT03X007_031.jpg"
-																		alt="">
-																	</a>
-																</div>
-																<button type="button" class="wish__btn  wish"
-																	data-wish="61276" wish="">wish</button>
-																<!-- 활성화시 클래스 on -->
-
-															</div>
-
-															<div class="info">
-																<a href="/product/view.asp?ProductNo=61276"
-																	onclick="clickGroobeeProduct('','','61276')">
-																	<div class="top">
-																		<p class="category">여성</p>
-
-																		<div class="tag"></div>
-																	</div>
-
-																	<p class="name">푸퍼 볼드 부츠</p>
-																	<div class="price">
-
-																		<p class="sale">70,000원</p>
-																		<p class="normal _sale">99,900원</p>
-																		<p class="percent">30% 할인</p>
-
-																	</div>
-																</a>
-															</div>
-														</div>
-
-
-														<div class="goods swiper-slide" data-val="1" role="group"
-															aria-label="4 / 12">
-															<div class="photo">
-																<div class="before">
-																	<a href="/product/view.asp?ProductNo=59490"
-																		onclick="clickGroobeeProduct('','','59490')"> <img
-																		src="//filacdn.styleship.com/filaproduct2/data/productimages/a/3/1RM02723H_050.jpg"
-																		alt="">
-																	</a>
-																</div>
-																<button type="button" class="wish__btn  wish"
-																	data-wish="59490" wish="">wish</button>
-																<!-- 활성화시 클래스 on -->
-
-															</div>
-
-															<div class="info">
-																<a href="/product/view.asp?ProductNo=59490"
-																	onclick="clickGroobeeProduct('','','59490')">
-																	<div class="top">
-																		<p class="category">공용</p>
-
-																		<div class="tag"></div>
-																	</div>
-
-																	<p class="name">인터레이션 v2</p>
-																	<div class="price">
-
-																		<p class="sale">89,000원</p>
-
-																	</div>
-																</a>
-															</div>
-														</div>
-
-
-														<div class="goods swiper-slide" data-val="1" role="group"
-															aria-label="5 / 12">
-															<div class="photo">
-																<div class="before">
-																	<a href="/product/view.asp?ProductNo=61269"
-																		onclick="clickGroobeeProduct('','','61269')"> <img
-																		src="//filacdn.styleship.com/filaproduct2/data/productimages/a/3/FS261RU03X076_217.jpg"
-																		alt="">
-																	</a>
-																</div>
-																<button type="button" class="wish__btn  wish"
-																	data-wish="61269" wish="">wish</button>
-																<!-- 활성화시 클래스 on -->
-
-															</div>
-
-															<div class="info">
-																<a href="/product/view.asp?ProductNo=61269"
-																	onclick="clickGroobeeProduct('','','61269')">
-																	<div class="top">
-																		<p class="category">공용</p>
-
-																		<div class="tag"></div>
-																	</div>
-
-																	<p class="name">판테라 99/25 LX</p>
-																	<div class="price">
-
-																		<p class="sale">129,000원</p>
-
-																	</div>
-																</a>
-															</div>
-														</div>
-
-
-														<div class="goods swiper-slide" data-val="1" role="group"
-															aria-label="6 / 12">
-															<div class="photo">
-																<div class="before">
-																	<a href="/product/view.asp?ProductNo=61371"
-																		onclick="clickGroobeeProduct('','','61371')"> <img
-																		src="//filacdn.styleship.com/filaproduct2/data/productimages/a/3/FS261OD03X008_734.jpg"
-																		alt="">
-																	</a>
-																</div>
-																<button type="button" class="wish__btn  wish"
-																	data-wish="61371" wish="">wish</button>
-																<!-- 활성화시 클래스 on -->
-
-															</div>
-
-															<div class="info">
-																<a href="/product/view.asp?ProductNo=61371"
-																	onclick="clickGroobeeProduct('','','61371')">
-																	<div class="top">
-																		<p class="category">공용</p>
-
-																		<div class="tag"></div>
-																	</div>
-
-																	<p class="name">휠라 리트모 슬릭 LX 옐로우</p>
-																	<div class="price">
-
-																		<p class="sale">129,000원</p>
-
-																	</div>
-																</a>
-															</div>
-														</div>
-
-
-														<div class="goods swiper-slide" data-val="1" role="group"
-															aria-label="7 / 12">
-															<div class="photo">
-																<div class="before">
-																	<a href="/product/view.asp?ProductNo=60554"
-																		onclick="clickGroobeeProduct('','','60554')"> <img
-																		src="//filacdn.styleship.com/filaproduct2/data/productimages/a/3/FS253OD03X012_260.jpg"
-																		alt="">
-																	</a>
-																</div>
-																<button type="button" class="wish__btn  wish"
-																	data-wish="60554" wish="">wish</button>
-																<!-- 활성화시 클래스 on -->
-
-															</div>
-
-															<div class="info">
-																<a href="/product/view.asp?ProductNo=60554"
-																	onclick="clickGroobeeProduct('','','60554')">
-																	<div class="top">
-																		<p class="category">공용</p>
-
-																		<div class="tag"></div>
-																	</div>
-
-																	<p class="name">휠라 에샤페 모카</p>
-																	<div class="price">
-
-																		<p class="sale">119,000원</p>
-
-																	</div>
-																</a>
-															</div>
-														</div>
-
-
-														<div class="goods swiper-slide" data-val="1" role="group"
-															aria-label="8 / 12">
-															<div class="photo">
-																<div class="before">
-																	<a href="/product/view.asp?ProductNo=54340"
-																		onclick="clickGroobeeProduct('','','54340')"> <img
-																		src="//filacdn.styleship.com/filaproduct2/data/productimages/a/3/1RM02752G_023.jpg"
-																		alt="">
-																	</a>
-																</div>
-																<button type="button" class="wish__btn  wish"
-																	data-wish="54340" wish="">wish</button>
-																<!-- 활성화시 클래스 on -->
-
-															</div>
-
-															<div class="info">
-																<a href="/product/view.asp?ProductNo=54340"
-																	onclick="clickGroobeeProduct('','','54340')">
-																	<div class="top">
-																		<p class="category">공용</p>
-
-																		<div class="tag"></div>
-																	</div>
-
-																	<p class="name">레플리카 2002</p>
-																	<div class="price">
-
-																		<p class="sale">139,000원</p>
-
-																	</div>
-																</a>
-															</div>
-														</div>
-
-
-														<div class="goods swiper-slide" data-val="1" role="group"
-															aria-label="9 / 12">
-															<div class="photo">
-																<div class="before">
-																	<a href="/product/view.asp?ProductNo=61370"
-																		onclick="clickGroobeeProduct('','','61370')"> <img
-																		src="//filacdn.styleship.com/filaproduct2/data/productimages/a/3/FS261OD03X008_370.jpg"
-																		alt="">
-																	</a>
-																</div>
-																<button type="button" class="wish__btn  wish"
-																	data-wish="61370" wish="">wish</button>
-																<!-- 활성화시 클래스 on -->
-
-															</div>
-
-															<div class="info">
-																<a href="/product/view.asp?ProductNo=61370"
-																	onclick="clickGroobeeProduct('','','61370')">
-																	<div class="top">
-																		<p class="category">공용</p>
-
-																		<div class="tag"></div>
-																	</div>
-
-																	<p class="name">휠라 리트모 슬릭 LX 말차</p>
-																	<div class="price">
-
-																		<p class="sale">129,000원</p>
-
-																	</div>
-																</a>
-															</div>
-														</div>
-
-
-														<div class="goods swiper-slide" data-val="1" role="group"
-															aria-label="10 / 12">
-															<div class="photo">
-																<div class="before">
-																	<a href="/product/view.asp?ProductNo=58606"
-																		onclick="clickGroobeeProduct('','','58606')"> <img
-																		src="//filacdn.styleship.com/filaproduct2/data/productimages/a/3/1RM02486H_100.jpg"
-																		alt="">
-																	</a>
-																</div>
-																<button type="button" class="wish__btn  wish"
-																	data-wish="58606" wish="">wish</button>
-																<!-- 활성화시 클래스 on -->
-
-																<!-- tag -->
-																<!--div class="tag-box">
-											<div>
-												<img src="/pc/resource/images/_temp/tag_product_list_01.png" alt="">
-											</div>
-										</div-->
-																<!-- //tag -->
-
-															</div>
-
-															<div class="info">
-																<a href="/product/view.asp?ProductNo=58606"
-																	onclick="clickGroobeeProduct('','','58606')">
-																	<div class="top">
-																		<p class="category">공용</p>
-
-																		<div class="tag"></div>
-																	</div>
-
-																	<p class="name">휠라 레인저 22</p>
-																	<div class="price">
-
-																		<p class="sale">69,000원</p>
-
-																	</div>
-																</a>
-															</div>
-														</div>
-
-
-														<div class="goods swiper-slide" data-val="1" role="group"
-															aria-label="11 / 12">
-															<div class="photo">
-																<div class="before">
-																	<a href="/product/view.asp?ProductNo=61102"
-																		onclick="clickGroobeeProduct('','','61102')"> <img
-																		src="//filacdn.styleship.com/filaproduct2/data/productimages/a/3/FS254BT03X001_100.jpg"
-																		alt="">
-																	</a>
-																</div>
-																<button type="button" class="wish__btn  wish"
-																	data-wish="61102" wish="">wish</button>
-																<!-- 활성화시 클래스 on -->
-
-															</div>
-
-															<div class="info">
-																<a href="/product/view.asp?ProductNo=61102"
-																	onclick="clickGroobeeProduct('','','61102')">
-																	<div class="top">
-																		<p class="category">공용</p>
-
-																		<div class="tag"></div>
-																	</div>
-
-																	<p class="name">푸퍼 멜로우</p>
-																	<div class="price">
-
-																		<p class="sale">49,000원</p>
-																		<p class="normal _sale">69,900원</p>
-																		<p class="percent">30% 할인</p>
-
-																	</div>
-																</a>
-															</div>
-														</div>
-
-
-														<div class="goods swiper-slide" data-val="1" role="group"
-															aria-label="12 / 12">
-															<div class="photo">
-																<div class="before">
-																	<a href="/product/view.asp?ProductNo=59685"
-																		onclick="clickGroobeeProduct('','','59685')"> <img
-																		src="//filacdn.styleship.com/filaproduct2/data/productimages/a/3/1RM02958H_103.jpg"
-																		alt="">
-																	</a>
-																</div>
-																<button type="button" class="wish__btn  wish"
-																	data-wish="59685" wish="">wish</button>
-																<!-- 활성화시 클래스 on -->
-
-															</div>
-
-															<div class="info">
-																<a href="/product/view.asp?ProductNo=59685"
-																	onclick="clickGroobeeProduct('','','59685')">
-																	<div class="top">
-																		<p class="category">공용</p>
-
-																		<div class="tag"></div>
-																	</div>
-
-																	<p class="name">프론토 v2</p>
-																	<div class="price">
-
-																		<p class="sale">99,000원</p>
-
-																	</div>
-																</a>
-															</div>
-														</div>
-
+														<!-- 반복 -->
+														<c:choose>
+													    <c:when test="${not empty recommendProducts}">
+													        <c:forEach var="pDto" items="${recommendProducts}" varStatus="status">
+													            <%-- 각 상품 슬라이드 --%>
+													            <div class="goods swiper-slide" data-val="${status.count}" role="group" aria-label="${status.count} / 12">
+													                <div class="photo">
+													                    <div class="before">
+													                        <%-- 상품 상세 페이지 이동 --%>
+													                        <a href="/SIST_FILA/view/productDetail.mm?product_id=${pDto.product_id}">
+													                            <%-- 이미지 경로는 프로젝트의 이미지 저장 규칙에 맞게 수정하세요 --%>
+													                            <img src="/SIST_FILA/images/products/${pDto.product_id}.jpg" alt="${pDto.name}">
+													                        </a>
+													                    </div>
+													                </div>
+													
+													                <div class="info">
+													                    <a href="/SIST_FILA/view/productDetail.mm?product_id=${pDto.product_id}">
+													                        <div class="top">
+													                            <%-- 카테고리나 태그 데이터가 DTO에 있다면 활용 가능 --%>
+													                            <p class="category">RECOMMEND</p>
+													                            <div class="tag">
+													                                <c:if test="${pDto.discount_rate > 0}">
+													                                    <span class="sale-tag">${pDto.discount_rate}%</span>
+													                                </c:if>
+													                            </div>
+													                        </div>
+													
+													                        <p class="name">${pDto.name}</p>
+													                        
+													                        <div class="price">
+													                            <c:choose>
+													                                <c:when test="${pDto.discount_rate > 0}">
+													                                    <%-- 할인이 있는 경우 계산 로직 (정수 처리) --%>
+													                                    <p class="sale">
+													                                        <fmt:formatNumber value="${pDto.price * (1 - pDto.discount_rate/100)}" type="number" />원
+													                                    </p>
+													                                    <p class="origin" style="text-decoration: line-through; color: #999; font-size: 0.9em;">
+													                                        <fmt:formatNumber value="${pDto.price}" type="number" />원
+													                                    </p>
+													                                </c:when>
+													                                <c:otherwise>
+													                                    <%-- 할인이 없는 경우 --%>
+													                                    <p class="sale">
+													                                        <fmt:formatNumber value="${pDto.price}" type="number" />원
+													                                    </p>
+													                                </c:otherwise>
+													                            </c:choose>
+													                        </div>
+													                    </a>
+													                </div>
+													            </div>
+													        </c:forEach>
+													    </c:when>
+													    <c:otherwise>
+													        <div class="swiper-slide">추천 상품이 없습니다.</div>
+													    </c:otherwise>
+													</c:choose>
+
+
+												
 													</div>
 													<span class="swiper-notification" aria-live="assertive"
 														aria-atomic="true"></span>
