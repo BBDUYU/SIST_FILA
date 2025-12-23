@@ -277,31 +277,36 @@ document.addEventListener('DOMContentLoaded', () => {
 									</div>
    
 									<div>
-										<ul>
-
-											<li><a
-												href="https://www.fila.co.kr/event/view.asp?seq=1269">차정원
-													신발</a></li>
-
-											<li><a
-												href="https://www.fila.co.kr/event/view.asp?seq=1268">판테라
-													LX</a></li>
-
-											<li><a
-												href="https://www.fila.co.kr/product/view.asp?ProductNo=60326">에픽런
-													포니</a></li>
-
-											<li><a
-												href="https://www.fila.co.kr/product/view.asp?ProductNo=60294">리틀에샤페</a>
-											</li>
-
-											<li><a
-												href="https://www.fila.co.kr/event/view.asp?seq=1233">피트니스</a>
-											</li>
-
-
-										</ul>
-									</div>
+								        <ul>
+								            <c:choose>
+								                <c:when test="${not empty recommendKeywords}">
+								                    <c:forEach var="rDto" items="${recommendKeywords}">
+								                        <li>
+								                            <c:choose>
+								                                <%-- 1. 상품 ID가 있으면 상품 상세 페이지로 --%>
+								                                <c:when test="${not empty rDto.product_id}">
+								                                    <a href="/SIST_FILA/view/productDetail.mm?product_id=${rDto.product_id}">
+								                                        ${rDto.name}
+								                                    </a>
+								                                </c:when>
+								                                
+								                                <%-- 2. 슬러그가 있으면 이벤트 페이지로 (이벤트 이름 출력) --%>
+								                                <c:when test="${not empty rDto.slug}">
+								                                    <a href="/SIST_FILA/view/eventView.mm?slug=${rDto.slug}">
+								                                        ${rDto.event_name}
+								                                    </a>
+								                                </c:when>
+								                            </c:choose>
+								                        </li>
+								                    </c:forEach>
+								                </c:when>
+								                <c:otherwise>
+								                    <%-- 데이터가 없을 경우 기본 표시 --%>
+								                    <li>추천 검색어가 없습니다.</li>
+								                </c:otherwise>
+								            </c:choose>
+								        </ul>
+								    </div>
 								</div>
 								<!-- //추천 검색어 -->
 
