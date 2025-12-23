@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			<a href="/main/main.asp">FILA</a>
 		</h1>
 		<!-- //logo -->
-
+		
 		<!-- gnb -->
 		<nav class="gnb">
 			<ul class="gnb">
@@ -231,11 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
 									            <li class="no_search_list">최근 검색어가 없습니다.</li>
 									        </c:otherwise>
 									    </c:choose>
-									</ul>
-
-
-
-										
+									</ul>									
 									</div>
 								</div>
 								<!-- //최근 검색어 -->
