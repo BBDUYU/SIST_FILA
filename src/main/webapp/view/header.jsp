@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
 <!DOCTYPE html>
@@ -54,11 +55,29 @@ $(document).on('click', '.search-open__btn', function () {
 	    });
 	  }, 300);
 	});
-
+$(document).on('click', '.cancel__btn', function () {
+    $('body').removeClass('search--open');
+});
 </script>
-</head>
-<body>
 
+</head>
+
+<body class="hd__style1 _style_main"> <!-- hover했을 때 class사라지게해야됨 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	  const body = document.body;
+
+	  // 이벤트 위임: #header nav 내부의 li에 마우스 enter/leave 시 동작
+	  document.querySelector('#header nav').addEventListener('mouseover', (e) => {
+	    if(e.target.closest('li')) body.classList.add('_bg_on');
+	  });
+
+	  document.querySelector('#header nav').addEventListener('mouseout', (e) => {
+	    if(e.target.closest('li')) body.classList.remove('_bg_on');
+	  });
+	});
+
+  </script>
 
 	<header id="header">
 		<!-- logo -->
@@ -134,8 +153,8 @@ $(document).on('click', '.search-open__btn', function () {
 
 			<div class="util-search">
 				<button type="button" class="search-open__btn">search</button>
-				<form action="javascript:searchRun2();" name="searchForm2"
-					method="get" autocomplete="off">
+				<form action="#" name="searchForm2"
+					method="get" autocomplete="off" onsubmit="searchRun2(); return false;">
 					<!-- search layer -->
 					<div class="search__layer">
 
@@ -156,19 +175,15 @@ $(document).on('click', '.search-open__btn', function () {
 
 
 							<div class="search-input-box">
-								<div>
-									<button type="button" class="close__btn"></button>
-
-									<!--<input type="search" placeholder="검색어 입력" name="searchItem" id="searchItem2" value="" onfocus="this.value='';" >-->
-									<input type="search" placeholder="검색어 입력" name="searchItem"
-										id="searchItem2" value=""> <input type="hidden"
-										name="searchsCateNo" id="searchsCateNo" value="">
-
-									<button type="button" class="search__btn"
-										onclick="javascript:searchRun2();void(0);">search</button>
-								</div>
-
-								<button type="button" class="cancel__btn">취소</button>
+							    <div>
+							        <button type="button" class="close__btn"></button>
+							
+							        <input type="search" placeholder="검색어 입력" name="searchItem" id="searchItem2" value="">
+							        <input type="hidden" name="searchsCateNo" id="searchsCateNo" value="">
+							
+							        <button type="button" class="search__btn" onclick="searchRun2();">search</button>
+							    </div>
+							    <button type="button" class="cancel__btn">취소</button>
 							</div>
 						</div>
 
@@ -186,10 +201,41 @@ $(document).on('click', '.search-open__btn', function () {
 									</div>
 
 									<div>
-										<ul class="latest__list" id="sWordHistory">
-											<li class="no_search_list">최근 검색어가 없습니다.</li>
-										</ul>
+										<%
+										    // 쿠키에서 recentSearch 가져오기
+										    String recentSearch = "";
+										    javax.servlet.http.Cookie[] cookies = request.getCookies();
+										    if (cookies != null) {
+										        for (javax.servlet.http.Cookie c : cookies) {
+										            if ("recentSearch".equals(c.getName())) {
+										                recentSearch = java.net.URLDecoder.decode(c.getValue(), "UTF-8");
+										                break;
+										            }
+										        }
+										    }
+										    // request scope에 저장해서 JSTL에서 사용
+										    request.setAttribute("recentSearch", recentSearch);
+										%>
+									
+									<ul class="latest__list" id="sWordHistory">
+									    <c:choose>
+									        <c:when test="${not empty recentSearch}">
+									            <c:forEach var="word" items="${fn:split(recentSearch, ',')}">
+									                <li data-sword="${word}">
+									                    <a href="/search/search_result.asp?sWord=${fn:escapeXml(word)}">${word}</a>
+									                    <button type="button" class="delete__btn sWordRemove btn_remove">delete</button>
+									                </li>
+									            </c:forEach>
+									        </c:when>
+									        <c:otherwise>
+									            <li class="no_search_list">최근 검색어가 없습니다.</li>
+									        </c:otherwise>
+									    </c:choose>
+									</ul>
 
+
+
+										
 									</div>
 								</div>
 								<!-- //최근 검색어 -->
@@ -199,40 +245,26 @@ $(document).on('click', '.search-open__btn', function () {
 								<div class="keywords-box _popular">
 									<div>
 										<p class="tit">인기 검색어</p>
-
-										<p class="update-txt">19:00 업데이트</p>
+										<!-- <p class="update-txt">19:00 업데이트</p> -->
 									</div>
 
 									<div> 
 										<ul>
-
-											<li><a
-												href="/search/search_result.asp?sWord=%uD55C%uC18C%uD76C">한소희</a>
-											</li>
-
-											<li><a
-												href="/search/search_result.asp?sWord=FS254RB01F002">FS254RB01F002</a>
-											</li>
-
-											<li><a
-												href="/search/search_result.asp?sWord=%uBE0C%uB77C">브라</a></li>
-
-											<li><a
-												href="/search/search_result.asp?sWord=%uD32C%uD2F0">팬티</a></li>
-
-											<li><a
-												href="/search/search_result.asp?sWord=FS253OD03X014">FS253OD03X014</a>
-											</li>
-
-											<li><a
-												href="/search/search_result.asp?sWord=%uC5D0%uC0E4%uD398">에샤페</a>
-											</li>
-
-											<li><a
-												href="/search/search_result.asp?sWord=%uD55C%uC18C%uD76C">한소희</a>
-											</li>
-
-
+											<c:choose>
+								                <c:when test="${not empty popularKeywords}">
+								                    <c:forEach var="sDto" items="${popularKeywords}">
+								                        <li>
+								                            <%-- 검색 결과 페이지 주소에 맞게 수정하세요 --%>
+								                            <a href="/SIST_FILA/view/main.mm?searchItem=${fn:escapeXml(sDto.keyword)}">
+								                                ${sDto.keyword}
+								                            </a>
+								                        </li>
+								                    </c:forEach>
+								                </c:when>
+								                <c:otherwise>
+								                    <li>검색 기록이 없습니다.</li>
+								                </c:otherwise>
+								            </c:choose>
 										</ul>
 									</div>
 								</div>
@@ -798,6 +830,75 @@ $(document).on('click', '.search-open__btn', function () {
 		<!-- //util -->
 	</header>
 
+<script>
+function searchRun2() {
+    const searchInput = document.getElementById("searchItem2");
+    const searchItem = searchInput ? searchInput.value.trim() : "";
+    const cateNo = document.getElementById("searchsCateNo").value || "";
+
+    if (!searchItem) {
+        alert("검색어를 입력해주세요.");
+        return false;
+    }
+
+    // 1. 쿠키 저장 (가장 먼저 실행)
+    try {
+        let name = "recentSearch";
+        let recent = getCookie(name) || "";
+        let list = recent ? recent.split(",") : [];
+
+        // 중복 제거 및 최신순 정렬
+        list = list.filter(item => item !== searchItem);
+        list.unshift(searchItem);
+        if (list.length > 5) list.pop();
+
+        // 쿠키 쓰기
+        const d = new Date();
+        d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
+        document.cookie = name + "=" + encodeURIComponent(list.join(",")) + ";path=/;expires=" + d.toUTCString();
+        console.log("쿠키 저장 완료:", document.cookie);
+    } catch (e) {
+        console.error("쿠키 저장 중 에러:", e);
+    }
+
+    const cp = "/SIST_FILA"; 
+    const recordUrl = cp + "/record.ss?keyword=" + encodeURIComponent(searchItem);
+    const moveUrl = cp + "/view/main.mm?searchItem=" + encodeURIComponent(searchItem) + "&searchsCateNo=" + encodeURIComponent(cateNo);
+
+    // 3. 서버 기록 및 이동
+    // fetch가 안 될 상황을 대비해 0.5초 뒤에는 무조건 이동하게 처리
+    let moved = false;
+    const timer = setTimeout(() => {
+        if(!moved) {
+            moved = true;
+            location.href = moveUrl;
+        }
+    }, 500);
+
+    fetch(recordUrl)
+        .then(() => {
+            if(!moved) {
+                moved = true;
+                clearTimeout(timer);
+                location.href = moveUrl;
+            }
+        })
+        .catch(err => {
+            console.error("서버 기록 실패:", err);
+            location.href = moveUrl;
+        });
+
+    return false; // form 제출 방지
+}
+
+// 단순화된 쿠키 가져오기
+function getCookie(name) {
+    const value = "; " + document.cookie;
+    const parts = value.split("; " + name + "=");
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(";").shift());
+    return "";
+}
+</script>
 
 
 
