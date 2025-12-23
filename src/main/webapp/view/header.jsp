@@ -85,10 +85,10 @@ $(document).on('click', '.search-open__btn', function () {
 											<c:if
 												test="${d2.depth eq 2 && d2.parent_id eq d1.category_id}">
 												<div class="category-group">
-
-													<a href="/product/list.asp?depth=${d2.depth}"
-														class="link-tit"> ${d2.name} </a>
-
+													
+													<a href="${pageContext.request.contextPath}/products/list" class="link-tit">
+													  ${d2.name}
+													</a>
 													<!-- ===== 3 DEPTH ===== -->
 													<div>
 														<ul>
