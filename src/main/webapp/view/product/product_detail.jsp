@@ -3,11 +3,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@ page import="products.productsDAO" %>
-<%@ page import="products.productsDTO" %>
+<%@ page import="products.ProductsDAO" %>
+<%@ page import="products.ProductsDTO" %>
 <%@ page import="java.util.List" %>
 
 <%
+p
+
     // ★ [추적용] JSP가 실행되었는지 확인하는 코드
     System.out.println("---------------------------------------");
     System.out.println("🚩 [JSP] product_detail.jsp 페이지 진입 성공!");
@@ -21,22 +23,24 @@
 %>
 
 <%
+p
+
     // 1. 상품 ID 받기
     String productId = request.getParameter("product_id");
 
     // 2. DB 조회 (상품 정보 + 옵션 정보)
-    productsDAO dao = new productsDAO();
-    productsDTO product = dao.getProduct(productId);
+    products.ProductsDAO dao = new products.ProductsDAO();
+    products.ProductsDTO product = dao.getProduct(productId);
     
     // ★ [추가] 옵션 데이터 가져오기
-    List<products.productsOptionDTO> optionList = dao.getProductOptions(productId);
+    List<products.products.ProductsOptionDTO> optionList = dao.getProductOptions(productId);
     
     // 3. 유효성 검사
     if(product == null) {
 %>
         <script>alert("존재하지 않는 상품입니다."); location.href = "list.jsp";</script>
 <%
-        return;
+return;
     }
 
     // 4. 데이터 저장
@@ -45,11 +49,11 @@
     pageContext.setAttribute("finalPrice", finalPrice);
     
     // ★ [추가] 옵션을 '색상'과 '사이즈'로 분리해서 저장 (JSP에서 쓰기 편하게)
-    products.productsOptionDTO colorOption = null;
-    products.productsOptionDTO sizeOption = null;
+    products.products.ProductsOptionDTO colorOption = null;
+    products.products.ProductsOptionDTO sizeOption = null;
     
     if(optionList != null) {
-        for(products.productsOptionDTO opt : optionList) {
+        for(products.products.ProductsOptionDTO opt : optionList) {
             if(opt.getGroupName().contains("색상") || opt.getGroupName().contains("Color")) {
                 colorOption = opt;
             } else if(opt.getGroupName().contains("사이즈") || opt.getGroupName().contains("Size")) {

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class searchDTO {
+public class SearchDTO {
 	private int keyword_id;
 	private String keyword;
 	private int search_count;
