@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 													<!-- ===== 3 DEPTH ===== -->
 													<div>
 														<ul>
-															<li><a href="/product/list.asp?no=${d2.category_id}">
+															<li><a href="/SIST_FILA/view/product/list.jsp?no=${d2.category_id}">
 																	전체보기 </a></li>
 
 															<c:forEach items="${list}" var="d3">

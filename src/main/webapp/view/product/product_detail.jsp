@@ -63,104 +63,8 @@
 
 <!DOCTYPE html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="format-detection" content="telephone=no">
 
-<title>여성 플로우다운 | FILA</title>
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.1, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
-
-<link rel="icon" type="image/x-icon" href="//filacdn.styleship.com/filacontent2/favicon.ico" />
-
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/layout.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/normalize.css" />
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/opt-default.css" >
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/product.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/SpoqaHanSansNeo.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/sub.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/swiper-bundle.css">
-
-<script src="http://localhost/SIST_FILA/js/default.js"></script>
-<script src="http://localhost/SIST_FILA/js/jquery-1.12.4.js"></script>
-<script src="http://localhost/SIST_FILA/js/matizResizeMap.1.0.0.js"></script>
-<script src="http://localhost/SIST_FILA/js/mighty.base.1.5.7.js"></script>
-<script src="http://localhost/SIST_FILA/js/swiper-bundle.js"></script>
-<script src="http://localhost/SIST_FILA/js/TweenMax.js"></script>
-
-	<meta name="title" content="FILA　여성 플로우다운" />
-	<meta name="description" content="여성 플로우다운" />
-	<meta name="keywords" content="FILA, E-commerce, Total Fashion, 휠라" />
-	<meta name="keyword" content="FILA, E-commerce, Total Fashion, 휠라" />	
-	<meta name="image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/a/4/FS254DJ01F001_561.jpg?ver=2" />
-	<meta name="author" content="FILA">
-	
-	<meta property="dable:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/a/4/FS254DJ01F001_561.jpg?ver=1"> 
-
-	<meta property="og:url" content="http://www.fila.co.kr/product/view.asp?ProductNo=61125" />
-	<meta property="og:type" content="product.item" />
-	<meta property="og:title" content="FILA 여성 플로우다운" />
-	<meta property="og:description" content="여성 플로우다운" />
-	<meta property="og:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/a/4/FS254DJ01F001_561.jpg?ver=2" />
-
-	<meta property="og:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/b/4/FS254DJ01F001_561.jpg" />
-
-	<meta property="og:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/c/4/FS254DJ01F001_561.jpg" />
-
-	<meta property="og:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/d/4/FS254DJ01F001_561.jpg" />
-
-	<meta property="og:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/e/4/FS254DJ01F001_561.jpg" />
-
-	<meta property="og:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/f/4/FS254DJ01F001_561.jpg" />
-
-	<meta property="og:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/g/4/FS254DJ01F001_561.jpg" />
-
-	<meta property="og:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/h/4/FS254DJ01F001_561.jpg" />
-
-	<meta property="og:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/i/4/FS254DJ01F001_561.jpg" />
-
-	<meta property="og:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/j/4/FS254DJ01F001_561.jpg" />
-
-	<meta property="og:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/k/4/FS254DJ01F001_561.jpg" />
-
-	<meta property="og:image" content="https://filacdn.styleship.com/filaproduct2/data/productimages/l/4/FS254DJ01F001_561.jpg" />
-
-	<meta property="og:image:type" content="image/jpeg" />
-	<meta property="og:image:width" content="550" />
-	<meta property="og:image:height" content="550" />
-	<meta property="og:site_name" content="Fila" />
-	<meta property="og:locale" content="ko_KR" />	
-
-	<meta property="product:image"      content="https://filacdn.styleship.com/filaproduct2/data/productimages/a/4/FS254DJ01F001_561.jpg?ver=2" />
-	<meta property="product:plural_title"      content="여성 플로우다운" />
-	<meta property="product:price:amount"      content="259000"/>
-	<meta property="product:price:currency"    content="KRW"/>
-	<meta property="product:sale_price:amount"      content="207000"/>
-	<meta property="product:sale_price:currency"      content="KRW"/>
-
-	<meta property="product:brand"    content="FILA"/>
-
-	<meta property="product:availability"    content="available for order"/>
-
-	<meta property="product:condition"    content="new"/>
-	<meta property="product:retailer_item_id"    content="1100FS254DJ01F001561"/>
-
-	
-	<meta property="product:color"    content="PURPLE/DARK VIOLET"/>
-
-	<meta property="product:target_gender"    content="female"/>
-
-	<meta property="product:category"    content="WOMEN > 의류 > 패딩/다운점퍼"/>
-
-
-	<meta property="recopick:title" content="여성 플로우다운">
-	<meta property="recopick:image" content="//filacdn.styleship.com/filaproduct2/data/productimages/a/4/FS254DJ01F001_561.jpg">
-	<meta property="recopick:price" content="259000">
-	<meta property="recopick:price:currency" content="KRW">
-	<meta property="recopick:description" content="여성 플로우다운">
-	<meta property="recopick:author" content="FILA">
-	<meta property="recopick:sale_price" content="207000">
-	<meta property="recopick:sale_price:currency" content="KRW">
-	
+	<title>FILA 상품상세</title>
 
 </head>
 
@@ -173,7 +77,7 @@
 	<div id="wrap">
 		
 <!-- start of :: header -->
-	<jsp:include page="header.jsp" />
+	<jsp:include page="../header.jsp" />
 <!-- // end of :: header -->	
 
 		<!-- start of :: contents -->
@@ -711,7 +615,7 @@
 
 
 <!-- start of :: footer -->
-<jsp:include page="footer.jsp" />
+<jsp:include page="../footer.jsp" />
 <!-- // end of :: footer -->
 <form name="form6" id="form6"  target="dataFrame"><input type="hidden" name="checkwish"><input type="hidden" name="ProductQuantity"></form>
 <iframe name="dataFrame" id="dataFrame" style="display:none;"></iframe>
