@@ -36,7 +36,7 @@
 <script src="${pageContext.request.contextPath}/js/TweenMax.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
 <script src="${pageContext.request.contextPath}/js/mighty.base.1.5.7.js"></script>
-<script src="${pageContext.request.contextPath}/js/matizResizeMap.1.0.0.js"></script>
+<script src="${pageContext.request.contextPath}/js/matiz.js"></script>
 <script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
 <script src="${pageContext.request.contextPath}/js/default.js"></script>
 
