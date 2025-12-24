@@ -517,6 +517,51 @@ function getCookie(name) {
     if (parts.length === 2) return decodeURIComponent(parts.pop().split(";").shift());
     return "";
 }
+
+function wordRemoveAll() {
+    if (confirm("최근 검색어를 모두 삭제하시겠습니까?")) {
+        // 1. 쿠키 삭제
+        document.cookie = "recentSearch=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;";
+        
+        // 2. 화면 UI 업데이트 (ul 태그 비우기)
+        const listContainer = document.getElementById("sWordHistory");
+        if (listContainer) {
+            listContainer.innerHTML = '<li class="no_search_list">최근 검색어가 없습니다.</li>';
+        }
+        
+        // 3. (선택사항) 전체삭제 버튼 숨기기
+        document.querySelector(".all-delete__btn").style.display = "none";
+    }
+}
+
+function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = name + "=" + encodeURIComponent(value) + ";path=/;expires=" + d.toUTCString();
+}
+
+$(document).on("click", ".sWordRemove", function(e) {
+    e.preventDefault(); // 버튼 클릭 시 기본 동작 방지
+    e.stopPropagation(); // 이벤트 버블링 방지
+
+    const $li = $(this).closest("li");
+    const word = $li.attr("data-sword"); // .data("sword") 보다 .attr()이 확실할 때가 있습니다.
+    
+    let recent = getCookie("recentSearch");
+    if (recent) {
+        // 단어 목록 배열로 변환 후, 삭제할 단어만 제외 (trim으로 공백 방어)
+        let list = recent.split(",").map(s => s.trim()).filter(item => item !== word && item !== "");
+        
+        if (list.length > 0) {
+            // 남은 단어가 있으면 쿠키 갱신
+            setCookie("recentSearch", list.join(","), 7);
+            $li.remove();
+        } else {
+            // 남은 단어가 없으면 전체 삭제 로직 호출
+            wordRemoveAll(); 
+        }
+    }
+});
 </script>
 
 
