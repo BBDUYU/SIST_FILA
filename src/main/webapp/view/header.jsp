@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				<c:forEach items="${list}" var="d1">
 					<!-- ===== 1 DEPTH : FEMALE / MALE / KIDS ===== -->
 					<c:if test="${d1.depth eq 1}">
-						<li><a href="#">${d1.name}</a> <!-- ===== 2 DEPTH WRAP ===== -->
+						<li><a href="/SIST_FILA/view/${d1.name }.jsp">${d1.name}</a> <!-- ===== 2 DEPTH WRAP ===== -->
 							<div class="depth2-box">
 								<div class="inner">
 

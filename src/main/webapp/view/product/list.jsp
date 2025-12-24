@@ -19,7 +19,7 @@
         pageContext.setAttribute("productList", productList);
         
     } catch (Exception e) {
-        e.printStackTrace(); // 에러 나면 콘솔에 출력
+        e.printStackTrace(); // 에러 나면 콘솔에 출력 
 %>
         <div style="color:red; padding:20px; font-weight:bold;">
             데이터를 불러오는 중 오류가 발생했습니다.<br>
@@ -97,7 +97,7 @@ $(document).ready(function() {
 	<!-- start of :: wrap -->
 	<div id="wrap">
 		<!-- header include -->
-		<jsp:include page="header.jsp" />
+		<jsp:include page="../header.jsp" />
 		
 		<section class="goods-list-box _thumb04">
                 <h2 class="hidden">상품 리스트</h2>
@@ -235,7 +235,7 @@ $(document).ready(function() {
 
 
 <!-- start of :: footer -->
-<jsp:include page="footer.jsp" />
+<jsp:include page="../footer.jsp" />
 <!-- // end of :: footer -->
 
 </div>
