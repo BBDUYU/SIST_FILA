@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.util.ConnectionProvider;
 import com.util.JdbcUtil;
 
-import search.searchDAO;
-import search.searchDTO;
+import search.SearchDAO;
+import search.SearchDTO;
 import event_product.eventproductDAO;
 import event_product.eventproductDTO;
 
@@ -33,8 +33,8 @@ public class CategoriesServlet extends HttpServlet {
 
         try {
             conn = ConnectionProvider.getConnection();
-            categoriesDAO cDao = categoriesDAO.getInstance();
-            searchDAO sDao = searchDAO.getInstance();
+            CategoriesDAO cDao = CategoriesDAO.getInstance();
+            SearchDAO sDao = SearchDAO.getInstance();
             eventproductDAO epDao = eventproductDAO.getInstance();
 
             if (uri.endsWith("main.mm")) {
@@ -45,11 +45,11 @@ public class CategoriesServlet extends HttpServlet {
                 }
             	
                 // 카테고리 리스트 조회
-                ArrayList<categoriesDTO> categoryList = cDao.selectCategoryList(conn);
+                ArrayList<CategoriesDTO> categoryList = cDao.selectCategoryList(conn);
                 request.setAttribute("list", categoryList);
 
                 // 인기 검색어 조회
-                ArrayList<searchDTO> popularKeywords = sDao.selectTopKeywords(conn, 8);
+                ArrayList<SearchDTO> popularKeywords = sDao.selectTopKeywords(conn, 8);
                 request.setAttribute("popularKeywords", popularKeywords);
 
                 // 추천 검색어 (이벤트+상품) 조회

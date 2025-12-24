@@ -2,7 +2,7 @@ package products;
 
 import java.util.Date;
 
-public class productsDTO {
+public class ProductsDTO {
     
     // 1. PRODUCTS 테이블 컬럼
     private String product_id;      // 상품 ID (PK)
@@ -20,7 +20,7 @@ public class productsDTO {
     private String image_url;       // 대표 이미지 URL
     
     // 기본 생성자
-    public productsDTO() {}
+    public ProductsDTO() {}
 
     // ★ 모든 Getter & Setter 직접 생성 (롬복 없이 안전하게!)
     public String getProduct_id() { return product_id; }

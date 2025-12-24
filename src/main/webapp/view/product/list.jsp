@@ -2,15 +2,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@ page import="products.productsDAO" %>
-<%@ page import="products.productsDTO" %>
+<%@ page import="products.ProductsDAO" %>
+<%@ page import="products.ProductsDTO" %>
 <%@ page import="java.util.List" %>
 
 <%
-    // ★ 에러 방지용 try-catch + 실제 데이터 로딩
+// ★ 에러 방지용 try-catch + 실제 데이터 로딩
     try {
-        products.productsDAO dao = new products.productsDAO();
-        List<productsDTO> productList = dao.selectAllProducts();
+        products.ProductsDAO dao = new products.ProductsDAO();
+        List<products.ProductsDTO> productList = dao.selectAllProducts();
         
         // 데이터가 잘 왔는지 서버 콘솔에 출력 (디버깅용)
         System.out.println("JSP 로딩 성공: 가져온 상품 수 = " + (productList != null ? productList.size() : 0));
@@ -19,14 +19,14 @@
         pageContext.setAttribute("productList", productList);
         
     } catch (Exception e) {
-        e.printStackTrace(); // 에러 나면 콘솔에 출력 
+        e.printStackTrace(); // 에러 나면 콘솔에 출력
 %>
         <div style="color:red; padding:20px; font-weight:bold;">
             데이터를 불러오는 중 오류가 발생했습니다.<br>
-            에러 메시지: <%= e.getMessage() %>
+            에러 메시지: <%=e.getMessage()%>
         </div>
 <%
-        return; // 에러 나면 밑에 HTML 실행 안 함
+return; // 에러 나면 밑에 HTML 실행 안 함
     }
 %>
 
@@ -37,8 +37,8 @@
 	<meta name="format-detection" content="telephone=no">
 
 <%
-    productsDAO dao = new productsDAO(); // DAO 객체 생성
-    List<productsDTO> productList = dao.selectAllProducts(); // DB 조회 실행!
+products.ProductsDAO dao = new products.ProductsDAO(); // DAO 객체 생성
+    List<products.ProductsDTO> productList = dao.selectAllProducts(); // DB 조회 실행!
     
     // 화면에 뿌리기 위해 저장
     pageContext.setAttribute("productList", productList);

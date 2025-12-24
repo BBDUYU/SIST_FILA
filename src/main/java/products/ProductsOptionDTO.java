@@ -8,12 +8,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class productsOptionDTO {
+public class ProductsOptionDTO {
     private String groupName; // 옵션 종류 (예: "색상", "사이즈")
     private List<String> values = new ArrayList<>(); // 옵션 값 목록
 
-    public productsOptionDTO() {}
-    public productsOptionDTO(String groupName) {
+    public ProductsOptionDTO() {}
+    public ProductsOptionDTO(String groupName) {
         this.groupName = groupName;
     }
 

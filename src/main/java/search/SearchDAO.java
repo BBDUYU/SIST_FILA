@@ -6,15 +6,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class searchDAO {
+public class SearchDAO {
 
-    private static searchDAO dao = null;
+    private static SearchDAO dao = null;
 
-    private searchDAO() { }
+    private SearchDAO() { }
 
-    public static searchDAO getInstance() {
+    public static SearchDAO getInstance() {
         if(dao == null) {
-            dao = new searchDAO();
+            dao = new SearchDAO();
         }
         return dao;
     }
@@ -41,8 +41,8 @@ public class searchDAO {
     /**
      * 상위 N개의 인기 검색어 조회
      */
-    public ArrayList<searchDTO> selectTopKeywords(Connection conn, int limit) throws SQLException {
-        ArrayList<searchDTO> list = new ArrayList<>();
+    public ArrayList<SearchDTO> selectTopKeywords(Connection conn, int limit) throws SQLException {
+        ArrayList<SearchDTO> list = new ArrayList<>();
         
         // Oracle 11g 이하는 정렬 후 ROWNUM으로 잘라내는 서브쿼리 방식을 써야 합니다.
         String sql = "SELECT * FROM ( " +
@@ -55,7 +55,7 @@ public class searchDAO {
             pstmt.setInt(1, limit);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    searchDTO dto = searchDTO.builder()
+                    SearchDTO dto = SearchDTO.builder()
                             .keyword_id(rs.getInt("KEYWORD_ID"))
                             .keyword(rs.getString("KEYWORD"))
                             .search_count(rs.getInt("SEARCH_COUNT"))

@@ -1,4 +1,4 @@
-package categories;
+package event;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,29 +6,29 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class categoriesDAO {
+public class EventDAO {
 	
-	private static categoriesDAO dao = null;
-	private categoriesDAO() {
+	private static EventDAO dao = null;
+	private EventDAO() {
 		
 	}
-	public static categoriesDAO getInstance() {
+	public static EventDAO getInstance() {
 		if(dao==null) {
-			dao=new categoriesDAO();
+			dao=new EventDAO();
 		}
 		return dao;
 	}
 	
 	
-	public ArrayList<categoriesDTO> selectCategoryList(Connection conn){
-	    ArrayList<categoriesDTO> list = new ArrayList<>();
+	public ArrayList<EventDTO> selectCategoryList(Connection conn){
+	    ArrayList<EventDTO> list = new ArrayList<>();
 	    String sql = "SELECT * FROM categories WHERE use_yn = 1 ORDER BY depth, category_id";
 
 	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
 	         ResultSet rs = pstmt.executeQuery()) {
 
 	        while (rs.next()) {
-	            categoriesDTO dto = categoriesDTO.builder()
+	            EventDTO dto = EventDTO.builder()
 	                    .category_id(rs.getInt("category_id"))
 	                    .name(rs.getString("name"))
 	                    .parent_id(rs.getInt("parent_id"))

@@ -8,18 +8,18 @@ import java.util.List;
 
 import com.util.DBConn; 
 
-public class productsDAO {
+public class ProductsDAO {
 
     // 싱글톤 패턴
-    private static productsDAO instance = new productsDAO();
-    public static productsDAO getInstance() { return instance; }
-    public productsDAO() {}
+    private static ProductsDAO instance = new ProductsDAO();
+    public static ProductsDAO getInstance() { return instance; }
+    public ProductsDAO() {}
 
     // -----------------------------------------------------------
     // 1. 상품 전체 목록 조회 (리스트 페이지용 - ★여기 수정됨!)
     // -----------------------------------------------------------
-    public List<productsDTO> selectAllProducts() {
-        List<productsDTO> list = new ArrayList<>();
+    public List<ProductsDTO> selectAllProducts() {
+        List<ProductsDTO> list = new ArrayList<>();
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -37,7 +37,7 @@ public class productsDAO {
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                productsDTO dto = new productsDTO();
+                ProductsDTO dto = new ProductsDTO();
                 dto.setProduct_id(rs.getString("PRODUCT_ID"));
                 dto.setName(rs.getString("NAME"));
                 dto.setPrice(rs.getInt("PRICE"));
@@ -68,8 +68,8 @@ public class productsDAO {
  // -----------------------------------------------------------
     // 2. 상품 상세 정보 조회 (디버깅 코드 추가 버전!)
     // -----------------------------------------------------------
-    public productsDTO getProduct(String productId) {
-        productsDTO dto = null;
+    public ProductsDTO getProduct(String productId) {
+        ProductsDTO dto = null;
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -93,7 +93,7 @@ public class productsDAO {
             if (rs.next()) {
                 System.out.println("✅ DB에서 해당 ID의 상품을 찾았습니다!");
 
-                dto = new productsDTO();
+                dto = new ProductsDTO();
                 
                 // 1. ID 확인
                 String dbId = rs.getString("PRODUCT_ID");
@@ -160,8 +160,8 @@ public class productsDAO {
     // -----------------------------------------------------------
     // 3. 상품 옵션 목록 조회 (상세 페이지 옵션용)
     // -----------------------------------------------------------
-    public List<productsOptionDTO> getProductOptions(String productId) {
-        List<productsOptionDTO> options = new ArrayList<>();
+    public List<ProductsOptionDTO> getProductOptions(String productId) {
+        List<ProductsOptionDTO> options = new ArrayList<>();
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -179,14 +179,14 @@ public class productsDAO {
             rs = pstmt.executeQuery();
 
             String currentGroupName = "";
-            productsOptionDTO currentOption = null;
+            ProductsOptionDTO currentOption = null;
 
             while (rs.next()) {
                 String groupName = rs.getString("OPTION_NAME");
                 String valueName = rs.getString("VALUE_NAME");
 
                 if (!groupName.equals(currentGroupName)) {
-                    currentOption = new productsOptionDTO(groupName);
+                    currentOption = new ProductsOptionDTO(groupName);
                     options.add(currentOption);
                     currentGroupName = groupName;
                 }

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class categoriesDTO {
+public class CategoriesDTO {
 	private int category_id;
 	private String name;
 	private int parent_id;
