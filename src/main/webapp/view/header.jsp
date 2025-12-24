@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				<c:forEach items="${list}" var="d1">
 					<!-- ===== 1 DEPTH : FEMALE / MALE / KIDS ===== -->
 					<c:if test="${d1.depth eq 1}">
-						<li><a href="#">${d1.name}</a> <!-- ===== 2 DEPTH WRAP ===== -->
+						<li><a href="/SIST_FILA/view/${d1.name }.jsp">${d1.name}</a> <!-- ===== 2 DEPTH WRAP ===== -->
 							<div class="depth2-box">
 								<div class="inner">
 
@@ -105,20 +105,20 @@ document.addEventListener('DOMContentLoaded', () => {
 												test="${d2.depth eq 2 && d2.parent_id eq d1.category_id}">
 												<div class="category-group">
 
-													<a href="/product/list.asp?depth=${d2.depth}"
+													<a href="/SIST_FILA/view/list.jsp?no=${d2.category_id }"
 														class="link-tit"> ${d2.name} </a>
 
 													<!-- ===== 3 DEPTH ===== -->
 													<div>
 														<ul>
-															<li><a href="/product/list.asp?no=${d2.category_id}">
+															<li><a href="/SIST_FILA/view/list.jsp?no=${d2.category_id }">
 																	전체보기 </a></li>
 
 															<c:forEach items="${list}" var="d3">
 																<c:if
 																	test="${d3.depth eq 3 && d3.parent_id eq d2.category_id}">
 																	<li><a
-																		href="/product/list.asp?no=${d3.category_id}">
+																		href="/SIST_FILA/view/list.jsp?no=${d3.category_id }">
 																			${d3.name} </a></li>
 																</c:if>
 															</c:forEach>
