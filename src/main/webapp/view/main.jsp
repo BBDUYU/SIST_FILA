@@ -18,6 +18,7 @@
 				<h2 class="hidden">상단 슬라이드</h2>
 
 				<div class="main__slider swiper swiper-initialized swiper-horizontal swiper-pointer-events">
+				
 					 <div class="swiper-wrapper" id="swiper-wrapper-2b66d35d4a56af48" aria-live="polite" style="transform: translate3d(-12000px, 0px, 0px); transition-duration: 0ms;"><div class="swiper-slide swiper-slide-duplicate" data-swiper-slide-index="6" role="group" aria-label="7 / 8" style="width: 1200px;">
 							<a href="/event/view.asp?seq=1268 " target="_self">
 								<!-- img -->
@@ -37,6 +38,7 @@
 								</div>
 							</a>
 						</div>
+						
 						<div class="swiper-slide _type_vdo swiper-slide-duplicate swiper-slide-duplicate-prev" data-swiper-slide-index="7" role="group" aria-label="8 / 8" style="width: 1200px;"> <!-- 영상있을 경우 클래스 추가 --> 
 							<a href="/event/view.asp?seq=1281" target="_self">
 								<!-- video -->

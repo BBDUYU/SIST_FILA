@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		
 		<!-- gnb -->
 		<nav class="gnb">
-			<ul class="gnb">
+			<ul>
 				<c:forEach items="${list}" var="d1">
 					<!-- ===== 1 DEPTH : FEMALE / MALE / KIDS ===== -->
 					<c:if test="${d1.depth eq 1}">
@@ -363,11 +363,16 @@ document.addEventListener('DOMContentLoaded', () => {
 													                                <c:when test="${pDto.discount_rate > 0}">
 													                                    <%-- 할인이 있는 경우 계산 로직 (정수 처리) --%>
 													                                    <p class="sale">
-													                                        <fmt:formatNumber value="${pDto.price * (1 - pDto.discount_rate/100)}" type="number" />원
-													                                    </p>
-													                                    <p class="origin" style="text-decoration: line-through; color: #999; font-size: 0.9em;">
-													                                        <fmt:formatNumber value="${pDto.price}" type="number" />원
-													                                    </p>
+																			                <fmt:formatNumber value="${pDto.price * (1 - pDto.discount_rate/100)}" type="number" />원
+																			            </p>
+																			            
+																			            <%-- 2. 원래 가격 (취소선) : 클래스명을 공식 사이트와 동일하게 수정 --%>
+																			            <p class="normal _sale">
+																			                <fmt:formatNumber value="${pDto.price}" type="number" />원
+																			            </p>
+																			            
+																			            <%-- 3. 할인율 표시 --%>
+																			            <p class="percent">${pDto.discount_rate}% 할인</p>
 													                                </c:when>
 													                                <c:otherwise>
 													                                    <%-- 할인이 없는 경우 --%>
