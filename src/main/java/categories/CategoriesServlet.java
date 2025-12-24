@@ -3,7 +3,6 @@ package categories;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.ArrayList;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +16,8 @@ import search.SearchDAO;
 import search.SearchDTO;
 import event_product.eventproductDAO;
 import event_product.eventproductDTO;
+import main.MainbannerDAO;
+import main.MainbannerDTO;
 
 @WebServlet("*.mm")
 public class CategoriesServlet extends HttpServlet {
@@ -36,7 +37,8 @@ public class CategoriesServlet extends HttpServlet {
             CategoriesDAO cDao = CategoriesDAO.getInstance();
             SearchDAO sDao = SearchDAO.getInstance();
             eventproductDAO epDao = eventproductDAO.getInstance();
-
+            MainbannerDAO ebDao = MainbannerDAO.getInstance();
+            
             if (uri.endsWith("main.mm")) {
                 // 검색어 저장 (검색창에서 입력 후 엔터 쳤을 때)
                 String searchItem = request.getParameter("searchItem"); 
@@ -59,6 +61,22 @@ public class CategoriesServlet extends HttpServlet {
                 // 추천 상품 (슬라이더용 12개) 조회
                 ArrayList<eventproductDTO> recommendProducts = epDao.selectRecommendProducts(conn);
                 request.setAttribute("recommendProducts", recommendProducts);
+                
+                //이벤트배너
+                ArrayList<MainbannerDTO> bannerList = ebDao.selectMainBannerList(conn);
+                
+                if (bannerList != null) {
+                    // 동영상을 리스트 맨 뒤로 보내는 정렬 로직
+                    bannerList.sort((a, b) -> {
+                        boolean aIsVideo = a.getImageUrl().toLowerCase().endsWith(".mp4");
+                        boolean bIsVideo = b.getImageUrl().toLowerCase().endsWith(".mp4");
+                        
+                        if (aIsVideo && !bIsVideo) return 1;  // a가 비디오면 뒤로
+                        if (!aIsVideo && bIsVideo) return -1; // a가 이미지면 앞으로
+                        return 0;                             // 동일 타입 유지
+                    });
+                    request.setAttribute("bannerList", bannerList);
+                }
                 
                 // 모든 데이터를 싣고 이동
                 // 화면 레이아웃에 따라 main.jsp 혹은 header.jsp로 결정

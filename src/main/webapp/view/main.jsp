@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,57 +23,35 @@
 
 				<div
 					class="main__slider swiper swiper-initialized swiper-horizontal swiper-pointer-events">
-					<div class="swiper-wrapper" id="swiper-wrapper-2b66d35d4a56af48"
-						aria-live="polite"
-						style="transform: translate3d(-12000px, 0px, 0px); transition-duration: 0ms;">
-						
-						<div class="swiper-slide swiper-slide-duplicate"
-							data-swiper-slide-index="6" role="group" aria-label="7 / 8"
-							style="width: 1200px;">
-							<a href="/event/view.asp?seq=1268 " target="_self"> <!-- img -->
-								<div class="vdo-box">
-									<img
-										src="//filacdn.styleship.com/filacontent2/data/banner/img_M_top_pantera_d_250813_71.jpg"
-										alt="">
-								</div> <!-- //img --> <!-- 
-									컬러별 클래스명 : 
-									_type_wt - white, 
-									_type_bk - black 
-								-->
-								<div class="txt-box _type_wt">
-									<p class="tit">PANTERA 99/25 LX</p>
-									<p class="more">자세히 보기</p>
-								</div>
-							</a>
+					
+					<%-- 바깥쪽 div 하나만 남기고 합칩니다. id나 style은 Swiper가 실행되면서 자동으로 붙여주니 클래스명만 잘 적으시면 됩니다. --%>
+						<div class="swiper-wrapper">
+						    <c:forEach var="dto" items="${bannerList}" varStatus="status" end="7">
+						        <c:set var="isVideo" value="${fn:endsWith(dto.imageUrl, '.mp4')}" />
+						        
+						        <div class="swiper-slide ${isVideo ? '_type_vdo' : ''}">
+						            <a href="${dto.linkUrl}" target="_self">
+						                <div class="vdo-box">
+						                    <c:choose>
+						                        <c:when test="${isVideo}">
+						                            <video autoplay muted loop playsinline>
+						                                <source src="${pageContext.request.contextPath}${dto.imageUrl}" type="video/mp4">
+						                            </video>
+						                        </c:when>
+						                        <c:otherwise>
+						                            <img src="${pageContext.request.contextPath}${dto.imageUrl}" alt="${dto.bannerName}">
+						                        </c:otherwise>
+						                    </c:choose>
+						                </div>
+						                
+						                <div class="txt-box _type_wt">
+						                    <p class="tit">${dto.bannerName}</p>
+						                    <p class="more">자세히 보기</p>
+						                </div>
+						            </a>
+						        </div>
+						    </c:forEach>
 						</div>
-						
-						<div
-							class="swiper-slide _type_vdo swiper-slide-duplicate swiper-slide-duplicate-prev"
-							data-swiper-slide-index="7" role="group" aria-label="8 / 8"
-							style="width: 1200px;">
-							<!-- 영상있을 경우 클래스 추가 -->
-							<a href="/event/view.asp?seq=1281" target="_self"> <!-- video -->
-								<div class="vdo-box">
-									<video muted="" playsinline="">
-										<source
-											src="https://filacdn.styleship.com/filacontent2/data/contentsfile/251027_Fila_whiteopen_15s_v3.mp4">
-									</video>
-								</div> <!-- //video --> <!-- 
-									컬러별 클래스명 : 
-									_type_wt - white, 
-									_type_bk - black 
-								-->
-								<div class="txt-box _type_wt">
-									<p class="tit">WHITE OPEN SEOUL 2025</p>
-									<p class="more">자세히 보기</p>
-								</div>
-							</a>
-						</div>
-
-						
-						
-						
-					</div>
 					<span class="swiper-notification" aria-live="assertive"
 						aria-atomic="true"></span>
 				</div>
