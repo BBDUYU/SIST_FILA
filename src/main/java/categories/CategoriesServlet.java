@@ -61,8 +61,8 @@ public class CategoriesServlet extends HttpServlet {
                 request.setAttribute("recommendProducts", recommendProducts);
                 
                 // 모든 데이터를 싣고 이동
-                // ※ 화면 레이아웃에 따라 main.jsp 혹은 header.jsp로 결정
-                String path = "/view/header.jsp"; 
+                // 화면 레이아웃에 따라 main.jsp 혹은 header.jsp로 결정
+                String path = "/view/main.jsp"; 
                 request.getRequestDispatcher(path).forward(request, response);
             }
 

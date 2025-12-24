@@ -26,17 +26,25 @@
 <link rel="stylesheet"
 	href="http://localhost/SIST_FILA/css/swiper-bundle.css">
   
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/layout.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/product.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/sub.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/product.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/sub.css">
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
 
-<script src="http://localhost/SIST_FILA/js/TweenMax.js"></script>
-<script src="http://localhost/SIST_FILA/js/jquery-1.12.4.js"></script>
-<script src="http://localhost/SIST_FILA/js/mighty.base.1.5.7.js"></script>
-<script src="http://localhost/SIST_FILA/js/matizResizeMap.1.0.0.js"></script>
-<script src="http://localhost/SIST_FILA/js/swiper-bundle.js"></script>
+<script src="${pageContext.request.contextPath}/js/TweenMax.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+<script src="${pageContext.request.contextPath}/js/mighty.base.1.5.7.js"></script>
+<script src="${pageContext.request.contextPath}/js/matizResizeMap.1.0.0.js"></script>
+<script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
+<script src="${pageContext.request.contextPath}/js/default.js"></script>
 
+<script>
+	jQuery(window.document).ready(function(){
+		jQuery(window.document).on("contextmenu", function(event){return false;});
+	});  
+</script>
 <style>
 
 </style>
@@ -59,10 +67,10 @@ $(document).on('click', '.cancel__btn', function () {
     $('body').removeClass('search--open');
 });
 </script>
-
+<script src="${pageContext.request.contextPath}/js/main.js"></script>
 </head>
 
-<body class="hd__style1 _style_main"> <!-- hover했을 때 class사라지게해야됨 -->
+<body class="hd__style1 _style_main">
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 	  const body = document.body;
@@ -92,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				<c:forEach items="${list}" var="d1">
 					<!-- ===== 1 DEPTH : FEMALE / MALE / KIDS ===== -->
 					<c:if test="${d1.depth eq 1}">
-						<li><a href="/SIST_FILA/view/${d1.name }.jsp">${d1.name}</a> <!-- ===== 2 DEPTH WRAP ===== -->
+						<li><a href="#">${d1.name}</a> <!-- ===== 2 DEPTH WRAP ===== -->
 							<div class="depth2-box">
 								<div class="inner">
 
@@ -105,20 +113,20 @@ document.addEventListener('DOMContentLoaded', () => {
 												test="${d2.depth eq 2 && d2.parent_id eq d1.category_id}">
 												<div class="category-group">
 
-													<a href="/SIST_FILA/view/list.jsp?no=${d2.category_id }"
+													<a href="/product/list.asp?depth=${d2.depth}"
 														class="link-tit"> ${d2.name} </a>
 
 													<!-- ===== 3 DEPTH ===== -->
 													<div>
 														<ul>
-															<li><a href="/SIST_FILA/view/list.jsp?no=${d2.category_id }">
+															<li><a href="/product/list.asp?no=${d2.category_id}">
 																	전체보기 </a></li>
 
 															<c:forEach items="${list}" var="d3">
 																<c:if
 																	test="${d3.depth eq 3 && d3.parent_id eq d2.category_id}">
 																	<li><a
-																		href="/SIST_FILA/view/list.jsp?no=${d3.category_id }">
+																		href="/product/list.asp?no=${d3.category_id}">
 																			${d3.name} </a></li>
 																</c:if>
 															</c:forEach>
@@ -517,51 +525,6 @@ function getCookie(name) {
     if (parts.length === 2) return decodeURIComponent(parts.pop().split(";").shift());
     return "";
 }
-
-function wordRemoveAll() {
-    if (confirm("최근 검색어를 모두 삭제하시겠습니까?")) {
-        // 1. 쿠키 삭제
-        document.cookie = "recentSearch=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;";
-        
-        // 2. 화면 UI 업데이트 (ul 태그 비우기)
-        const listContainer = document.getElementById("sWordHistory");
-        if (listContainer) {
-            listContainer.innerHTML = '<li class="no_search_list">최근 검색어가 없습니다.</li>';
-        }
-        
-        // 3. (선택사항) 전체삭제 버튼 숨기기
-        document.querySelector(".all-delete__btn").style.display = "none";
-    }
-}
-
-function setCookie(name, value, days) {
-    const d = new Date();
-    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-    document.cookie = name + "=" + encodeURIComponent(value) + ";path=/;expires=" + d.toUTCString();
-}
-
-$(document).on("click", ".sWordRemove", function(e) {
-    e.preventDefault(); // 버튼 클릭 시 기본 동작 방지
-    e.stopPropagation(); // 이벤트 버블링 방지
-
-    const $li = $(this).closest("li");
-    const word = $li.attr("data-sword"); // .data("sword") 보다 .attr()이 확실할 때가 있습니다.
-    
-    let recent = getCookie("recentSearch");
-    if (recent) {
-        // 단어 목록 배열로 변환 후, 삭제할 단어만 제외 (trim으로 공백 방어)
-        let list = recent.split(",").map(s => s.trim()).filter(item => item !== word && item !== "");
-        
-        if (list.length > 0) {
-            // 남은 단어가 있으면 쿠키 갱신
-            setCookie("recentSearch", list.join(","), 7);
-            $li.remove();
-        } else {
-            // 남은 단어가 없으면 전체 삭제 로직 호출
-            wordRemoveAll(); 
-        }
-    }
-});
 </script>
 
 
