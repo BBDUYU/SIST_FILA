@@ -1,20 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<link rel="icon" type="image/x-icon" href="//filacdn.styleship.com/filacontent2/favicon.ico" />
-<link href="https://cdn.jsdelivr.net/npm/spoqa-han-sans@3.3.0/css/SpoqaHanSansNeo.min.css" rel="stylesheet">
 
-<link rel="stylesheet" href="//filacdn.styleship.com/filacontent2/pc/resource/css/normalize.css">
-<link rel="stylesheet" href="//filacdn.styleship.com/filacontent2/pc/resource/css/opt-default.css">
-<link rel="stylesheet" href="//filacdn.styleship.com/filacontent2/pc/resource/css/swiper-bundle.min.css">
-
-<link rel="stylesheet" href="https://www.fila.co.kr/pc/resource/css/layout.css">
-<link rel="stylesheet" href="https://www.fila.co.kr/pc/resource/css/product.css">
-<link rel="stylesheet" href="https://www.fila.co.kr/pc/resource/css/sub.css">
-
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/greensock/TweenMax.min.js"></script>
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/jquery-1.12.4.min.js"></script>
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/mighty.base.1.5.7.min.js"></script>
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/matizResizeMap.1.0.0.min.js"></script>
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/swiper-bundle.min.js"></script>
 <!DOCTYPE html>
 <html>
 <head>
