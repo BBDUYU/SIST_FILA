@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	<header id="header">
 		<!-- logo -->
 		<h1 class="logo">
-			<a href="/main/main.asp">FILA</a>
+			<a href="main.mm">FILA</a>
 		</h1>
 		<!-- //logo -->
 		
