@@ -9,7 +9,7 @@
 <title>FILA 메인</title>
 </head>
 <body class="hd__style1 _style_main">
-	<jsp:include page="header.jsp" />
+	<jsp:include page="common/header.jsp" />
 
 	<div id="wrap">
 
@@ -3133,6 +3133,6 @@
 			<!-- //instagram -->
 		</div>
 	</div>
-	<jsp:include page="footer.jsp" />
+	<jsp:include page="common/footer.jsp" />
 </body>
 </html>

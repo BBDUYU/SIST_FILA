@@ -97,7 +97,7 @@ $(document).ready(function() {
 	<!-- start of :: wrap -->
 	<div id="wrap">
 		<!-- header include -->
-		<jsp:include page="../header.jsp" />
+		<jsp:include page="../common/header.jsp" />
 		
 		<section class="goods-list-box _thumb04">
                 <h2 class="hidden">상품 리스트</h2>
@@ -235,7 +235,7 @@ $(document).ready(function() {
 
 
 <!-- start of :: footer -->
-<jsp:include page="../footer.jsp" />
+<jsp:include page="../common/footer.jsp" />
 <!-- // end of :: footer -->
 
 </div>
