@@ -8,7 +8,7 @@
 <%@ page import="java.util.List" %>
 
 <%
-p
+
 
     // ★ [추적용] JSP가 실행되었는지 확인하는 코드
     System.out.println("---------------------------------------");
@@ -23,7 +23,7 @@ p
 %>
 
 <%
-p
+
 
     // 1. 상품 ID 받기
     String productId = request.getParameter("product_id");
@@ -81,7 +81,7 @@ return;
 	<div id="wrap">
 		
 <!-- start of :: header -->
-	<jsp:include page="../header.jsp" />
+	<jsp:include page="../common/header.jsp" />
 <!-- // end of :: header -->	
 
 		<!-- start of :: contents -->
