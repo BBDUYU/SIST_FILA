@@ -72,7 +72,7 @@ public class EventDAO {
         return list;
     }
 
-    private void attachSectionImages(Connection con, Map<Long, SectionImageDTO> sectionMap) throws SQLException {
+    private void attachSectionImages(Connection con, Map<Long, SectionDTO> sectionMap) throws SQLException {
         String sql = "SELECT SECTION_IMAGE_ID, SECTION_ID, IMAGE_URL, ALT_TEXT, LINK_URL, SORT_ORDER " +
                      "FROM EVENT_SECTION_IMAGE " +
                      "WHERE SECTION_ID = ? ORDER BY SORT_ORDER";
@@ -109,12 +109,12 @@ public class EventDAO {
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         productsDTO p = new productsDTO();
-                        p.setProductId(rs.getString("PRODUCT_ID"));
+                        p.setProduct_id(rs.getString("PRODUCT_ID"));
                         p.setName(rs.getString("NAME"));
-                        p.setPrice(rs.getLong("PRICE"));
-                        p.setViewCount((Long) rs.getObject("VIEW_COUNT"));
+                        p.setPrice(rs.getInt("PRICE"));
+                        p.setView_count((Integer) rs.getObject("VIEW_COUNT"));
                         p.setStatus(rs.getString("STATUS"));
-                        p.setDiscountRate((Integer) rs.getObject("DISCOUNT_RATE"));
+                        p.setDiscount_rate((Integer) rs.getObject("DISCOUNT_RATE"));
 
                         sectionMap.get(sectionId).getProducts().add(p);
                     }
