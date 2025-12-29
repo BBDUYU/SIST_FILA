@@ -14,7 +14,7 @@ import com.util.ConnectionProvider;
 import com.util.JdbcUtil;
 
 // 관리자 페이지 호출 시 이 서블릿을 거치도록 설정 (패턴을 *.mm으로 하거나 경로를 맞추세요)
-@WebServlet("admin.ad") 
+@WebServlet("/admin.ad") 
 public class UserInfoServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -34,7 +34,7 @@ public class UserInfoServlet extends HttpServlet {
             request.setAttribute("userList", userList);
             
             // 4. 관리자 메인(회원 목록) 페이지로 이동
-            String path = "/view/admin/admin.jsp"; 
+            String path = "/view/admin/admin_user.jsp"; 
             request.getRequestDispatcher(path).forward(request, response);
             
         } catch (Exception e) {
