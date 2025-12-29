@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix ="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -18,6 +18,16 @@
 	href="//filacdn.styleship.com/filacontent2/favicon.ico" />
 <link href="http://localhost/SIST_FILA/css/SpoqaHanSansNeo.css"
 	rel="stylesheet">
+
+
+	<c:choose>
+		<c:if test="아이디=admin">
+			
+		</c:if>
+		<c:otherwise>
+			
+		</c:otherwise>
+	</c:choose>
 
 <link rel="stylesheet"
 	href="http://localhost/SIST_FILA/css/normalize.css">
@@ -437,6 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
 								<li id="globalMenu5" style="display: none;">&nbsp;</li>
 								<li id="globalMenu8"><a href="/specialoffer/list.asp">이벤트</a></li>
 								<li id="globalMenu9"><a href="${pageContext.request.contextPath}/admin/createProduct.do">상품 등록하러 가기</a></li>
+								<li id="globalMenu10"><a href="${pageContext.request.contextPath}/view//admin/admin.jsp">관리자 페이지</a></li>
 							</ul>
 							<button type="button" class="logout__btn" id="globalMenu6"
 								onclick="location.href='/member/logout.asp';"
