@@ -55,24 +55,10 @@ products.ProductsDAO dao = new products.ProductsDAO(); // DAO 객체 생성
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.1, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.1, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
 
-<link rel="icon" type="image/x-icon" href="//filacdn.styleship.com/filacontent2/favicon.ico" />
 
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/layout.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/normalize.css" />
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/opt-default.css" >
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/product.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/SpoqaHanSansNeo.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/sub.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/swiper-bundle.css">
-
-<script src="http://localhost/SIST_FILA/js/default.js"></script>
-<script src="http://localhost/SIST_FILA/js/jquery-1.12.4.js"></script>
-<script src="http://localhost/SIST_FILA/js/matizResizeMap.1.0.0.js"></script>
-<script src="http://localhost/SIST_FILA/js/mighty.base.1.5.7.js"></script>
-<script src="http://localhost/SIST_FILA/js/swiper-bundle.js"></script>
-<script src="http://localhost/SIST_FILA/js/TweenMax.js"></script>
 
 <body class="list filter--open">
+<jsp:include page="../common/header.jsp" />
 <!-- 체크박스 누르면 '초기화' 버튼 나오는 UI기능 -->
 <!-- 나중에 필터기능 만들때 추가 -->
 <!-- 
@@ -97,7 +83,7 @@ $(document).ready(function() {
 	<!-- start of :: wrap -->
 	<div id="wrap">
 		<!-- header include -->
-		<jsp:include page="../common/header.jsp" />
+		
 		
 		<section class="goods-list-box _thumb04">
                 <h2 class="hidden">상품 리스트</h2>
