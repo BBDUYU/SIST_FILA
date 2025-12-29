@@ -1,15 +1,54 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<%@ page import="wishlist.WishlistDAO" %>
+<%@ page import="wishlist.WishlistDTO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.text.DecimalFormat" %>
+
+<%@ page import="member.MyPageDAO" %>
+<%@ page import="member.MyPageDTO" %>
+
+<%
+    // [테스트용] 로그인 시뮬레이션 (10001번 김철수)
+    // 실제 로그인 기능 구현 후에는 이 if문 블록을 지우세요.
+    if (session.getAttribute("userNumber") == null) {
+        session.setAttribute("userNumber", 10001);
+        session.setAttribute("userName", "김철수");
+        session.setAttribute("userGrade", "SILVER");
+    }
+
+    // 1. 로그인 체크
+    Integer userNumber = (Integer)session.getAttribute("userNumber");
+    if (userNumber == null) {
+%>
+        <script>
+            alert("로그인이 필요한 서비스입니다.");
+            location.href = "login.jsp"; // 로그인 페이지로 이동
+        </script>
+<%
+        return;
+    }
+
+    // 2. 위시리스트 데이터 가져오기
+    WishlistDAO dao = new WishlistDAO();
+    List<WishlistDTO> wishList = dao.getWishlist(userNumber);
+
+    pageContext.setAttribute("wishList", wishList);
+    pageContext.setAttribute("wishCount", wishList.size());
+    
+ 	// 3. 마이페이지 상단 정보 가져오기 (쿠폰, 포인트 등)
+    member.MyPageDAO myPageDao = new member.MyPageDAO();
+    member.MyPageDTO myPageDto = myPageDao.getMyPageSummary(userNumber);
+    
+    pageContext.setAttribute("myPage", myPageDto);
+    
+ 	// 숫자 포맷터 (3자리마다 콤마)
+    DecimalFormat df = new DecimalFormat("#,###");
+%>
+
 <!DOCTYPE html>
 <html class="no-js" lang="ko-KR">
-<!--[if IE 6]> <html class="no-js lt-ie10 lt-ie9 lt-ie8 ie6" lang="ko-KR"> <![endif]-->
-<!--[if IE 7]> <html class="no-js lt-ie10 lt-ie9 lt-ie8 ie7" lang="ko-KR"> <![endif]-->
-<!--[if IE 8]> <html class="no-js lt-ie10 lt-ie9 ie8" lang="ko-KR"> <![endif]-->
-<!--[if IE 9]> <html class="no-js lt-ie10 ie9" lang="ko-KR"> <![endif]-->
-<!--[if gt IE 9]><!--> <html class="no-js" lang="ko-KR"> <!--<![endif]-->
 <head>
-
-<!-- End Google Tag Manager -->
-<!-- #HJ 2020-05-27 Google optimize 2022-04-28 제거함 -->
 
 	<meta charset="UTF-8">
 	<meta name="format-detection" content="telephone=no">
@@ -100,10 +139,10 @@
 					</div>
 					<!-- 쿠폰, 포인트, 위시리스트, 주문내역 -->
 					<div class="my-link-box">
-                        <div><a href="#"><dl><dt>쿠폰</dt><dd>0개</dd></dl></a></div>
-                        <div><a href="#"><dl><dt>포인트</dt><dd>0P</dd></dl></a></div>
-                        <div><a href="#"><dl><dt>위시리스트</dt><dd>0개</dd></dl></a></div>
-                        <div><a href="#"><dl><dt>주문내역</dt><dd>0건</dd></dl></a></div>
+                        <div><a href="#"><dl><dt>쿠폰</dt><dd><%= df.format(myPageDto.getCouponCount()) %>개</dd></dl></a></div>
+                        <div><a href="#"><dl><dt>포인트</dt><dd><%= df.format(myPageDto.getPointBalance()) %>P</dd></dl></a></div>
+                        <div><a href="wishlist.jsp"><dl><dt>위시리스트</dt><dd><%= df.format(myPageDto.getWishlistCount()) %>개</dd></dl></a></div>
+                        <div><a href="#"><dl><dt>주문내역</dt><dd><%= df.format(myPageDto.getOrderCount()) %>건</dd></dl></a></div>
                     </div>
 				</div>
 			</div>
@@ -149,7 +188,7 @@
 				</div>
 
 				<section class="my-con wishlist">
-           			<h2 class="tit__style4">위시리스트</h2>
+           			<h2 class="tit__style4">위시리스트<span style="font-size:14px; color:#999;">(<%= wishList.size() %>)</span></h2>
 
 					<div class="odr-box">
                         <div class="odr-hd">
@@ -163,40 +202,76 @@
 							
 						</div>
 						<ul class="odr__list __my_chk">
-
-							<li>
-							
-								<div class="_soldout">
-							
-									<input type="checkbox" id="checkwish1" name="checkwish" value="60451"  class="cb__style1" />
-									<label for="checkwish1">선택</label>
-
-								</div>
-								<div class="goods-thumb"><a href="#"><img src="//filacdn.styleship.com/filaproduct2/data/productimages/a/2/FS253FT01X001_234.jpg" alt="샘플상품"></a></div>
-								<div class="goods-info">
-									<p class="sex">FILA</p>
-									<p class="tit">1911 유니 니트트랙 집업</p>
-									<p class="info">BROWN/DARK BROWN</p>
-									<p class="price">
-										<span class="sale">119,000원</span> 
-
-									</p>
-								</div>
-								<div class="goods-etc">
-									<p class="ico">
-										<!-- 2023-04-26 리뷰보기 버튼 추가 -->
-										<button type="button" class="btn_review">리뷰보기</button>
-										<!-- // 2023-04-26 리뷰보기 버튼 추가 -->
-										<button type="button" class="del" onclick="deleteWish('60451')">삭제</button>
-									</p>
-									<p class="btn-box" >
-										<!--button type="button" class="btn_sld__gr Wishoption-change__btn" data-no="362865">옵션변경</button-->
-										
-									</p>
-								</div>
-							</li>
-
-						</ul>
+						<%
+                            // 자바 코드로 리스트 반복 출력 (JSTL 사용 X)
+                            if (wishList == null || wishList.isEmpty()) {
+                        %>
+                            <c:choose>
+                                <c:when test="${empty wishList}">
+                                    <li style="text-align: center; padding: 50px 0;">
+                                        위시리스트에 담긴 상품이 없습니다.
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:forEach var="dto" items="${wishList}">
+                                        <li>
+                                            <div class="_soldout">
+                                                <input type="checkbox" id="checkwish${dto.wishlist_id}" name="checkwish" value="${dto.wishlist_id}" class="cb__style1" />
+                                                <label for="checkwish${dto.wishlist_id}">선택</label>
+                                            </div>
+                                            
+                                            <div class="goods-thumb">
+                                                <a href="product_detail.jsp?product_id=${dto.product_id}">
+                                                    <img src="${dto.image_url}" alt="${dto.name}">
+                                                </a>
+                                            </div>
+                                            
+                                            <div class="goods-info">
+                                                <p class="sex">FILA</p>
+                                                
+                                                <p class="tit">
+                                                    <a href="product_detail.jsp?product_id=${dto.product_id}" style="color:#000;">${dto.name}</a>
+                                                </p>
+                                                
+                                                <p class="info" style="color:#999; font-size:13px; text-transform: uppercase;">
+                                                    ${dto.color_options != null ? dto.color_options : '옵션 없음'}
+                                                </p>
+                                                
+                                                <p class="price">
+                                                    <c:choose>
+                                                        <c:when test="${dto.discount_rate > 0}">
+                                                            <%-- 할인가 계산 --%>
+                                                            <c:set var="salePrice" value="${dto.price * (100 - dto.discount_rate) / 100}" />
+                                                            
+                                                            <span class="sale" style="font-weight:bold;">
+                                                                <fmt:formatNumber value="${salePrice}" pattern="#,###" />원
+                                                            </span>
+                                                            
+                                                            <span class="normal" style="text-decoration:line-through; color:#aaa; margin-left:5px;">
+                                                                <fmt:formatNumber value="${dto.price}" pattern="#,###" />원
+                                                            </span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="sale" style="font-weight:bold;">
+                                                                <fmt:formatNumber value="${dto.price}" pattern="#,###" />원
+                                                            </span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="goods-etc">
+                                                <p class="ico">
+                                                    <a href="#" style="font-size:13px; color:#666; text-decoration:underline;">리뷰보기</a>
+                                                    
+                                                    <button type="button" class="del" onclick="deleteWish('${dto.wishlist_id}')" style="margin-left:10px;">삭제</button>
+                                                </p>
+                                            </div>
+                                        </li>
+                                    </c:forEach>
+                                </c:otherwise>
+                            </c:choose>
+                        </ul>
 				</form>
 					</div>	
 				</section>

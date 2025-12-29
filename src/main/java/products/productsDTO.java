@@ -22,7 +22,6 @@ public class productsDTO {
     // 기본 생성자
     public productsDTO() {}
 
-    // ★ 모든 Getter & Setter 직접 생성 (롬복 없이 안전하게!)
     public String getProduct_id() { return product_id; }
     public void setProduct_id(String product_id) { this.product_id = product_id; }
 
