@@ -17,7 +17,7 @@ public class productsDTO {
     private int discount_rate;      // 할인율
     
     // 2. PRODUCT_IMAGE 테이블 컬럼 (조인해서 가져올 대표 이미지)
-    private String image_url;       // 대표 이미지 URL
+    private String image_url;       // 대표 이미지 URL   
     
     // 기본 생성자
     public productsDTO() {}
