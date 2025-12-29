@@ -2,7 +2,7 @@ package products;
 
 import java.util.Date;
 
-public class productsDTO {
+public class productsDTO { 
     
     // 1. PRODUCTS 테이블 컬럼
     private String product_id;      // 상품 ID (PK)
