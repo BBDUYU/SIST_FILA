@@ -48,7 +48,7 @@ public class CategoriesServlet extends HttpServlet {
             	
                 // 카테고리 리스트 조회
                 ArrayList<CategoriesDTO> categoryList = cDao.selectCategoryList(conn);
-                request.setAttribute("list", categoryList);
+                request.getSession().setAttribute("list", categoryList);
 
                 // 인기 검색어 조회
                 ArrayList<SearchDTO> popularKeywords = sDao.selectTopKeywords(conn, 8);

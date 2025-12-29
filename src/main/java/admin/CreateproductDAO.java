@@ -145,58 +145,94 @@ public class CreateproductDAO {
     /**
      * 2단계: 상품 옵션 그룹 및 상세 값 저장 (12, 13번 테이블)
      */
-    public void insertProductOptions(Connection conn, String productId, String sportOption, String[] sizeOptions) throws SQLException {
-        // 1. 시퀀스 번호를 미리 가져오는 쿼리 (가장 안전)
+    public void insertProductOptions(Connection conn, String productId, String genderOption, String sportOption, String[] sizeOptions) throws SQLException {
         String sqlNextGroup = "SELECT SEQ_OPTION_GROUP.NEXTVAL FROM DUAL";
-        
         String sqlGroup = "INSERT INTO PRODUCT_OPTION_GROUPS (OPTION_GROUP_ID, PRODUCT_ID, MASTER_ID, OPTION_NAME) VALUES (?, ?, ?, ?)";
         String sqlValue = "INSERT INTO PRODUCT_OPTION_VALUES (VALUE_ID, OPTION_GROUP_ID, V_MASTER_ID, VALUE_NAME) VALUES (SEQ_OPTION_VALUE.NEXTVAL, ?, ?, ?)";
+        
+        // 마스터 이름과 값 이름을 가져오기 위한 쿼리
+        String sqlGetMasterName = "SELECT OPTION_NAME FROM OPTION_MASTERS WHERE MASTER_ID = ?";
+        String sqlGetValueName = "SELECT VALUE_NAME FROM OPTION_VALUE_MASTERS WHERE V_MASTER_ID = ?";
 
         try (PreparedStatement pstmtSeq = conn.prepareStatement(sqlNextGroup);
              PreparedStatement pstmtGroup = conn.prepareStatement(sqlGroup);
-             PreparedStatement pstmtValue = conn.prepareStatement(sqlValue)) {
+             PreparedStatement pstmtValue = conn.prepareStatement(sqlValue);
+             PreparedStatement pstmtMName = conn.prepareStatement(sqlGetMasterName);
+             PreparedStatement pstmtVName = conn.prepareStatement(sqlGetValueName)) {
 
-            // --- A. 스포츠 옵션 저장 ---
-            if (sportOption != null && !sportOption.trim().isEmpty()) {
-                long gId = 0;
-                try (ResultSet rs = pstmtSeq.executeQuery()) { if (rs.next()) gId = rs.getLong(1); }
+            // --- 1. 성별 옵션 (MASTER_ID: 1) ---
+            if (genderOption != null) {
+                insertSingleOption(pstmtSeq, pstmtGroup, pstmtValue, pstmtMName, pstmtVName, productId, 1, genderOption);
+            }
 
-                if (gId > 0) {
-                    pstmtGroup.setLong(1, gId);
-                    pstmtGroup.setString(2, productId);
-                    pstmtGroup.setInt(3, 2);
-                    pstmtGroup.setString(4, "스포츠");
-                    pstmtGroup.executeUpdate();
+            // --- 2. 스포츠 옵션 (MASTER_ID: 2) ---
+            if (sportOption != null) {
+                insertSingleOption(pstmtSeq, pstmtGroup, pstmtValue, pstmtMName, pstmtVName, productId, 2, sportOption);
+            }
+
+            // --- 3. 사이즈 옵션 (MASTER_ID: 4~8 판별) ---
+            if (sizeOptions != null) {
+                int sizeMasterId = 4; // 기본 남성
+                if (productId.startsWith("PROD1")) sizeMasterId = 5;      // 여성 의류
+                else if (productId.startsWith("PROD3")) sizeMasterId = 6; // 아동 의류
+                // 신발 카테고리 체크 로직 추가 가능 (예: category_id 확인)
+
+                long gId = getNextSeq(pstmtSeq);
+                
+                // MASTER_ID 5인 경우 "여성 의류 사이즈" 라는 이름을 DB에서 가져옴
+                pstmtMName.setInt(1, sizeMasterId);
+                String masterName = "";
+                try (ResultSet rs = pstmtMName.executeQuery()) { if (rs.next()) masterName = rs.getString(1); }
+
+                pstmtGroup.setLong(1, gId);
+                pstmtGroup.setString(2, productId);
+                pstmtGroup.setInt(3, sizeMasterId);
+                pstmtGroup.setString(4, masterName); // "여성 의류 사이즈" 저장
+                pstmtGroup.executeUpdate();
+
+                for (String vId : sizeOptions) {
+                    pstmtVName.setInt(1, Integer.parseInt(vId));
+                    String valueName = "";
+                    try (ResultSet rs = pstmtVName.executeQuery()) { if (rs.next()) valueName = rs.getString(1); }
 
                     pstmtValue.setLong(1, gId);
-                    pstmtValue.setInt(2, Integer.parseInt(sportOption));
-                    pstmtValue.setString(3, "스포츠값");
+                    pstmtValue.setInt(2, Integer.parseInt(vId));
+                    pstmtValue.setString(3, valueName); // "095", "100" 등 저장
                     pstmtValue.executeUpdate();
                 }
             }
-
-            // --- B. 사이즈 옵션 저장 ---
-            if (sizeOptions != null && sizeOptions.length > 0) {
-                long gId = 0;
-                try (ResultSet rs = pstmtSeq.executeQuery()) { if (rs.next()) gId = rs.getLong(1); }
-
-                if (gId > 0) {
-                    pstmtGroup.setLong(1, gId);
-                    pstmtGroup.setString(2, productId);
-                    pstmtGroup.setInt(3, 4); // 사이즈 MASTER_ID
-                    pstmtGroup.setString(4, "사이즈");
-                    pstmtGroup.executeUpdate();
-
-                    for (String vId : sizeOptions) {
-                        if (vId == null || vId.trim().isEmpty()) continue;
-                        pstmtValue.setLong(1, gId);
-                        pstmtValue.setInt(2, Integer.parseInt(vId));
-                        pstmtValue.setString(3, "사이즈값");
-                        pstmtValue.executeUpdate();
-                    }
-                }
-            }
         }
+    }
+
+    // 중복 코드를 줄이기 위한 헬퍼 메서드 (내부에서 사용)
+    private void insertSingleOption(PreparedStatement seq, PreparedStatement grp, PreparedStatement val, 
+                                   PreparedStatement mName, PreparedStatement vName, 
+                                   String pId, int mId, String vId) throws SQLException {
+        long gId = getNextSeq(seq);
+        
+        mName.setInt(1, mId);
+        String mNm = "";
+        try (ResultSet rs = mName.executeQuery()) { if (rs.next()) mNm = rs.getString(1); }
+        
+        grp.setLong(1, gId);
+        grp.setString(2, pId);
+        grp.setInt(3, mId);
+        grp.setString(4, mNm);
+        grp.executeUpdate();
+        
+        vName.setInt(1, Integer.parseInt(vId));
+        String vNm = "";
+        try (ResultSet rs = vName.executeQuery()) { if (rs.next()) vNm = rs.getString(1); }
+        
+        val.setLong(1, gId);
+        val.setInt(2, Integer.parseInt(vId));
+        val.setString(3, vNm);
+        val.executeUpdate();
+    }
+
+    private long getNextSeq(PreparedStatement seq) throws SQLException {
+        try (ResultSet rs = seq.executeQuery()) { if (rs.next()) return rs.getLong(1); }
+        return 0;
     }
 
 

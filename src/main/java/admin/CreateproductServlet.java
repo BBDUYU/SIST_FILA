@@ -92,10 +92,11 @@ public class CreateproductServlet extends HttpServlet {
 	                .build();
 	        dao.insertProduct(conn, product);
 	        dao.insertCategoryRelations(conn, productId, categoryIds);
+	        String genderOption = multi.getParameter("gender_option"); // 추가
 	        String sportOption = multi.getParameter("sport_option"); // JSP의 name값 확인 필요
 	        String[] sizeOptions = multi.getParameterValues("size_options"); // JSP의 name값 확인 필요
 
-	        dao.insertProductOptions(conn, productId, sportOption, sizeOptions);
+	        dao.insertProductOptions(conn, productId,genderOption, sportOption, sizeOptions);
 
 	        // 6. 기본 재고 및 조합 생성
 	        dao.insertDefaultStock(conn, productId, sizeOptions);

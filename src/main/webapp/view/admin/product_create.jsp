@@ -493,7 +493,6 @@ textarea.f-input {
   
     let selectedMap = new Map();
 
- // 1. [추가] 상위 카테고리 클릭 시 하위 필터링 및 초기화
  function filterCategory(nextDepth, parentId, element) {
      // 1단계를 클릭했을 경우, 다른 1단계 선택은 해제하고 하위 선택 기록도 초기화
      if (nextDepth === 2) {
@@ -562,6 +561,25 @@ textarea.f-input {
              sizePlaceholder.style.display = 'block';
              sizeTargetName.innerText = "";
          }
+     }
+     if (nextDepth === 2) {
+         // 성별(depth1)의 v_master_id를 담을 히든 인풋 생성/업데이트
+         let genderInput = document.getElementById('gender_option_input');
+         if (!genderInput) {
+             genderInput = document.createElement('input');
+             genderInput.type = 'hidden';
+             genderInput.id = 'gender_option_input';
+             genderInput.name = 'gender_option'; // 서블릿에서 이 이름으로 받음
+             document.getElementById('productForm').appendChild(genderInput);
+         }
+         
+         // 선택된 성별의 명칭에 따라 v_master_id 매칭 (DB의 성별 값 확인 필요)
+         // 보통 남성:101, 여성:102 이런 식으로 저장되어 있을 것임
+         // 여기서는 단순히 카테고리 ID를 활용하거나 텍스트로 판별
+         const genderText = element.innerText.trim();
+         if(genderText === "MALE") genderInput.value = "101"; // 실제 DB의 남성 v_master_id
+         else if(genderText === "FEMALE") genderInput.value = "102"; // 실제 DB의 여성 v_master_id
+         else if(genderText === "KIDS") genderInput.value = "103";
      }
  }
 
