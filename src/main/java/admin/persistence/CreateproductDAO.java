@@ -290,5 +290,48 @@ public class CreateproductDAO {
             }
         }
     }
-    
+    /**
+     * 1. 스타일 상품 연결 (STYLE_PRODUCT 테이블)
+     */
+    public void insertStyleProduct(Connection conn, String productId, int styleId) throws SQLException {
+        String sql = "INSERT INTO STYLE_PRODUCT (PRODUCT_ID, STYLE_ID, SORT_ORDER) VALUES (?, ?, 1)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, productId);
+            pstmt.setInt(2, styleId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /**
+     * 2. 이벤트 상품 연결 (EVENT_PRODUCT 테이블)
+     * 주의: EVENT_ID가 아니라 SECTION_ID를 넣어야 합니다.
+     */
+    public void insertEventProduct(Connection conn, String productId, int sectionId) throws SQLException {
+        String sql = "INSERT INTO EVENT_PRODUCT (PRODUCT_ID, SECTION_ID) VALUES (?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, productId);
+            pstmt.setInt(2, sectionId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /**
+     * 3. 화면 UI용: 선택 가능한 이벤트 섹션 리스트 가져오기
+     */
+    public List<Map<String, Object>> selectActiveEventSections(Connection conn) throws SQLException {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String sql = "SELECT e.EVENT_NAME, s.SECTION_ID " +
+                     "FROM EVENT e JOIN EVENT_SECTION s ON e.EVENT_ID = s.EVENT_ID " +
+                     "WHERE e.IS_ACTIVE = 1 ORDER BY e.EVENT_ID, s.SORT_ORDER";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("name", rs.getString("EVENT_NAME") + " - 섹션 " + rs.getInt("SECTION_ID"));
+                map.put("sectionId", rs.getInt("SECTION_ID"));
+                list.add(map);
+            }
+        }
+        return list;
+    }
 }
