@@ -707,7 +707,7 @@
 	box-sizing: border-box;
 }
 .order-info-box .txt-box p:before {
-	content: '쨌';
+	content: '·';
 	display: block;
 	position: absolute;
 	left: 0;
@@ -7363,7 +7363,7 @@ body._index .brand__contents {
 /* 2023-12-22 諛섑뭹 臾멸뎄異붽� */
 .my-top .caution {color: rgb(204, 0, 0);}
 .my-top .caution::before {
-	content: '��';
+	    content: '·';
 }
 /* //2023-12-22 諛섑뭹 臾멸뎄異붽� */
 
