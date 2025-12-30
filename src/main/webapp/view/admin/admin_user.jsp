@@ -110,12 +110,12 @@
 
     <div class="sidebar">
         <div class="logo">
-            <a href="${pageContext.request.contextPath}/view/user/main.mm" style="text-decoration: none; color: inherit;"> 
+            <a href="${pageContext.request.contextPath}/index.htm" style="text-decoration: none; color: inherit;"> 
                 <span style="letter-spacing: 5px;">FILA</span>
             </a> 
             <span style="font-weight: 300; font-size: 16px; margin-left: 5px; color: rgba(255, 255, 255, 0.7);">ADMIN</span>
         </div>
-        <div class="nav-item active" onclick="location.href='${pageContext.request.contextPath}/admin.ad'">회원 관리</div>
+        <div class="nav-item active" onclick="location.href='${pageContext.request.contextPath}/admin/userList.htm'">회원 관리</div>
         <div class="nav-item">상품 관리</div>
         <div class="nav-item">쿠폰 관리</div>
         <div class="nav-item">
@@ -161,7 +161,7 @@
                                 </c:choose>
                             </td>
                             <td>
-                                <button class="btn-detail" onclick="location.href='${pageContext.request.contextPath}/userDetail.ad?userNum=${user.usernumber}'">상세보기</button>
+                                <button class="btn-detail" onclick="location.href='${pageContext.request.contextPath}/admin/userDetail.htm?userNum=${user.usernumber}'">상세보기</button>
                             </td>
                         </tr>
                     </c:forEach>

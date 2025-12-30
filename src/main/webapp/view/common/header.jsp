@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	<header id="header">
 		<!-- logo -->
 		<h1 class="logo">
-			<a href="main.mm">FILA</a>
+			<a href="${pageContext.request.contextPath}/index.htm">FILA</a>
 		</h1>
 		<!-- //logo -->
 		

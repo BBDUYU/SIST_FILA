@@ -1,10 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>FILA ADMIN - 회원 상세 정보</title>
 <style>
 :root {
 	--fila-navy: #001E62;
@@ -16,8 +18,10 @@ body {
 	font-family: 'Noto Sans KR', sans-serif;
 	background-color: var(--fila-gray);
 	margin: 0;
+	display: flex;
 }
 
+/* 사이드바 */
 .sidebar {
 	width: 240px;
 	height: 100vh;
@@ -42,36 +46,127 @@ body {
 	transition: 0.3s;
 }
 
-.nav-item:hover {
+.nav-item:hover, .nav-item.active {
 	background: var(--fila-red);
 }
 
+/* 컨텐츠 영역 */
 .main-content {
 	margin-left: 240px;
 	padding: 40px;
+	width: calc(100% - 240px);
 }
 
 .card {
 	background: white;
 	border: 1px solid #ddd;
-	border-radius: 0;
-	padding: 20px;
+	padding: 25px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 상세 페이지 전용 스타일 */
+.section-title {
+	font-size: 18px;
+	font-weight: bold;
+	color: var(--fila-navy);
+	margin: 30px 0 15px 0;
+	display: flex;
+	align-items: center;
+}
+
+.section-title::before {
+	content: '';
+	display: inline-block;
+	width: 4px;
+	height: 18px;
+	background-color: var(--fila-red);
+	margin-right: 10px;
+}
+
+.info-table {
+	width: 100%;
+	border-top: 2px solid var(--fila-navy);
+	border-collapse: collapse;
+	margin-bottom: 20px;
+}
+
+.info-table th {
+	background-color: #f9f9f9;
+	border: 1px solid #eee;
+	padding: 12px 15px;
+	text-align: left;
+	width: 20%;
+	font-size: 14px;
+	color: #333;
+}
+
+.info-table td {
+	border: 1px solid #eee;
+	padding: 12px 15px;
+	font-size: 14px;
+	color: #666;
+}
+
+.status-badge {
+	padding: 3px 10px;
+	font-size: 12px;
+	font-weight: bold;
+	color: white;
+	background-color: #28a745;
+}
+
+.status-badge.blocked {
+	background-color: var(--fila-red);
+}
+
+/* 버튼 스타일 */
+.btn-area {
+	text-align: center;
+	margin-top: 40px;
+	border-top: 1px solid #eee;
+	padding-top: 25px;
 }
 
 .btn-fila {
 	background: var(--fila-navy);
 	color: white;
-	border-radius: 0;
 	border: none;
-	padding: 10px 20px;
+	padding: 10px 25px;
+	cursor: pointer;
 }
 
 .btn-fila-red {
 	background: var(--fila-red);
 	color: white;
-	border-radius: 0;
 	border: none;
-	padding: 10px 20px;
+	padding: 10px 25px;
+	cursor: pointer;
+}
+
+/* 탭 메뉴 스타일 */
+.nav-tabs {
+	display: flex;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	border-bottom: 2px solid var(--fila-navy);
+}
+
+.nav-item-tab {
+	padding: 10px 25px;
+	cursor: pointer;
+	border: 1px solid #eee;
+	border-bottom: none;
+	margin-right: 5px;
+	background: white;
+	color: #666;
+	transition: 0.2s;
+}
+
+.nav-item-tab.active {
+	background: var(--fila-navy) !important;
+	color: white !important;
+	border-color: var(--fila-navy) !important;
 }
 </style>
 </head>
@@ -79,52 +174,203 @@ body {
 
 	<div class="sidebar">
 		<div class="logo">
-			<a href="${pageContext.request.contextPath}/view/user/main.mm"
+			<a href="${pageContext.request.contextPath}/index.htm"
 				style="text-decoration: none; color: inherit;"> <span
 				style="letter-spacing: 5px;">FILA</span>
 			</a> <span
-				style="font-weight: 300; font-size: 16px; margin-left: 5px; vertical-align: middle; color: rgba(255, 255, 255, 0.7);">ADMIN</span>
+				style="font-weight: 300; font-size: 16px; margin-left: 5px; color: rgba(255, 255, 255, 0.7);">ADMIN</span>
 		</div>
-		<div class="nav-item" onclick="location.href='${pageContext.request.contextPath}/admin.ad'" style="cursor:pointer;">
-		    회원 관리
-		</div>
+		<div class="nav-item active"
+			onclick="location.href='${pageContext.request.contextPath}/admin/userList.htm'">회원
+			관리</div>
 		<div class="nav-item">상품 관리</div>
 		<div class="nav-item">쿠폰 관리</div>
-		<div class="nav-item">
-			1:1 문의 <span class="badge" style="background: var(--fila-red)">3</span>
-		</div>
+		<div class="nav-item">1:1 문의</div>
 	</div>
 
 	<div class="main-content">
 		<div class="card">
 			<h2
-				style="border-left: 5px solid var(--fila-navy); padding-left: 15px;">회원
+				style="border-left: 5px solid var(--fila-navy); padding-left: 15px; margin-top: 0;">회원
 				상세 정보</h2>
 			<hr>
-			<ul class="nav nav-tabs"
-				style="border-bottom: 2px solid var(--fila-navy);">
-				<li class="nav-item-tab active"
-					style="background: var(--fila-navy); color: white; padding: 10px 20px;">기본정보</li>
-				<li class="nav-item-tab"
-					style="padding: 10px 20px; cursor: pointer;">포인트/쿠폰</li>
-				<li class="nav-item-tab"
-					style="padding: 10px 20px; cursor: pointer;">주문내역</li>
-				<li class="nav-item-tab"
-					style="padding: 10px 20px; cursor: pointer;">자녀정보</li>
+
+			<ul class="nav nav-tabs">
+				<li class="nav-item-tab active" onclick="showTab('basic', this)">기본정보</li>
+				<li class="nav-item-tab" onclick="showTab('point', this)">포인트/쿠폰</li>
+				<li class="nav-item-tab" onclick="showTab('order', this)">주문내역</li>
+				<li class="nav-item-tab" onclick="showTab('child', this)">자녀정보</li>
 			</ul>
 
-			<div class="info-body" style="padding-top: 20px;">
-				<table class="table" style="width: 100%; border-collapse: collapse;">
-					<tr>
-						<th
-							style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd; width: 200px;">회원
-							ID</th>
-						<td style="padding: 15px; border: 1px solid #ddd;">PROD_USER_01</td>
-					</tr>
-				</table>
+			<div class="info-body">
+
+				<div id="section-basic" class="tab-content">
+					<div class="section-title">계정 정보</div>
+					<table class="info-table">
+						<tr>
+							<th>회원 번호</th>
+							<td>${user.usernumber}</td>
+							<th>회원 ID</th>
+							<td style="font-weight: bold; color: var(--fila-navy);">${user.id}</td>
+						</tr>
+						<tr>
+							<th>회원 성함</th>
+							<td>${user.childname}</td>
+							<th>회원 등급</th>
+							<td><span
+								style="border: 1px solid #ccc; padding: 2px 6px; font-size: 12px;">${user.grade}</span></td>
+						</tr>
+						<tr>
+							<th>계정 상태</th>
+							<td colspan="3"><c:choose>
+									<c:when test="${user.status eq 'ACTIVE'}">
+										<span class="status-badge">정상 이용 중</span>
+									</c:when>
+									<c:otherwise>
+										<span class="status-badge blocked">차단/휴면</span>
+									</c:otherwise>
+								</c:choose></td>
+						</tr>
+					</table>
+
+					<div class="section-title">연락처 및 개인정보</div>
+					<table class="info-table">
+						<tr>
+							<th>이메일 주소</th>
+							<td>${user.email}</td>
+							<th>휴대폰 번호</th>
+							<td>${user.phone}</td>
+						</tr>
+						<tr>
+							<th>성별</th>
+							<td>${user.gender eq 'M' ? '남성' : '여성'}</td>
+							<th>생년월일</th>
+							<td><fmt:formatDate value="${user.birthday}"
+									pattern="yyyy-MM-dd" /></td>
+						</tr>
+						<tr>
+							<th>가입일</th>
+							<td><fmt:formatDate value="${user.createAt}"
+									pattern="yyyy-MM-dd HH:mm" /></td>
+							<th>최종 수정일</th>
+							<td><fmt:formatDate value="${user.updatedAt}"
+									pattern="yyyy-MM-dd HH:mm" /></td>
+						</tr>
+					</table>
+				</div>
+
+				<div id="section-point" class="tab-content" style="display: none;">
+					<div class="section-title">포인트 이용 내역</div>
+					<table class="info-table" style="text-align: center;">
+						<thead>
+							<tr style="background: #f4f4f4;">
+								<th style="text-align: center;">일자</th>
+								<th style="text-align: center;">구분</th>
+								<th style="text-align: center;">금액</th>
+								<th style="text-align: center;">잔액</th>
+								<th style="text-align: center;">내역</th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:forEach var="p" items="${user.pointList}">
+								<tr>
+									<td><fmt:formatDate value="${p.createAt}"
+											pattern="yyyy-MM-dd HH:mm" /></td>
+									<td><c:choose>
+											<c:when test="${p.type eq '적립' or p.type eq 'SAVED'}">
+												<span style="color: #28a745; font-weight: bold;">+
+													${p.type}</span>
+											</c:when>
+											<c:otherwise>
+												<span style="color: var(--fila-red); font-weight: bold;">-
+													${p.type}</span>
+											</c:otherwise>
+										</c:choose></td>
+									<td style="font-weight: bold;"><fmt:formatNumber
+											value="${p.amout}" pattern="#,###" /> P</td>
+									<td><fmt:formatNumber value="${p.balance}" pattern="#,###" />
+										P</td>
+									<td style="text-align: left;">${p.description}</td>
+								</tr>
+							</c:forEach>
+							<c:if test="${empty user.pointList}">
+								<tr>
+									<td colspan="5" style="padding: 50px; color: #999;">포인트
+										내역이 없습니다.</td>
+								</tr>
+							</c:if>
+						</tbody>
+					</table>
+				</div>
+
+				<div id="section-order" class="tab-content" style="display: none;">
+					<div class="section-title">주문 내역</div>
+					<p
+						style="text-align: center; padding: 80px; color: #999; border: 1px solid #eee;">
+						준비 중인 서비스입니다 (ORDER 테이블 연동 필요).</p>
+				</div>
+
+				<div id="section-child" class="tab-content" style="display: none;">
+					<div class="section-title">자녀 정보 (${user.childList.size()}명)</div>
+					<table class="info-table">
+						<thead>
+							<tr style="background: #f4f4f4;">
+								<th style="text-align: center; width: 33%;">자녀 이름</th>
+								<th style="text-align: center; width: 33%;">자녀 성별</th>
+								<th style="text-align: center; width: 34%;">자녀 생년월일</th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:choose>
+								<c:when test="${not empty user.childList}">
+									<c:forEach var="child" items="${user.childList}">
+										<tr>
+											<td style="text-align: center;">${child.childname}</td>
+											<td style="text-align: center;">${child.childgender eq 'M' ? '남아' : '여아'}</td>
+											<td style="text-align: center;"><fmt:formatDate
+													value="${child.childbirth}" pattern="yyyy년 MM월 dd일" /></td>
+										</tr>
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<tr>
+										<td colspan="3"
+											style="text-align: center; color: #999; padding: 40px;">등록된
+											자녀 정보가 없습니다.</td>
+									</tr>
+								</c:otherwise>
+							</c:choose>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="btn-area">
+					<button type="button" class="btn-fila"
+						onclick="location.href='${pageContext.request.contextPath}/admin/userList.htm'">목록으로</button>
+					<button type="button" class="btn-fila-red"
+						onclick="alert('정보 수정 페이지 준비 중')" style="margin-left: 10px;">정보
+						수정</button>
+				</div>
+
 			</div>
 		</div>
 	</div>
+	<script>
+    function showTab(tabName, element) {
+        const contents = document.getElementsByClassName('tab-content');
+        for (let i = 0; i < contents.length; i++) {
+            contents[i].style.display = 'none';
+        }
 
+        document.getElementById('section-' + tabName).style.display = 'block';
+
+        const tabs = document.getElementsByClassName('nav-item-tab');
+        for (let i = 0; i < tabs.length; i++) {
+            tabs[i].classList.remove('active');
+        }
+
+        element.classList.add('active');
+    }
+    </script>
 </body>
 </html>

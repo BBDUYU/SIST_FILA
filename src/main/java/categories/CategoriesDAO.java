@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import com.util.JdbcUtil;
-import categories.CategoriesDTO;
 
 public class CategoriesDAO implements ICategories {
     private CategoriesDAO() {}

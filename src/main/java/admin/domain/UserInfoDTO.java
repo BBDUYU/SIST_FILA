@@ -80,6 +80,8 @@ public class UserInfoDTO {
 	private String reply;
 	private Date replyat;
 	
-	
+	// UserInfoDTO.java 내부에 추가
+	private java.util.List<UserInfoDTO> childList;
+	private java.util.List<UserInfoDTO> pointList;
 	
 }

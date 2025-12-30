@@ -25,4 +25,24 @@ public class AdminUserService {
             JdbcUtil.close(conn);
         }
     }
+    public UserInfoDTO getUserDetail(int userNum) {
+        Connection conn = null;
+        try {
+            conn = ConnectionProvider.getConnection();
+            UserInfoDAO dao = UserInfoDAO.getInstance();
+            UserInfoDTO user = dao.selectOne(conn, userNum);
+            
+            // 2. 포인트 내역 추가로 가져오기
+            if (user != null) {
+                ArrayList<UserInfoDTO> pointList = dao.selectPointList(conn, userNum);
+                user.setPointList(pointList); // DTO에 List<UserInfoDTO> pointList 필드 추가 필요
+            }
+            return user;
+        } catch (Exception e) {
+            throw new RuntimeException("회원 상세 정보 로드 실패", e);
+        } finally {
+            JdbcUtil.close(conn);
+        }
+    }
+    
 }
