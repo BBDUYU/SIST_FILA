@@ -18,24 +18,24 @@ SIST_FILA/
 │     │     │  ├─ Cookies.java
 │     │     │  └─ JdbcUtil.java
 │     │     │
-│     │     └─ products/  # Model, Controller
-│     │        ├─ productsDAO.java
-│     │        ├─ productsDTO.java
-│     │        └─ productsServlet.java
+│     │     └─ # Model, Controller
 │     │
 │     └─ webapp/
 │        ├─ css/
 │        ├─ js/
-│        │
+│        ├─ resources/
+│        │  └─ main_slider
+│        │     └─ img
+│        │  └─ product # 상품사진 저장공간
+│        │     └─ product_pk.folder # 상품pk 폴더명
+│        │        └─ img # 해당상품사진
 │        ├─ META-INF/
 │        │  ├─ context.xml # JNDI DataSource 설정
 │        │  └─ MANIFEST.MF
 │        │
+│        ├─ Subset/
+│        │  └─ SpoqHanSansEno # 글씨체
 │        ├─ view/          # JSP View 기능별 분리
-│        │  ├─ admin/
-│        │  ├─ event/
-│        │  ├─ product/
-│        │  └─ user/
 │        │
 │        └─ WEB-INF/
 │           ├─ web.xml

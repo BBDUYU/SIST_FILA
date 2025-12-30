@@ -1,3 +1,6 @@
+/*! 초기화(옵션) 스타일 */
+
+
 /* CDN */
 @font-face {
     font-family: 'HelveticaNeueLTStd';
@@ -184,7 +187,7 @@ em {
 	font-style:normal;
 }
 
-/* �꾩슂�� base �ｌ쓣寃� */
+/* 필요한 base 넣을것 */
 :root,
 html {
 	font-size: 10px;
@@ -360,7 +363,7 @@ input[type="password"]{font-family: sans-serif;}
 }
 .cb__style1:disabled + label:after {
 	z-index: 3;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cg id='check' transform='translate(-445 -205)'%3E%3Cg id='�ш컖��_22' data-name='�ш컖�� 22' transform='translate(445 205)' fill='%23eee' stroke='%23ccc' stroke-width='1'%3E%3Crect width='20' height='20' rx='5' stroke='none'/%3E%3Crect x='0.5' y='0.5' width='19' height='19' rx='4.5' fill='none'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cg id='check' transform='translate(-445 -205)'%3E%3Cg id='사각형_22' data-name='사각형 22' transform='translate(445 205)' fill='%23eee' stroke='%23ccc' stroke-width='1'%3E%3Crect width='20' height='20' rx='5' stroke='none'/%3E%3Crect x='0.5' y='0.5' width='19' height='19' rx='4.5' fill='none'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
 }
 
 .cb__style2 {
@@ -390,10 +393,10 @@ input[type="password"]{font-family: sans-serif;}
 	background-position: center center;
 	content: '';
 }
-.cb__style2 + label:before {background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cg id='Select' transform='translate(-20 -300)'%3E%3Cg id='����_67' data-name='���� 67' transform='translate(20 300)' fill='none' stroke='%23ccc' stroke-width='1'%3E%3Ccircle cx='10' cy='10' r='10' stroke='none'/%3E%3Ccircle cx='10' cy='10' r='9.5' fill='none'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");}
+.cb__style2 + label:before {background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cg id='Select' transform='translate(-20 -300)'%3E%3Cg id='타원_67' data-name='타원 67' transform='translate(20 300)' fill='none' stroke='%23ccc' stroke-width='1'%3E%3Ccircle cx='10' cy='10' r='10' stroke='none'/%3E%3Ccircle cx='10' cy='10' r='9.5' fill='none'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");}
 .cb__style2:checked + label:after {
 	z-index: 3;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cg id='Select' transform='translate(-20 -300)'%3E%3Ccircle id='����_67' data-name='���� 67' cx='10' cy='10' r='10' transform='translate(20 300)' fill='%23002053'/%3E%3Cg id='check' transform='translate(27 308)'%3E%3Cpath id='�⑥뒪_144' data-name='�⑥뒪 144' d='M450,214l2,2,4-4' transform='translate(-450 -212)' fill='none' stroke='%23fff' stroke-linecap='square' stroke-miterlimit='10' stroke-width='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cg id='Select' transform='translate(-20 -300)'%3E%3Ccircle id='타원_67' data-name='타원 67' cx='10' cy='10' r='10' transform='translate(20 300)' fill='%23002053'/%3E%3Cg id='check' transform='translate(27 308)'%3E%3Cpath id='패스_144' data-name='패스 144' d='M450,214l2,2,4-4' transform='translate(-450 -212)' fill='none' stroke='%23fff' stroke-linecap='square' stroke-miterlimit='10' stroke-width='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
 }
 
 .cb__style3 {
@@ -424,11 +427,11 @@ input[type="password"]{font-family: sans-serif;}
 	content: '';
 }
 .cb__style3 + label:before {
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cg id='check' transform='translate(-445 -205)'%3E%3Cg id='�ш컖��_22' data-name='�ш컖�� 22' transform='translate(445 205)' fill='%23fff' stroke='%23000' stroke-width='1'%3E%3Crect width='20' height='20' rx='5' stroke='none'/%3E%3Crect x='0.5' y='0.5' width='19' height='19' rx='4.5' fill='none'/%3E%3C/g%3E%3Cpath id='�⑥뒪_8' data-name='�⑥뒪 8' d='M453,219c-.24,0-.84.16-1,0l-3-3a2.2,2.2,0,0,1,0-2,.641.641,0,0,1,1,0l3,3,6-6a.707.707,0,0,1,1,1l-6,7C453.84,219.16,453.24,219,453,219Z' transform='translate(0 0)' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E%0A");
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cg id='check' transform='translate(-445 -205)'%3E%3Cg id='사각형_22' data-name='사각형 22' transform='translate(445 205)' fill='%23fff' stroke='%23000' stroke-width='1'%3E%3Crect width='20' height='20' rx='5' stroke='none'/%3E%3Crect x='0.5' y='0.5' width='19' height='19' rx='4.5' fill='none'/%3E%3C/g%3E%3Cpath id='패스_8' data-name='패스 8' d='M453,219c-.24,0-.84.16-1,0l-3-3a2.2,2.2,0,0,1,0-2,.641.641,0,0,1,1,0l3,3,6-6a.707.707,0,0,1,1,1l-6,7C453.84,219.16,453.24,219,453,219Z' transform='translate(0 0)' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E%0A");
 }
 .cb__style3:checked + label:after {
 	z-index: 3;
-	background-image: url("data:image/svg+xml,%3Csvg id='check' xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cg id='�ш컖��_22' data-name='�ш컖�� 22' stroke='%23000' stroke-width='1'%3E%3Crect width='20' height='20' rx='5' stroke='none'/%3E%3Crect x='0.5' y='0.5' width='19' height='19' rx='4.5' fill='none'/%3E%3C/g%3E%3Cpath id='�⑥뒪_8' data-name='�⑥뒪 8' d='M453,219a.726.726,0,0,1-.56-.24l-3.2-3.2a.792.792,0,0,1,1.12-1.12l2.64,2.64,5.84-5.84a.792.792,0,0,1,1.12,1.12l-6.4,6.4A.726.726,0,0,1,453,219Z' transform='translate(-445 -205)' fill='%23fff'/%3E%3C/svg%3E%0A");
+	background-image: url("data:image/svg+xml,%3Csvg id='check' xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cg id='사각형_22' data-name='사각형 22' stroke='%23000' stroke-width='1'%3E%3Crect width='20' height='20' rx='5' stroke='none'/%3E%3Crect x='0.5' y='0.5' width='19' height='19' rx='4.5' fill='none'/%3E%3C/g%3E%3Cpath id='패스_8' data-name='패스 8' d='M453,219a.726.726,0,0,1-.56-.24l-3.2-3.2a.792.792,0,0,1,1.12-1.12l2.64,2.64,5.84-5.84a.792.792,0,0,1,1.12,1.12l-6.4,6.4A.726.726,0,0,1,453,219Z' transform='translate(-445 -205)' fill='%23fff'/%3E%3C/svg%3E%0A");
 }
 .cb__style3:disabled + label:before {
 	background: none;
@@ -518,7 +521,7 @@ input[type="password"]{font-family: sans-serif;}
 .mt15 {margin-top: 15px !important;}
 .bd0 {border: 0 !important;}
 
-/*�곗뒪�ы깙*/
+/*데스크탑*/
 @media screen and (min-width:1200px) {
 	/* checkbox style */
 	.cb__style1 + label:hover:before {

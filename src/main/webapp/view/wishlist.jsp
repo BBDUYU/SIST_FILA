@@ -79,7 +79,7 @@
 	<!-- start of :: wrap -->
 	<div id="wrap">
 		<!-- header include -->
-		<jsp:include page="header.jsp" />
+		<jsp:include page="common/header.jsp" />
 		
 		<!-- start of :: contents -->
 		<div id="contents" class="mypage__contents">
@@ -222,7 +222,7 @@
 <!-- //하단 고정 버튼 (top, sns) -->
 
 <!-- footer clude -->
-<jsp:include page="footer.jsp" />
+<jsp:include page="common/footer.jsp" />
 
 
 
