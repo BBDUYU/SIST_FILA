@@ -139,6 +139,33 @@ cre('send','Pageview');
 <!-- 개별 css, js -->
 <script src="/pc/resource/js/pages/login.js?v=202503281116"></script>
 <script src="/pc/resource/js/pages/member.js?v=202109030002"></script>
+<!-- 카카오 로그인 SDK -->
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+
+<script>
+    Kakao.init('여기에_카카오_JS_KEY');
+
+    function kakaoLogin() {
+        Kakao.Auth.login({
+            scope: 'profile_nickname',
+            success: function () {
+                Kakao.API.request({
+                    url: '/v2/user/me',
+                    success: function (res) {
+                        const kakaoId = res.id;
+                        const name = res.kakao_account.profile.nickname;
+
+                        location.href =
+                            '<%=request.getContextPath()%>/member/kakao-login'
+                            + '?kakaoId=' + kakaoId
+                            + '&name=' + encodeURIComponent(name);
+                    }
+                });
+            }
+        });
+    }
+</script>
+
 </head>
 
 <body class="">
@@ -701,7 +728,9 @@ cre('send','Pageview');
 				<c:choose>
 					<c:when test="${empty loginMember}">
 						<button type="button" class="account__btn"
-								onclick="location.href='${pageContext.request.contextPath}/member/login.jsp'">
+								onclick="location.href='${pageContext.request.contextPath}/view/user/login.jsp'">
+
+
 							account
 						</button>
 					</c:when>
@@ -734,6 +763,7 @@ cre('send','Pageview');
 			</div>
 		</div>
 		<!-- //util -->
+		
 	</header>
 	<!-- // end of :: header -->
 
@@ -790,7 +820,8 @@ cre('send','Pageview');
 			<!-- sns 로그인 -->
 			<div class="login_sns">
 				<a href="javascript:snsLogin('NV');void(0);" class="btn_naver" tabindex="57">네이버로 로그인하기</a>
-				<a href="javascript:snsLogin('KK');void(0);" class="btn_kakao" tabindex="58">카카오로 로그인하기</a>
+				<a href="javascript:kakaoLogin();" class="btn_kakao">카카오로 로그인하기</a>
+
 			</div>
 
 			<p class="txt" style="display:none">휠라코리아 통합멤버십 회원(FILA, KEDS, ZOO YORK)은<br>

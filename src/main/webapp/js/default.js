@@ -2320,7 +2320,6 @@ jQuery(function(){
 	jQuery(document).on("click",  "#vpop99 button[id^=qtyPlusW]", function() {
 		var maxStock = jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") != undefined ?jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") : ProductStockLimitNumber ; 
 		var minStock = maxStock > 0 ? 1 : 0 ;
-		
 		//console.log(11);
 		var obj = jQuery(this).prev( "input[id^=ProductQuantityW]" ); 
 		var qtyVal = obj.val(); 
