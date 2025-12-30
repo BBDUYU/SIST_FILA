@@ -1,28 +1,34 @@
-package admin;
+package admin.persistence;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import com.util.JdbcUtil;
+import admin.domain.UserInfoDTO;
 
-public class UserInfoDAO {
+public class UserInfoDAO implements IUserInfo {
     private static UserInfoDAO dao = new UserInfoDAO();
     private UserInfoDAO() {}
     public static UserInfoDAO getInstance() { return dao; }
 
-    public ArrayList<UserInfoDTO> selectUserList(Connection conn) {
+    @Override
+    public ArrayList<UserInfoDTO> selectUserList(Connection conn) throws SQLException {
         ArrayList<UserInfoDTO> list = new ArrayList<>();
-        // 가입일 기준 내림차순 정렬
         String sql = "SELECT USER_NUMBER, ID, NAME, EMAIL, PHONE, GRADE, STATUS, CREATED_AT FROM USERS ORDER BY CREATED_AT DESC";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
 
+        try {
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
             while (rs.next()) {
                 UserInfoDTO dto = UserInfoDTO.builder()
                         .usernumber(rs.getInt("USER_NUMBER"))
                         .id(rs.getString("ID"))
-                        .childname(rs.getString("NAME")) // DTO의 childname 필드에 이름을 잠시 담음
+                        .childname(rs.getString("NAME")) // 기획에 따라 필드명 매핑 확인 필요
                         .email(rs.getString("EMAIL"))
                         .phone(rs.getString("PHONE"))
                         .grade(rs.getString("GRADE"))
@@ -31,8 +37,9 @@ public class UserInfoDAO {
                         .build();
                 list.add(dto);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } finally {
+            JdbcUtil.close(rs);
+            JdbcUtil.close(pstmt);
         }
         return list;
     }
