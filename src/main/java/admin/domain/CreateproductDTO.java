@@ -1,4 +1,4 @@
-package admin;
+package admin.domain;
 
 import java.util.Date;
 

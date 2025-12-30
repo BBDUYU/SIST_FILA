@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.util.ConnectionProvider;
 import com.util.JdbcUtil;
 
+import admin.domain.UserInfoDTO;
+import admin.persistence.UserInfoDAO;
+
 // 관리자 페이지 호출 시 이 서블릿을 거치도록 설정 (패턴을 *.mm으로 하거나 경로를 맞추세요)
 @WebServlet("/admin.ad") 
 public class UserInfoServlet extends HttpServlet {

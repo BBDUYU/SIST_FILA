@@ -436,8 +436,8 @@ document.addEventListener('DOMContentLoaded', () => {
 								<li id="globalMenu4"></li>
 								<li id="globalMenu5" style="display: none;">&nbsp;</li>
 								<li id="globalMenu8"><a href="/specialoffer/list.asp">이벤트</a></li>
-								<li id="globalMenu9"><a href="${pageContext.request.contextPath}/admin/createProduct.do">상품 등록하러 가기</a></li>
-								<li id="globalMenu10"><a href="${pageContext.request.contextPath}/admin.ad">관리자 페이지</a></li>
+								<li id="globalMenu9"><a href="${pageContext.request.contextPath}/admin/createProduct.htm">상품 등록하러 가기</a></li>								
+								<li id="globalMenu10"><a href="${pageContext.request.contextPath}/admin/userList.htm">관리자 페이지</a></li>
 							</ul>
 							<button type="button" class="logout__btn" id="globalMenu6"
 								onclick="location.href='/member/logout.asp';"

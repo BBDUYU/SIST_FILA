@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class SearchDAO {
+public class SearchDAO implements ISearch{
 
     private static SearchDAO dao = null;
 
