@@ -20,6 +20,7 @@ public class EventServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	
 
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
@@ -31,22 +32,28 @@ public class EventServlet extends HttpServlet {
             // 테스트용 기본값
             eventId = 1236;
         }
-
+        System.out.println("[EventServlet] called. eventId=" + request.getParameter("eventId"));
         Connection con = null;
         try {
             con = ConnectionProvider.getConnection();
 
             EventDetailDTO detail = eventDao.selectEventDetail(con, eventId);
+            System.out.println("[EventServlet] detail=" + detail);
+
             if (detail == null) {
+                System.out.println("[EventServlet] Event not found. eventId=" + eventId);
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Event not found");
                 return;
             }
+            System.out.println("[EventServlet] sections size=" + detail.getSections().size());
+
 
             request.setAttribute("detail", detail);
             RequestDispatcher rd = request.getRequestDispatcher("/view/event/event.jsp");
             rd.forward(request, response);
 
         } catch (Exception e) {
+            e.printStackTrace(); 
             throw new ServletException(e);
         } finally {
             JdbcUtil.close(con);
