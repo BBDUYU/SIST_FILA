@@ -1,7 +1,7 @@
 package event;
 
 import event.dto.*;
-import products.productsDTO;
+import products.ProductsDTO;
 
 import java.sql.*;
 import java.util.*;
@@ -21,13 +21,15 @@ public class EventDAO {
         }
 
         if (!sectionMap.isEmpty()) {
-            attachSectionImages(con, sectionMap);
+            attachSectionImages(con, eventId, sectionMap);
             attachSectionProducts(con, sectionMap);
         }
 
         EventDetailDTO detail = new EventDetailDTO();
         detail.setEvent(event);
         detail.setSections(new ArrayList<>(sectionMap.values()));
+        System.out.println("sections size=" + sections.size());
+        System.out.println("sectionMap keys=" + sectionMap.keySet());
         return detail;
     }
 
@@ -73,41 +75,44 @@ public class EventDAO {
         return list;
     }
 
-    private void attachSectionImages(Connection con, Map<Long, SectionDTO> sectionMap) throws SQLException {
-        String sql = "SELECT\r\n"
-        		+ "  ES.SECTION_ID,\r\n"
-        		+ "  ES.SORT_ORDER AS SECTION_SORT,\r\n"
-        		+ "  ESI.SECTION_IMAGE_ID,\r\n"
-        		+ "  ESI.IMAGE_URL,\r\n"
-        		+ "  ESI.ALT_TEXT,\r\n"
-        		+ "  ESI.LINK_URL,\r\n"
-        		+ "  ESI.SORT_ORDER AS IMAGE_SORT\r\n"
-        		+ "FROM EVENT_SECTION ES\r\n"
-        		+ "JOIN EVENT_SECTION_IMAGE ESI\r\n"
-        		+ "  ON ES.SECTION_ID = ESI.SECTION_ID\r\n"
-        		+ "WHERE ES.EVENT_ID = ?\r\n"
-        		+ "ORDER BY ES.SORT_ORDER, ESI.SORT_ORDER\r\n";
+    private void attachSectionImages(Connection con, long eventId, Map<Long, SectionDTO> sectionMap) throws SQLException {
+        String sql =
+            "SELECT " +
+            "  ES.SECTION_ID, " +
+            "  ESI.SECTION_IMAGE_ID, " +
+            "  ESI.IMAGE_URL, " +
+            "  ESI.ALT_TEXT, " +
+            "  ESI.LINK_URL, " +
+            "  ESI.SORT_ORDER AS IMAGE_SORT " +
+            "FROM EVENT_SECTION ES " +
+            "JOIN EVENT_SECTION_IMAGE ESI ON ES.SECTION_ID = ESI.SECTION_ID " +
+            "WHERE ES.EVENT_ID = ? " +
+            "ORDER BY ES.SORT_ORDER, ESI.SORT_ORDER";
+
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-            for (Long sectionId : sectionMap.keySet()) {
-                ps.setLong(1, sectionId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        SectionImageDTO img = new SectionImageDTO();
-                        img.setSectionImageId(rs.getLong("SECTION_IMAGE_ID"));
-                        img.setSectionId(rs.getLong("SECTION_ID"));
-                        img.setImageUrl(rs.getString("IMAGE_URL"));
-                        img.setAltText(rs.getString("ALT_TEXT"));
-                        img.setLinkUrl(rs.getString("LINK_URL"));
-                        int v = rs.getInt("SORT_ORDER");
-                        img.setSortOrder(rs.wasNull() ? null : v);
+            ps.setLong(1, eventId);
 
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    long sectionId = rs.getLong("SECTION_ID");
 
-                        sectionMap.get(sectionId).getImages().add(img);
-                    }
+                    SectionImageDTO img = new SectionImageDTO();
+                    img.setSectionImageId(rs.getLong("SECTION_IMAGE_ID"));
+                    img.setSectionId(sectionId);
+                    img.setImageUrl(rs.getString("IMAGE_URL"));
+                    img.setAltText(rs.getString("ALT_TEXT"));
+                    img.setLinkUrl(rs.getString("LINK_URL"));
+
+                    int v = rs.getInt("IMAGE_SORT");
+                    img.setSortOrder(rs.wasNull() ? null : v);
+
+                    SectionDTO sec = sectionMap.get(sectionId);
+                    if (sec != null) sec.getImages().add(img);
                 }
             }
         }
     }
+
 
     private void attachSectionProducts(Connection con, Map<Long, SectionDTO> sectionMap) throws SQLException {
         String sql =
@@ -121,7 +126,7 @@ public class EventDAO {
                 ps.setLong(1, sectionId);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        productsDTO p = new productsDTO();
+                    	ProductsDTO p = new ProductsDTO();
                         p.setProduct_id(rs.getString("PRODUCT_ID"));
                         p.setName(rs.getString("NAME"));
                         p.setPrice(rs.getInt("PRICE"));

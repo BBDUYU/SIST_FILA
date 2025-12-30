@@ -3,7 +3,7 @@ package event.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import products.productsDTO;
+import products.ProductsDTO;
 
 public class SectionDTO {
     private long sectionId;
@@ -12,7 +12,7 @@ public class SectionDTO {
 
     private String title; // (추천) 섹션 제목 컬럼이 없으면 임시로 sectionId로 표시하거나, 컬럼 추가 추천
     private List<SectionImageDTO> images = new ArrayList<>();
-    private List<productsDTO> products = new ArrayList<>();
+    private List<ProductsDTO> products = new ArrayList<>();
 
     // getter/setter
     public long getSectionId() { return sectionId; }
@@ -24,5 +24,5 @@ public class SectionDTO {
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
     public List<SectionImageDTO> getImages() { return images; }
-    public List<productsDTO> getProducts() { return products; }
+    public List<ProductsDTO> getProducts() { return products; }
 }

@@ -17,7 +17,7 @@
 <!--[if IE 8]> <html class="no-js lt-ie10 lt-ie9 ie8" lang="ko-KR"> <![endif]-->
 <!--[if IE 9]> <html class="no-js lt-ie10 ie9" lang="ko-KR"> <![endif]-->
 <!--[if gt IE 9]><!--> <html class="no-js" lang="ko-KR"> <!--<![endif]-->
-<jsp:include page="/view/header.jsp" />
+<jsp:include page="/view/common/header.jsp" />
 
 <body class="">
 <c:set var="event" value="${detail.event}" />
@@ -1822,7 +1822,7 @@ frm.submit();
 </div>
 
 
-<jsp:include page="/view/footer.jsp" />
+<jsp:include page="/view/common/footer.jsp" />
 
 </body>
 </html>
