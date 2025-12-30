@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,35 +23,42 @@
 
 				<div
 					class="main__slider swiper swiper-initialized swiper-horizontal swiper-pointer-events">
-					
+
 					<%-- 바깥쪽 div 하나만 남기고 합칩니다. id나 style은 Swiper가 실행되면서 자동으로 붙여주니 클래스명만 잘 적으시면 됩니다. --%>
-						<div class="swiper-wrapper">
-						    <c:forEach var="dto" items="${bannerList}" varStatus="status" end="7">
-						        <c:set var="isVideo" value="${fn:endsWith(dto.imageUrl, '.mp4')}" />
-						        
-						        <div class="swiper-slide ${isVideo ? '_type_vdo' : ''}">
-						            <a href="${dto.linkUrl}" target="_self">
-						                <div class="vdo-box">
-						                    <c:choose>
-						                        <c:when test="${isVideo}">
-						                            <video autoplay muted loop playsinline>
-						                                <source src="${pageContext.request.contextPath}${dto.imageUrl}" type="video/mp4">
-						                            </video>
-						                        </c:when>
-						                        <c:otherwise>
-						                            <img src="${pageContext.request.contextPath}${dto.imageUrl}" alt="${dto.bannerName}">
-						                        </c:otherwise>
-						                    </c:choose>
-						                </div>
-						                
-						                <div class="txt-box _type_wt">
-						                    <p class="tit">${dto.bannerName}</p>
-						                    <p class="more">자세히 보기</p>
-						                </div>
-						            </a>
-						        </div>
-						    </c:forEach>
-						</div>
+					<div class="swiper-wrapper">
+						<c:forEach var="dto" items="${bannerList}" varStatus="status"
+							end="7">
+							<c:set var="isVideo" value="${fn:endsWith(dto.imageUrl, '.mp4')}" />
+
+							<div class="swiper-slide ${isVideo ? '_type_vdo' : ''}">
+								<a
+									href="<%=request.getContextPath()%>/event.htm?eventId=1"
+									target="_self">
+									<div class="vdo-box">
+										<c:choose>
+											<c:when test="${isVideo}">
+												<video autoplay muted loop playsinline>
+													<source
+														src="${pageContext.request.contextPath}${dto.imageUrl}"
+														type="video/mp4">
+												</video>
+											</c:when>
+											<c:otherwise>
+												<img src="${pageContext.request.contextPath}${dto.imageUrl}"
+													alt="${dto.bannerName}">
+											</c:otherwise>
+										</c:choose>
+									</div>
+
+									<div class="txt-box _type_wt">
+										<p class="tit">${dto.bannerName}</p>
+										<p class="more">자세히 보기</p>
+									</div>
+								</a>
+							</div>
+
+						</c:forEach>
+					</div>
 					<span class="swiper-notification" aria-live="assertive"
 						aria-atomic="true"></span>
 				</div>
@@ -1281,8 +1288,7 @@
 											<div class="txt-box">
 												<p class="tit">권순우 선수의 How to SERVE</p>
 												<p class="txt">
-													Lesson #1 <br>권순우 선수처럼 서브하기<br>
-													<br>
+													Lesson #1 <br>권순우 선수처럼 서브하기<br> <br>
 												</p>
 												<p class="category">How to tennis</p>
 											</div>
@@ -1866,8 +1872,7 @@
 											<div class="txt-box">
 												<p class="tit">권순우 선수의 How to SERVE</p>
 												<p class="txt">
-													Lesson #1 <br>권순우 선수처럼 서브하기<br>
-													<br>
+													Lesson #1 <br>권순우 선수처럼 서브하기<br> <br>
 												</p>
 												<p class="category">How to tennis</p>
 											</div>
@@ -2419,8 +2424,7 @@
 											<div class="txt-box">
 												<p class="tit">권순우 선수의 How to SERVE</p>
 												<p class="txt">
-													Lesson #1 <br>권순우 선수처럼 서브하기<br>
-													<br>
+													Lesson #1 <br>권순우 선수처럼 서브하기<br> <br>
 												</p>
 												<p class="category">How to tennis</p>
 											</div>
