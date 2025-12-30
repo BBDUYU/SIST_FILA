@@ -3,24 +3,24 @@ package event.dto;
 import java.util.Date;
 
 public class EventDTO {
-    private long eventId;
+    private int eventId;
     private String eventName;
     private String eventCategory;
-    private String url;
+    private String slug;
     private String description;
     private Date startAt;
     private Date endAt;
     private String isActive;
 
     // getter/setter
-    public long getEventId() { return eventId; }
-    public void setEventId(long eventId) { this.eventId = eventId; }
+    public int getEventId() { return eventId; }
+    public void setEventId(int eventId) { this.eventId = eventId; }
     public String getEventName() { return eventName; }
     public void setEventName(String eventName) { this.eventName = eventName; }
     public String getEventCategory() { return eventCategory; }
     public void setEventCategory(String eventCategory) { this.eventCategory = eventCategory; }
-    public String getUrl() { return url; }
-    public void setUrl(String url) { this.url = url; }
+    public String getSlug() { return slug; }
+    public void setSlug(String slug) { this.slug = slug; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
     public Date getStartAt() { return startAt; }
