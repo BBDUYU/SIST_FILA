@@ -32,7 +32,7 @@ public class EventDAO {
     }
 
     private EventDTO selectEvent(Connection con, long eventId) throws SQLException {
-        String sql = "SELECT EVENT_ID, EVENT_NAME, EVENT_CATEGORY, URL, DESCRIPTION, START_AT, END_AT, IS_ACTIVE " +
+        String sql = "SELECT EVENT_ID, EVENT_NAME, EVENT_CATEGORY, SLUG, DESCRIPTION, START_AT, END_AT, IS_ACTIVE " +
                      "FROM EVENT WHERE EVENT_ID = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setLong(1, eventId);
@@ -40,10 +40,10 @@ public class EventDAO {
                 if (!rs.next()) return null;
 
                 EventDTO e = new EventDTO();
-                e.setEventId(rs.getLong("EVENT_ID"));
+                e.setEventId(rs.getInt("EVENT_ID"));
                 e.setEventName(rs.getString("EVENT_NAME"));
                 e.setEventCategory(rs.getString("EVENT_CATEGORY"));
-                e.setUrl(rs.getString("URL"));
+                e.setSlug(rs.getString("SLUG"));
                 e.setDescription(rs.getString("DESCRIPTION"));
                 e.setStartAt(rs.getDate("START_AT"));
                 e.setEndAt(rs.getDate("END_AT"));
@@ -63,8 +63,9 @@ public class EventDAO {
                 while (rs.next()) {
                 	SectionDTO s = new SectionDTO();
                     s.setSectionId(rs.getLong("SECTION_ID"));
-                    s.setEventId(rs.getLong("EVENT_ID"));
-                    s.setSortOrder((Integer) rs.getObject("SORT_ORDER"));
+                    s.setEventId(rs.getInt("EVENT_ID"));
+                    int v = rs.getInt("SORT_ORDER");
+                    s.setSortOrder(rs.wasNull() ? null : v);
                     list.add(s);
                 }
             }
@@ -73,9 +74,19 @@ public class EventDAO {
     }
 
     private void attachSectionImages(Connection con, Map<Long, SectionDTO> sectionMap) throws SQLException {
-        String sql = "SELECT SECTION_IMAGE_ID, SECTION_ID, IMAGE_URL, ALT_TEXT, LINK_URL, SORT_ORDER " +
-                     "FROM EVENT_SECTION_IMAGE " +
-                     "WHERE SECTION_ID = ? ORDER BY SORT_ORDER";
+        String sql = "SELECT\r\n"
+        		+ "  ES.SECTION_ID,\r\n"
+        		+ "  ES.SORT_ORDER AS SECTION_SORT,\r\n"
+        		+ "  ESI.SECTION_IMAGE_ID,\r\n"
+        		+ "  ESI.IMAGE_URL,\r\n"
+        		+ "  ESI.ALT_TEXT,\r\n"
+        		+ "  ESI.LINK_URL,\r\n"
+        		+ "  ESI.SORT_ORDER AS IMAGE_SORT\r\n"
+        		+ "FROM EVENT_SECTION ES\r\n"
+        		+ "JOIN EVENT_SECTION_IMAGE ESI\r\n"
+        		+ "  ON ES.SECTION_ID = ESI.SECTION_ID\r\n"
+        		+ "WHERE ES.EVENT_ID = ?\r\n"
+        		+ "ORDER BY ES.SORT_ORDER, ESI.SORT_ORDER\r\n";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             for (Long sectionId : sectionMap.keySet()) {
                 ps.setLong(1, sectionId);
@@ -87,7 +98,9 @@ public class EventDAO {
                         img.setImageUrl(rs.getString("IMAGE_URL"));
                         img.setAltText(rs.getString("ALT_TEXT"));
                         img.setLinkUrl(rs.getString("LINK_URL"));
-                        img.setSortOrder((Integer) rs.getObject("SORT_ORDER"));
+                        int v = rs.getInt("SORT_ORDER");
+                        img.setSortOrder(rs.wasNull() ? null : v);
+
 
                         sectionMap.get(sectionId).getImages().add(img);
                     }
@@ -112,9 +125,10 @@ public class EventDAO {
                         p.setProduct_id(rs.getString("PRODUCT_ID"));
                         p.setName(rs.getString("NAME"));
                         p.setPrice(rs.getInt("PRICE"));
-                        p.setView_count((Integer) rs.getObject("VIEW_COUNT"));
+                        p.setView_count( rs.getInt("VIEW_COUNT"));
                         p.setStatus(rs.getString("STATUS"));
-                        p.setDiscount_rate((Integer) rs.getObject("DISCOUNT_RATE"));
+                        int v = rs.getInt("DISCOUNT_RATE");
+                        p.setDiscount_rate(rs.wasNull() ? null : v);
 
                         sectionMap.get(sectionId).getProducts().add(p);
                     }

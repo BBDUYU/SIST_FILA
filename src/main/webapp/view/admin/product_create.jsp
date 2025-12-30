@@ -265,13 +265,64 @@ textarea.f-input {
 	color: var(--fila-navy);
 	font-weight: bold;
 }
+/* 사이드바 기본 스타일 및 레이아웃 설정 */
+.sidebar {
+	width: 240px;
+	height: 100vh;
+	background: var(--fila-navy);
+	color: white;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1000; /* 헤더보다 위에 있거나 적절한 높이 유지 */
+}
+
+.sidebar .logo {
+	padding: 30px;
+	text-align: center;
+	border-bottom: 1px solid #1a3578;
+	font-weight: bold;
+	font-size: 24px;
+	letter-spacing: 2px;
+}
+
+.sidebar .nav-item {
+	padding: 15px 25px;
+	cursor: pointer;
+	border-bottom: 1px solid #1a3578;
+	transition: 0.3s;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.sidebar .nav-item:hover, .sidebar .nav-item.active {
+	background: var(--fila-red);
+	color: white;
+}
+
+/* 메인 컨텐츠 영역 밀어내기 */
+.admin-section {
+	margin-left: 240px; /* 사이드바 너비만큼 왼쪽 여백 추가 */
+	padding-top: 50px; /* 기존 150px에서 헤더 유무에 따라 조절 */
+	background-color: var(--bg-gray);
+	min-height: 100vh;
+	width: calc(100% - 240px);
+}
+
+/* form 컨테이너 중앙 정렬 보정 */
+#productForm {
+	width: 100%;
+	max-width: 1300px;
+	margin: 0 auto;
+}
 </style>
 </head>
 
 <body class="view__style1">
-	<jsp:include page="../common/header.jsp" />
 
 	<div id="wrap" class="admin-section">
+		<jsp:include page="../common/sidebar.jsp">
+			<jsp:param name="currentPage" value="product" />
+		</jsp:include>
 		<form id="productForm" action="createProduct.do" method="post"
 			enctype="multipart/form-data">
 			<div id="contents" class="goods__contents"
@@ -425,6 +476,27 @@ textarea.f-input {
 										목록이 나타납니다.</div>
 								</div>
 							</div>
+							<div style="display: flex; gap: 15px;">
+								<div class="input-group" style="flex: 1;">
+									<label>스타일(룩북) 연결</label> <select name="styleId"
+										class="f-input">
+										<option value="">-- 선택 안함 --</option>
+										<c:forEach items="${styleList}" var="s">
+											<option value="${s.STYLE_ID}">${s.STYLE_NAME}</option>
+										</c:forEach>
+									</select>
+								</div>
+
+								<div class="input-group" style="flex: 1;">
+									<label>이벤트 섹션 연결</label> <select name="sectionId"
+										class="f-input">
+										<option value="">-- 선택 안함 --</option>
+										<c:forEach items="${eventSectionList}" var="es">
+											<option value="${es.sectionId}">${es.name}</option>
+										</c:forEach>
+									</select>
+								</div>
+							</div>
 						</div>
 					</div>
 
@@ -459,7 +531,6 @@ textarea.f-input {
 		</form>
 	</div>
 
-	<jsp:include page="../common/footer.jsp" />
 
 	<script>
     // 이미지 미리보기 공통 함수

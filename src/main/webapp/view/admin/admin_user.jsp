@@ -108,20 +108,9 @@
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="logo">
-            <a href="${pageContext.request.contextPath}/view/user/main.mm" style="text-decoration: none; color: inherit;"> 
-                <span style="letter-spacing: 5px;">FILA</span>
-            </a> 
-            <span style="font-weight: 300; font-size: 16px; margin-left: 5px; color: rgba(255, 255, 255, 0.7);">ADMIN</span>
-        </div>
-        <div class="nav-item active" onclick="location.href='${pageContext.request.contextPath}/admin.ad'">회원 관리</div>
-        <div class="nav-item">상품 관리</div>
-        <div class="nav-item">쿠폰 관리</div>
-        <div class="nav-item">
-            1:1 문의 <span style="background: var(--fila-red); padding: 2px 6px; border-radius: 10px; font-size: 10px;">3</span>
-        </div>
-    </div>
+    <jsp:include page="../common/sidebar.jsp">
+        <jsp:param name="currentPage" value="user" />
+    </jsp:include>
 
     <div class="main-content">
         <div class="card">
@@ -147,7 +136,7 @@
                         <tr>
                             <td>${user.usernumber}</td>
                             <td><strong>${user.id}</strong></td>
-                            <td>${user.childname}</td> <td>${user.email}</td>
+                            <td>${user.name}</td> <td>${user.email}</td>
                             <td><fmt:formatDate value="${user.createAt}" pattern="yyyy-MM-dd" /></td>
                             <td><span style="border: 1px solid #ccc; padding: 2px 5px; font-size: 11px;">${user.grade}</span></td>
                             <td>
@@ -161,7 +150,7 @@
                                 </c:choose>
                             </td>
                             <td>
-                                <button class="btn-detail" onclick="location.href='${pageContext.request.contextPath}/userDetail.ad?userNum=${user.usernumber}'">상세보기</button>
+                                <button class="btn-detail" onclick="location.href='${pageContext.request.contextPath}/admin/userDetail.htm?userNum=${user.usernumber}'">상세보기</button>
                             </td>
                         </tr>
                     </c:forEach>
