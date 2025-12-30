@@ -28,7 +28,7 @@ public class UserInfoDAO implements IUserInfo {
                 UserInfoDTO dto = UserInfoDTO.builder()
                         .usernumber(rs.getInt("USER_NUMBER"))
                         .id(rs.getString("ID"))
-                        .childname(rs.getString("NAME")) // 기획에 따라 필드명 매핑 확인 필요
+                        .name(rs.getString("NAME")) // 기획에 따라 필드명 매핑 확인 필요
                         .email(rs.getString("EMAIL"))
                         .phone(rs.getString("PHONE"))
                         .grade(rs.getString("GRADE"))
@@ -64,6 +64,7 @@ public class UserInfoDAO implements IUserInfo {
             if (rs.next()) {
                 userDto = UserInfoDTO.builder()
                         .usernumber(rs.getInt("USER_NUMBER"))
+                        .name(rs.getString("NAME"))
                         .id(rs.getString("ID"))
                         .email(rs.getString("EMAIL"))
                         .phone(rs.getString("PHONE"))

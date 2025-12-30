@@ -24,7 +24,7 @@ public class MainHandler implements CommandHandler {
         // 나머지 데이터는 request에 저장
         request.setAttribute("popularKeywords", mainData.get("popularKeywords"));
         request.setAttribute("recommendKeywords", mainData.get("recommendKeywords"));
-        request.setAttribute("recommendProducts", mainData.get("recommendProducts"));
+        request.setAttribute("r ecommendProducts", mainData.get("recommendProducts"));
         request.setAttribute("bannerList", mainData.get("bannerList"));
 
         // 4. 이동할 JSP 경로 리턴
