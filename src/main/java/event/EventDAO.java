@@ -13,7 +13,7 @@ public class EventDAO {
         if (event == null) return null;
 
         List<SectionDTO> sections = selectSections(con, eventId);
-        Map<Long, SectionDTO> sectionMap = new LinkedHashMap<>();
+        Map<Integer, SectionDTO> sectionMap = new LinkedHashMap<>();
         for (SectionDTO s : sections) {
             // 섹션 제목 컬럼이 없다면 임시로 이렇게라도
             s.setTitle("SECTION " + s.getSectionId());
@@ -64,7 +64,7 @@ public class EventDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                 	SectionDTO s = new SectionDTO();
-                    s.setSectionId(rs.getLong("SECTION_ID"));
+                    s.setSectionId(rs.getInt("SECTION_ID"));
                     s.setEventId(rs.getInt("EVENT_ID"));
                     int v = rs.getInt("SORT_ORDER");
                     s.setSortOrder(rs.wasNull() ? null : v);
@@ -75,7 +75,7 @@ public class EventDAO {
         return list;
     }
 
-    private void attachSectionImages(Connection con, long eventId, Map<Long, SectionDTO> sectionMap) throws SQLException {
+    private void attachSectionImages(Connection con, long eventId, Map<Integer, SectionDTO> sectionMap) throws SQLException {
         String sql =
             "SELECT " +
             "  ES.SECTION_ID, " +
@@ -94,10 +94,10 @@ public class EventDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    long sectionId = rs.getLong("SECTION_ID");
+                    int sectionId = rs.getInt("SECTION_ID");
 
                     SectionImageDTO img = new SectionImageDTO();
-                    img.setSectionImageId(rs.getLong("SECTION_IMAGE_ID"));
+                    img.setSectionImageId(rs.getInt("SECTION_IMAGE_ID"));
                     img.setSectionId(sectionId);
                     img.setImageUrl(rs.getString("IMAGE_URL"));
                     img.setAltText(rs.getString("ALT_TEXT"));
@@ -114,7 +114,7 @@ public class EventDAO {
     }
 
 
-    private void attachSectionProducts(Connection con, Map<Long, SectionDTO> sectionMap) throws SQLException {
+    private void attachSectionProducts(Connection con, Map<Integer, SectionDTO> sectionMap) throws SQLException {
         String sql =
             "SELECT ep.SECTION_ID, p.PRODUCT_ID, p.NAME, p.PRICE, p.VIEW_COUNT, p.STATUS, p.DISCOUNT_RATE " +
             "FROM EVENT_PRODUCT ep " +
@@ -122,7 +122,7 @@ public class EventDAO {
             "WHERE ep.SECTION_ID = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-            for (Long sectionId : sectionMap.keySet()) {
+            for (Integer sectionId : sectionMap.keySet()) {
                 ps.setLong(1, sectionId);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
