@@ -38,7 +38,7 @@
 <script src="${pageContext.request.contextPath}/js/mighty.base.1.5.7.js"></script>
 <script src="${pageContext.request.contextPath}/js/matiz.js"></script>
 <script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
-<script src="${pageContext.request.contextPath}/js/default.js"></script>
+<script src="${pageContext.request.contextPath}/js/default.js?v=20251231_v3"></script>
 
 <script>
 	jQuery(window.document).ready(function(){
@@ -418,35 +418,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			<div class="util-account">
 				<button type="button" class="account__btn"
-					onclick="location.href='/member/login.asp'">account</button>
+					onclick="location.href='${pageContext.request.contextPath}/login.htm'">account</button>
 
 				<!-- account layer -->
 				<div class="account__layer">
-					<div class="inner">
+    <div class="inner">
+        <c:choose>
+            <%-- 1. 로그인 안 된 상태 --%>
+            <c:when test="${empty auth}">
+                <div class="account-menu-box">
+                    <ul>
+                        <li id="globalMenu1"><a href="${pageContext.request.contextPath}/login.htm">로그인</a></li>
+                        <li id="globalMenu2"><a href="/member/join_intro.asp">회원가입</a></li>
+                        <li id="globalMenu3"><a href="/member/searchIDPW.asp">아이디 · 비밀번호 찾기</a></li>
+                        <li id="globalMenu7" style="display: none;">&nbsp;</li>
+                        <li id="globalMenu4"></li>
+                        <li id="globalMenu5" style="display: none;">&nbsp;</li>
+                        <li id="globalMenu8"><a href="/specialoffer/list.asp">이벤트</a></li>
+                    </ul>
+                </div>
+            </c:when>
 
-						<div class="account-menu-box">
-							<ul>
-								<li id="globalMenu1"><a href="/member/login.asp">로그인</a></li>
+            <%-- 2. 로그인 된 상태 --%>
+            <c:otherwise>
+                <c:choose>
+                    <%-- 2-1. 관리자 로그인 상태 (ID에 admin 포함) --%>
+                    <c:when test="${fn:contains(auth.id, 'admin')}">
+                        <div class="account-menu-box">
+                            <ul>
+                                <li id="globalMenu9"><a href="${pageContext.request.contextPath}/admin/userList.htm">관리자 페이지</a></li>
+                            </ul>
+                            <button type="button" class="logout__btn" id="globalMenu6" 
+                                    onclick="location.href='${pageContext.request.contextPath}/logout.htm';">로그아웃</button>
+                        </div>
+                    </c:when>
 
-								<li id="globalMenu2"><a href="/member/join_intro.asp">회원가입</a></li>
+                    <%-- 2-2. 일반 사용자 로그인 상태 --%>
+                    <c:otherwise>
+                        <div class="account-info-box loginMember">
+                            <div>
+                                <p class="name">${auth.name}님</p>
+                                <p class="level">WHITE</p>
+                            </div>
+                            <div>
+                                <p class="percent">2% 적립</p>
+                                <a href="/customer/membership.asp">자세히 보기</a>
+                            </div>
+                        </div>
 
-								<li id="globalMenu3"><a href="/member/searchIDPW.asp">아이디
-										· 비밀번호 찾기</a></li>
-								<li id="globalMenu7" style="display: none;">&nbsp;</li>
-								<li id="globalMenu4"></li>
-								<li id="globalMenu5" style="display: none;">&nbsp;</li>
-								<li id="globalMenu8"><a href="/specialoffer/list.asp">이벤트</a></li>
-								<li id="globalMenu9"><a href="${pageContext.request.contextPath}/admin/userList.htm">관리자 페이지</a></li>
-							</ul>
-							<button type="button" class="logout__btn" id="globalMenu6"
-								onclick="location.href='/member/logout.asp';"
-								style="display: none;">로그아웃</button>
-						</div>
-
-
-						<!-- //로그인 후 -->
-					</div>
-				</div>
+                        <div class="account-menu-box">
+                            <ul>
+                                <li id="globalMenu1"><a href="/mypage/mypage.asp">마이페이지</a></li>
+                                <li id="globalMenu2"><a href="/mypage/myOrder.asp">주문/배송</a></li>
+                                <li id="globalMenu3"><a href="/mypage/qna.asp">1:1문의</a></li>
+                                <li id="globalMenu7"><a href="/mypage/wishlist.asp">위시리스트</a><strong><a href="/mypage/wishlist.asp">0개</a></strong></li>
+                                <li id="globalMenu4"><a href="/mypage/coupon.asp">쿠폰</a><strong><a href="/mypage/coupon.asp">0개</a></strong></li>
+                                <li id="globalMenu5"><a href="/mypage/point.asp">포인트</a><strong><a href="/mypage/point.asp">0P</a></strong></li>
+                                <li id="globalMenu8"><a href="/specialoffer/list.asp">이벤트</a></li>
+                            </ul>
+                            <button type="button" class="logout__btn" id="globalMenu6" 
+                                    onclick="location.href='${pageContext.request.contextPath}/logout.htm';">로그아웃</button>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </c:otherwise>
+        </c:choose>
+    </div>
+</div>
 				<!-- //account layer -->
 			</div>
 
