@@ -53,22 +53,13 @@ public class ProductsDTO {
     public int getDiscount_rate() { return discount_rate; }
     public void setDiscount_rate(int discount_rate) { this.discount_rate = discount_rate; }
 
-    public String getImage_url() { 
-        // 1. 이미지가 비어있을 경우 기본 이미지 리턴
-        if (this.image_url == null || this.image_url.isEmpty()) {
-            return "https://filacdn.styleship.com/filaproduct2/data/productimages/a/1/FS261FT01X001_234.jpg";
-        }
-
-        // 2. 이미지가 로컬 경로(C:\)인 경우 서블릿 주소로 변환
-        // 관리자 페이지에서 썼던 로직과 동일하게 맞춤
-        if (this.image_url.contains(":\\") || this.image_url.contains("fila_upload")) {
-            String webPath = this.image_url.replace("\\", "/");
-            // 어제 사용하신 displayImage.do 핸들러를 호출하도록 주소 생성
-            return "/SIST_FILA/displayImage.do?path=" + webPath;
-        }
-
-        // 3. 그 외(이미 웹 주소인 경우)는 그대로 리턴
-        return this.image_url; 
+    public String getImage_url() {
+        // 값이 없으면 빈 문자열 리턴
+        if (this.image_url == null || this.image_url.isEmpty()) return "";
+     
+        // 역슬래시를 슬래시로 바꾸고 서블릿 경로 붙여서 리턴
+        String webPath = this.image_url.replace("\\", "/");
+        return "/SIST_FILA/displayImage.do?path=" + webPath;
     }
     
     public void setImage_url(String image_url) { 
