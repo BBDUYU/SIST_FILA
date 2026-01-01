@@ -21,11 +21,5 @@ public class ProductDTO {
     private Date createdAt;      // 등록일
     private String mainImageUrl; // 상품 대표 이미지
     
-    public String getMainImageUrl() {
-        if (this.mainImageUrl == null || this.mainImageUrl.isEmpty()) return "";
-     
-        String webPath = this.mainImageUrl.replace("\\", "/");
-        
-        return "/displayImage.do?path=" + webPath;
-    }
+
 }

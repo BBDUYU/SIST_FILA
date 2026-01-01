@@ -177,7 +177,7 @@ body {
 				<c:forEach var="p" items="${productList}">
 					<tr>
 						<td><img
-							src="${pageContext.request.contextPath}${p.mainImageUrl}"
+							src="${pageContext.request.contextPath}/displayImage.do?path=${p.mainImageUrl}"
 							width="50" height="50" style="object-fit: cover;"></td>
 						<td>${p.productid}</td>
 						<td>${p.categoryName}</td>
@@ -200,7 +200,7 @@ body {
 							</c:choose></td>
 						<td>
 							<button class="small-btn"
-								onclick="location.href='editProduct.htm?id=${p.productid}'">수정</button>
+								onclick="location.href='${pageContext.request.contextPath}/admin/editProduct.htm?id=${p.productid}'">수정</button>
 							<button class="small-btn"
 							    style="background-color: #e31837; color: white; border: none;"
 							    onclick="if(confirm('정말 삭제하시겠습니까?')) { location.href='${pageContext.request.contextPath}/admin/deleteProduct.htm?id=${p.productid}'; }">

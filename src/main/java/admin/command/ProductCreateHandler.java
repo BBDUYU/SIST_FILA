@@ -26,12 +26,22 @@ public class ProductCreateHandler implements CommandHandler {
         
         // GET 방식: 등록 페이지 데이터 준비 및 이동
         if (request.getMethod().equalsIgnoreCase("GET")) {
-            ProductService.getInstance().getAdminFullFormData(request);
+        	ProductService service = ProductService.getInstance(); 
+            
+            service.getAdminFullFormData(request);            
             if (isEdit) {
                 // 수정 모드일 때: 기존 상품 정보를 불러와서 request에 담기
                 String productId = request.getParameter("id");
                 CreateproductDTO product = ProductService.getInstance().getProductDetail(productId);
                 request.setAttribute("product", product);
+                ArrayList<CreateproductDTO> imageList = service.getProductImages(productId);
+                request.setAttribute("imageList", imageList);
+                
+                // 3. [추가] 기존 선택된 사이즈 ID 리스트 (DAO에 구현 필요)
+                // request.setAttribute("productSizes", service.getProductSizeIds(productId));
+                
+                // 4. [추가] 기존 선택된 카테고리 정보 (DAO에 구현 필요)
+                // request.setAttribute("productCategories", service.getProductCategories(productId));
                 request.setAttribute("mode", "edit");
                 return "/view/admin/product_edit.jsp"; // 수정 페이지로 이동
             }
@@ -70,10 +80,10 @@ public class ProductCreateHandler implements CommandHandler {
                 CreateproductDTO product = CreateproductDTO.builder()
                         .product_id(productId)
                         .category_id(mainCateId)
-                        .name(multi.getParameter("productName"))
+                        .name(multi.getParameter("name"))
                         .description(multi.getParameter("description"))
                         .price(Integer.parseInt(multi.getParameter("price")))
-                        .discount_rate(Integer.parseInt(multi.getParameter("discount")))
+                        .discount_rate(Integer.parseInt(multi.getParameter("discount_rate")))
                         .build();
 
                 // 4. 파일 처리 (C:\fila_upload\product\ID 폴더로 이동)
@@ -81,15 +91,20 @@ public class ProductCreateHandler implements CommandHandler {
                 
                 String stockStr = multi.getParameter("stock");
                 int stock = (stockStr != null && !stockStr.isEmpty()) ? Integer.parseInt(stockStr) : 10; // 기본값 10
-                
+                String[] deleteImageIds = multi.getParameterValues("deleteImageIds"); // 추가
                 // 5. 서비스 호출 (등록과 수정을 구분해서 호출)
                 if (isEdit) {
                     service.updateProduct(
-                        product, categoryIds, 
-                        multi.getParameter("gender_option"), 
-                        multi.getParameter("sport_option"), 
-                        multi.getParameterValues("size_options"), 
-                        imageList, styleId, sectionId,stock
+                    		product,             
+                            imageList,           
+                            deleteImageIds,      
+                            categoryIds,        
+                            multi.getParameter("gender_option"), 
+                            multi.getParameter("sport_option"), 
+                            multi.getParameterValues("size_options"),
+                            styleId,             
+                            sectionId,           
+                            stock                
                     );
                 } else {
                     service.createProduct(
@@ -100,8 +115,10 @@ public class ProductCreateHandler implements CommandHandler {
                         imageList, styleId, sectionId,stock
                     );
                 }
+                String contextPath = request.getContextPath(); // /SIST_FILA
+                response.sendRedirect(contextPath + "/admin/productList.htm");
 
-                return "/admin/productList.htm"; 
+                return null; 
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;

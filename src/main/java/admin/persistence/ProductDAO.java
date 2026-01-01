@@ -39,7 +39,20 @@ public class ProductDAO {
 	    try {
 	        pstmt = conn.prepareStatement(sql);
 	        rs = pstmt.executeQuery();
+	     // ProductDAO.java 수정
 	        while (rs.next()) {
+	            String rawPath = rs.getString("IMG"); // DB값 가져오기
+	            
+	            if (rawPath != null && !rawPath.isEmpty()) {
+	                // 1. 만약 DB에 이미 /displayImage... 가 포함되어 있다면 순수 경로만 추출
+	                if (rawPath.contains("path=")) {
+	                    rawPath = rawPath.split("path=")[1];
+	                }
+	                
+	                // 2. 역슬래시를 슬래시로 변환 (URL 안정성)
+	                rawPath = rawPath.replace("\\", "/");
+	            }
+
 	            ProductDTO dto = ProductDTO.builder()
 	                    .productid(rs.getString("PRODUCT_ID"))
 	                    .name(rs.getString("NAME"))
@@ -47,9 +60,8 @@ public class ProductDAO {
 	                    .price(rs.getInt("PRICE"))
 	                    .discountRate(rs.getInt("DISCOUNT_RATE"))
 	                    .status(rs.getString("STATUS"))
-	                    .createdAt(rs.getDate("CREATED_AT"))
 	                    .totalStock(rs.getInt("TOTAL_STOCK"))
-	                    .mainImageUrl(rs.getString("IMG"))
+	                    .mainImageUrl(rawPath) // [수정] webPath가 아니라 rawPath를 넣어야 합니다!
 	                    .build();
 	            list.add(dto);
 	        }
