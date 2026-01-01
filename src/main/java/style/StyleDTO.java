@@ -6,5 +6,6 @@ import lombok.Data;
 public class StyleDTO {
     private int styleId;      
     private String styleName; 
+    private String description;
     private int useYn;        
 }

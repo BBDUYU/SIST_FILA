@@ -106,22 +106,35 @@ public class CreateproductDAO {
         }
         return results;
     }
-    public void insertCategoryRelations(Connection conn, String productId, String[] categoryIds) {
+ // 파라미터에 String genderOption 추가
+    public void insertCategoryRelations(Connection conn, String productId, String[] categoryIds, String genderOption) {
         String sql = "INSERT INTO PRODUCT_CATEGORY_REL (REL_ID, PRODUCT_ID, CATEGORY_ID) "
                    + "VALUES (REL_SEQ.NEXTVAL, ?, ?)";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            for (String catId : categoryIds) {
-            	if (catId == null || catId.trim().isEmpty()) {
-                    continue; 
-                }
+            // 1. 성별 카테고리(10, 20, 30) 강제 추가
+            if (genderOption != null && !genderOption.isEmpty()) {
                 pstmt.setString(1, productId);
-                pstmt.setInt(2, Integer.parseInt(catId));
-                pstmt.addBatch(); // 여러 건을 한 번에 처리하기 위해 배치 사용
+                pstmt.setInt(2, Integer.parseInt(genderOption));
+                pstmt.addBatch();
+                System.out.println("성별 카테고리 추가됨: " + genderOption); // 디버깅용
+            }
+
+            // 2. 나머지 하위 카테고리들 추가
+            if (categoryIds != null) {
+                for (String catId : categoryIds) {
+                    if (catId == null || catId.trim().isEmpty()) continue;
+                    // 성별과 중복 방지
+                    if (catId.equals(genderOption)) continue; 
+
+                    pstmt.setString(1, productId);
+                    pstmt.setInt(2, Integer.parseInt(catId));
+                    pstmt.addBatch();
+                }
             }
             pstmt.executeBatch();
         } catch (Exception e) {
-        	throw new RuntimeException("DB 작업 중 에러 발생: " + e.getMessage(), e);
+            throw new RuntimeException("카테고리 저장 에러: " + e.getMessage(), e);
         }
     }
     public Map<Integer, List<Map<String, Object>>> selectAllOptions(Connection conn) throws SQLException {
@@ -162,10 +175,7 @@ public class CreateproductDAO {
              PreparedStatement pstmtMName = conn.prepareStatement(sqlGetMasterName);
              PreparedStatement pstmtVName = conn.prepareStatement(sqlGetValueName)) {
 
-            // --- 1. 성별 옵션 (MASTER_ID: 1) ---
-            if (genderOption != null) {
-                insertSingleOption(pstmtSeq, pstmtGroup, pstmtValue, pstmtMName, pstmtVName, productId, 1, genderOption);
-            }
+
 
             // --- 2. 스포츠 옵션 (MASTER_ID: 2) ---
             if (sportOption != null) {
@@ -238,12 +248,13 @@ public class CreateproductDAO {
     }
 
 
-    /**
-     * 3단계: 기본 재고 및 조합 생성 (14, 15, 16번 테이블)
-     */
-    public void insertDefaultStock(Connection conn, String productId, String[] sizeOptions) throws SQLException {
+
+    public void insertDefaultStock(Connection conn, String productId, String[] sizeOptions, int stock) throws SQLException {
+        // 14번 테이블: 상품 옵션 조합
         String sqlCombi = "INSERT INTO PRODUCT_OPTION_COMBINATIONS (COMBINATION_ID, PRODUCT_ID) VALUES (SEQ_COMBINATION.NEXTVAL, ?)";
-        String sqlStock = "INSERT INTO PRODUCT_OPTION_STOCK (STOCK_ID, COMBINATION_ID, STORE_ID, STOCK, IS_SOLDOUT) VALUES (SEQ_STOCK.NEXTVAL, ?, 1, 10, 0)";
+        
+        // 16번 테이블: 재고 (기존 하드코딩된 10 대신 ? 사용)
+        String sqlStock = "INSERT INTO PRODUCT_OPTION_STOCK (STOCK_ID, COMBINATION_ID, STORE_ID, STOCK, IS_SOLDOUT) VALUES (SEQ_STOCK.NEXTVAL, ?, 1, ?, ?)";
         
         // 15번 테이블(Combi_Value) 연결을 위한 VALUE_ID 조회 쿼리
         String sqlFindValueId = "SELECT VALUE_ID FROM PRODUCT_OPTION_VALUES v " +
@@ -256,7 +267,7 @@ public class CreateproductDAO {
 
             if (sizeOptions != null) {
                 for (String vId : sizeOptions) {
-                    // 1. 조합 생성
+                    // 1. 조합(Combination) 생성
                     pstmtCombi.setString(1, productId);
                     pstmtCombi.executeUpdate();
                     
@@ -265,15 +276,18 @@ public class CreateproductDAO {
                         if (rs.next()) combiId = rs.getLong(1);
                     }
 
-                    // 2. 재고 등록 (기본 10개)
+                    // 2. 재고(Stock) 등록
                     if (combiId > 0) {
                         pstmtStock.setLong(1, combiId);
+                        pstmtStock.setInt(2, stock); // 사용자가 입력한 재고 수량 설정
+                        pstmtStock.setInt(3, stock > 0 ? 0 : 1); // 0개면 품절(1) 처리
                         pstmtStock.executeUpdate();
                         
-                        // 3. (옵션) 15번 테이블 PRODUCT_OPTION_COMBI_VALUES 채우기
-                        // 등록된 VALUE_ID를 찾아서 조합과 연결
+                        // 3. 15번 테이블 PRODUCT_OPTION_COMBI_VALUES 채우기
+                        // 미리 등록된 VALUE_ID를 찾아서 조합(combiId)과 맵핑
                         pstmtFind.setString(1, productId);
                         pstmtFind.setInt(2, Integer.parseInt(vId));
+                        
                         try (ResultSet rs = pstmtFind.executeQuery()) {
                             if (rs.next()) {
                                 long valueId = rs.getLong("VALUE_ID");
@@ -290,9 +304,7 @@ public class CreateproductDAO {
             }
         }
     }
-    /**
-     * 1. 스타일 상품 연결 (STYLE_PRODUCT 테이블)
-     */
+
     public void insertStyleProduct(Connection conn, String productId, int styleId) throws SQLException {
         String sql = "INSERT INTO STYLE_PRODUCT (PRODUCT_ID, STYLE_ID, SORT_ORDER) VALUES (?, ?, 1)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -302,10 +314,6 @@ public class CreateproductDAO {
         }
     }
 
-    /**
-     * 2. 이벤트 상품 연결 (EVENT_PRODUCT 테이블)
-     * 주의: EVENT_ID가 아니라 SECTION_ID를 넣어야 합니다.
-     */
     public void insertEventProduct(Connection conn, String productId, int sectionId) throws SQLException {
         String sql = "INSERT INTO EVENT_PRODUCT (PRODUCT_ID, SECTION_ID) VALUES (?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -315,9 +323,6 @@ public class CreateproductDAO {
         }
     }
 
-    /**
-     * 3. 화면 UI용: 선택 가능한 이벤트 섹션 리스트 가져오기
-     */
     public List<Map<String, Object>> selectActiveEventSections(Connection conn) throws SQLException {
         List<Map<String, Object>> list = new ArrayList<>();
         String sql = "SELECT e.EVENT_NAME, s.SECTION_ID " +
@@ -333,5 +338,77 @@ public class CreateproductDAO {
             }
         }
         return list;
+    }
+    public List<Map<String, Object>> selectStyleList(Connection conn) throws SQLException {
+        List<Map<String, Object>> list = new ArrayList<>();
+        // USE_YN이 1(사용중)인 스타일만 가져옴
+        String sql = "SELECT STYLE_ID, STYLE_NAME FROM STYLE WHERE USE_YN = 1 ORDER BY STYLE_ID DESC";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                java.util.Map<String, Object> map = new java.util.HashMap<>();
+                map.put("styleId", rs.getInt("STYLE_ID"));
+                map.put("styleName", rs.getString("STYLE_NAME"));
+                list.add(map);
+            }
+        }
+        return list;
+    }
+ // 특정 상품의 기본 정보 조회
+    public CreateproductDTO selectProductById(Connection conn, String productId) throws SQLException {
+        String sql = "SELECT * FROM product WHERE product_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, productId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return CreateproductDTO.builder()
+                            .product_id(rs.getString("product_id"))
+                            .category_id(rs.getInt("category_id"))
+                            .name(rs.getString("name"))
+                            .description(rs.getString("description"))
+                            .price(rs.getInt("price"))
+                            .discount_rate(rs.getInt("discount_rate"))
+                            .build();
+                }
+            }
+        }
+        return null;
+    }
+
+    // 수정 처리 (기본 정보 업데이트)
+    public void updateProduct(Connection conn, CreateproductDTO product) throws SQLException {
+        String sql = "UPDATE product SET name=?, description=?, price=?, discount_rate=? WHERE product_id=?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, product.getName());
+            pstmt.setString(2, product.getDescription());
+            pstmt.setInt(3, product.getPrice());
+            pstmt.setInt(4, product.getDiscount_rate());
+            pstmt.setString(5, product.getProduct_id());
+            pstmt.executeUpdate();
+        }
+    }
+
+    // 기존 카테고리/옵션/이미지 삭제 (수정 시 새로 등록하기 위함)
+    public void deleteRelatedData(Connection conn, String productId) throws SQLException {
+        String[] sqls = {
+            "DELETE FROM product_category WHERE product_id = ?",
+            "DELETE FROM product_option WHERE product_id = ?",
+            "DELETE FROM product_image WHERE product_id = ?"
+        };
+        for (String sql : sqls) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, productId);
+                pstmt.executeUpdate();
+            }
+        }
+    }
+    public void updateProductStatusDeleted(Connection conn, String productId) throws SQLException {
+        // 주신 스키마의 PRODUCTS 테이블 STATUS 컬럼 활용
+        String sql = "UPDATE PRODUCTS SET STATUS = 'DELETED', UPDATED_AT = SYSDATE WHERE PRODUCT_ID = ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, productId);
+            pstmt.executeUpdate();
+        }
     }
 }

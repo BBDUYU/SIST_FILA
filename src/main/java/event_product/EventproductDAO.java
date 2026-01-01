@@ -8,15 +8,15 @@ import java.util.ArrayList;
 
 import com.util.JdbcUtil;
 
-public class eventproductDAO {
+public class EventproductDAO {
     
-    private static eventproductDAO instance = new eventproductDAO();
-    public static eventproductDAO getInstance() { return instance; }
-    private eventproductDAO() {}
+    private static EventproductDAO instance = new EventproductDAO();
+    public static EventproductDAO getInstance() { return instance; }
+    private EventproductDAO() {}
 
 
-    public ArrayList<eventproductDTO> selectRecommendKeywords(Connection conn) throws SQLException {
-        ArrayList<eventproductDTO> list = new ArrayList<>();
+    public ArrayList<EventproductDTO> selectRecommendKeywords(Connection conn) throws SQLException {
+        ArrayList<EventproductDTO> list = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
@@ -29,7 +29,7 @@ public class eventproductDAO {
             pstmt = conn.prepareStatement(sqlEvent);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                list.add(eventproductDTO.builder()
+                list.add(EventproductDTO.builder()
                         .event_name(rs.getString("EVENT_NAME"))
                         .slug(rs.getString("SLUG"))
                         .event_id(rs.getInt("EVENT_ID"))
@@ -47,7 +47,7 @@ public class eventproductDAO {
             pstmt = conn.prepareStatement(sqlProduct);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                list.add(eventproductDTO.builder()
+                list.add(EventproductDTO.builder()
                         .name(rs.getString("NAME"))
                         .product_id(rs.getString("PRODUCT_ID"))
                         .build());
@@ -61,11 +61,10 @@ public class eventproductDAO {
 
  
     // 추천상품용
-    public ArrayList<eventproductDTO> selectRecommendProducts(Connection conn) throws SQLException {
-        ArrayList<eventproductDTO> list = new ArrayList<>();
+    public ArrayList<EventproductDTO> selectRecommendProducts(Connection conn) throws SQLException {
+        ArrayList<EventproductDTO> list = new ArrayList<>();
         
-        // 이벤트 제품 테이블과 상품 테이블을 조인하여 상위 12개 추출
-     // eventproductDAO.java 수정
+        // 진행중인 이벤트 상품 중 최신순 12개 추출
         String sql = "SELECT * FROM ( " +
                      "  SELECT p.PRODUCT_ID, p.NAME, p.PRICE, p.DISCOUNT_RATE " +
                      "  FROM EVENT_PRODUCT ep " +
@@ -74,23 +73,16 @@ public class eventproductDAO {
                      "  ORDER BY p.CREATED_AT DESC " +
                      ") WHERE ROWNUM <= 12";
 
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            pstmt = conn.prepareStatement(sql);
-            rs = pstmt.executeQuery();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                list.add(eventproductDTO.builder()
+                list.add(EventproductDTO.builder()
                         .product_id(rs.getString("PRODUCT_ID"))
                         .name(rs.getString("NAME"))
                         .price(rs.getInt("PRICE"))
                         .discount_rate(rs.getInt("DISCOUNT_RATE"))
                         .build());
             }
-        } finally {
-            JdbcUtil.close(rs);
-            JdbcUtil.close(pstmt);
         }
         return list;
     }
