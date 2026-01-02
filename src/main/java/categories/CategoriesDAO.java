@@ -95,4 +95,32 @@ public class CategoriesDAO implements ICategories {
         return list;
     }
     
+    // ★ 추가한 코드: 대분류(Depth 1) 목록만 가져오기
+    public ArrayList<CategoriesDTO> selectMainCategories(Connection conn) throws SQLException {
+        // depth가 1인 것만 가져옵니다 (FEMALE, MALE, KIDS)
+        String sql = "SELECT * FROM categories WHERE depth = 1 AND use_yn = 1 ORDER BY category_id ASC";
+        
+        ArrayList<CategoriesDTO> list = new ArrayList<>();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                CategoriesDTO dto = CategoriesDTO.builder()
+                        .category_id(rs.getInt("category_id"))
+                        .name(rs.getString("name"))
+                        .parent_id(rs.getInt("parent_id"))
+                        .depth(rs.getInt("depth"))
+                        .build();
+                list.add(dto);
+            }
+        } finally {
+            JdbcUtil.close(rs);
+            JdbcUtil.close(pstmt);
+        }
+        return list;
+    }
+    
 }

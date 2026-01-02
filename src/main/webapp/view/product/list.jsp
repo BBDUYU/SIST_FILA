@@ -221,5 +221,3 @@ $(document).ready(function() {
     
 </body>
 </html>
-
-// 씨발
