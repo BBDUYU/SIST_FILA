@@ -20,6 +20,6 @@ public class EventproductDTO {
     private int event_id;
     private String event_name;  
     private String slug;        
-
+    private String mainImageUrl;
     
 }

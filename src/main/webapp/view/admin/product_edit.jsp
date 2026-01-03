@@ -180,14 +180,14 @@
 					<div style="display: flex; gap: 15px;">
 						<div class="input-group" style="flex: 1;">
 							<label>스타일(룩북) 연결</label>
-							<select name="style_id" class="f-input">
+							<select name="styleId" class="f-input">
 								<option value="0">-- 선택 안함 --</option>
 								<c:forEach items="${styleList}" var="s"><option value="${s.styleId}" ${product.style_id == s.styleId ? 'selected' : ''}>${s.styleName}</option></c:forEach>
 							</select>
 						</div>
 						<div class="input-group" style="flex: 1;">
 							<label>이벤트 섹션 연결</label>
-							<select name="section_id" class="f-input">
+							<select name="sectionId" class="f-input">
 								<option value="0">-- 선택 안함 --</option>
 								<c:forEach items="${eventSectionList}" var="es"><option value="${es.sectionId}" ${product.section_id == es.sectionId ? 'selected' : ''}>${es.name}</option></c:forEach>
 							</select>

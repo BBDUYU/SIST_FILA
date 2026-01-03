@@ -88,6 +88,7 @@ public class ProductService {
 			int styleId, int sectionId, int stock) {
 		Connection conn = null;
 		try {
+			
 			conn = ConnectionProvider.getConnection();
 			conn.setAutoCommit(false);
 

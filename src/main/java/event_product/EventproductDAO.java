@@ -64,9 +64,10 @@ public class EventproductDAO {
     public ArrayList<EventproductDTO> selectRecommendProducts(Connection conn) throws SQLException {
         ArrayList<EventproductDTO> list = new ArrayList<>();
         
-        // 진행중인 이벤트 상품 중 최신순 12개 추출
+        // [수정] 서브쿼리를 통해 메인 이미지(IS_MAIN=1) 경로를 함께 가져옴
         String sql = "SELECT * FROM ( " +
-                     "  SELECT p.PRODUCT_ID, p.NAME, p.PRICE, p.DISCOUNT_RATE " +
+                     "  SELECT p.PRODUCT_ID, p.NAME, p.PRICE, p.DISCOUNT_RATE, " +
+                     "  (SELECT IMAGE_URL FROM PRODUCT_IMAGE pi WHERE pi.PRODUCT_ID = p.PRODUCT_ID AND pi.IS_MAIN = 1 AND ROWNUM = 1) as IMG " +
                      "  FROM EVENT_PRODUCT ep " +
                      "  JOIN PRODUCTS p ON ep.PRODUCT_ID = p.PRODUCT_ID " +
                      "  WHERE p.STATUS IN ('SALE', 'NEW') " + 
@@ -76,11 +77,21 @@ public class EventproductDAO {
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
+                String rawPath = rs.getString("IMG");
+                // 중복 방지를 위한 정제 (C:\... 형태만 남기기)
+                if (rawPath != null && rawPath.contains("path=")) {
+                    rawPath = rawPath.split("path=")[1];
+                }
+                if (rawPath != null) {
+                    rawPath = rawPath.replace("\\", "/");
+                }
+
                 list.add(EventproductDTO.builder()
                         .product_id(rs.getString("PRODUCT_ID"))
                         .name(rs.getString("NAME"))
                         .price(rs.getInt("PRICE"))
                         .discount_rate(rs.getInt("DISCOUNT_RATE"))
+                        .mainImageUrl(rawPath) // [수정] 가져온 경로 세팅
                         .build());
             }
         }
