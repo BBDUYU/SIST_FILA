@@ -334,14 +334,14 @@ document.addEventListener('DOMContentLoaded', () => {
 													            <div class="goods swiper-slide" data-val="${status.count}" role="group" aria-label="${status.count} / 12">
 													                <div class="photo">
 																	    <div class="before">
-																	        <a href="${pageContext.request.contextPath}/product/product_detail.htm?id=${pDto.product_id}">
+																	        <a href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${pDto.product_id}">
 																	            <img src="${pageContext.request.contextPath}/displayImage.do?path=C:/fila_upload/product/${pDto.product_id}/${pDto.product_id}_main_1.jpg" alt="${pDto.name}">
 																	        </a>
 																	    </div>
 																	</div>
 													
 													                <div class="info">
-													                    <a href="/SIST_FILA/view/productDetail.mm?product_id=${pDto.product_id}">
+													                    <a href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${pDto.product_id}">
 													                        <div class="top">
 													                            <%-- 카테고리나 태그 데이터가 DTO에 있다면 활용 가능 --%>
 													                            <p class="category">RECOMMEND</p>
