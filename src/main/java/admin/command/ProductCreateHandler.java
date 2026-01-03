@@ -87,8 +87,7 @@ public class ProductCreateHandler implements CommandHandler {
                         .build();
 
                 // 4. 파일 처리 (C:\fila_upload\product\ID 폴더로 이동)
-                ArrayList<CreateproductDTO> imageList = processFiles(multi, productId, tempPath);
-                
+                ArrayList<CreateproductDTO> imageList = processFiles(multi, productId, tempPath, isEdit);                
                 String stockStr = multi.getParameter("stock");
                 int stock = (stockStr != null && !stockStr.isEmpty()) ? Integer.parseInt(stockStr) : 10; // 기본값 10
                 String[] deleteImageIds = multi.getParameterValues("deleteImageIds"); // 추가
@@ -126,55 +125,78 @@ public class ProductCreateHandler implements CommandHandler {
         }
     }
 
-    private ArrayList<CreateproductDTO> processFiles(MultipartRequest multi, String productId, String tempPath) {
+    private ArrayList<CreateproductDTO> processFiles(MultipartRequest multi, String productId, String tempPath, boolean isEdit) {
         ArrayList<CreateproductDTO> imageList = new ArrayList<>();
+        // [체크] 경로 끝에 역슬래시가 확실히 있는지 확인
         String baseDiskPath = "C:\\fila_upload\\product\\" + productId + "\\";
         File saveDir = new File(baseDiskPath);
-        if (!saveDir.exists()) saveDir.mkdirs();
+        
+        if (!saveDir.exists()) {
+            saveDir.mkdirs();
+        } else if (isEdit) {
+            File[] files = saveDir.listFiles();
+            if (files != null) for (File f : files) f.delete();
+        }
 
-        String[] types = {"mainImages", "modelImages", "detailImages"};
-        String[] dbTypes = {"MAIN", "MODEL", "DETAIL"};
-        int globalOrder = 1;
+        // 파라미터 정렬
+        java.util.TreeMap<String, String> sortedFiles = new java.util.TreeMap<>();
+        Enumeration files = multi.getFileNames();
+        while (files.hasMoreElements()) {
+            String name = (String) files.nextElement();
+            sortedFiles.put(name, name);
+        }
 
-        for (int i = 0; i < types.length; i++) {
-            String baseName = types[i]; // "mainImages"
-            int subIdx = 1;
+        int currentSortOrder = 1;
+        int mainIdx = 1, modelIdx = 1, detailIdx = 1;
 
-            // 0번부터 15번까지 무조건 다 찔러보기 (이름 뒤에 숫자가 붙든 안붙든)
-            for (int j = 0; j < 15; j++) {
-                // 검사할 이름들: mainImages, mainImages0, mainImages1, mainImages[], mainImages[]0...
-                String[] possibleNames = {
-                    baseName + j, 
-                    baseName + "[]" + j, 
-                    baseName + (j == 0 ? "" : j-1),
-                    baseName + "[]"
-                };
+        for (String paramName : sortedFiles.keySet()) {
+            String systemName = multi.getFilesystemName(paramName);
+            if (systemName == null) continue;
 
-                for (String searchName : possibleNames) {
-                    String systemName = multi.getFilesystemName(searchName);
-                    if (systemName != null) {
-                        // 이미 처리한 파일인지 중복 체크를 위해 리스트 확인 필요할 수 있음
-                        // (생략 가능: renameTo가 실패하면 어차피 안들어감)
+            File oldFile = new File(tempPath, systemName);
+            if (!oldFile.exists()) {
+                System.out.println("⚠ 임시파일 없음: " + systemName);
+                continue;
+            }
 
-                        String ext = systemName.substring(systemName.lastIndexOf("."));
-                        String newFileName = productId + "_" + dbTypes[i].toLowerCase() + "_" + (subIdx++) + ext;
+            // 인덱스 및 타입 설정
+            String type = paramName.contains("main") ? "MAIN" : (paramName.contains("model") ? "MODEL" : "DETAIL");
+            int subIdx = type.equals("MAIN") ? mainIdx++ : (type.equals("MODEL") ? modelIdx++ : detailIdx++);
+            
+            String ext = systemName.substring(systemName.lastIndexOf(".")).toLowerCase();
+            String newFileName = productId + "_" + type.toLowerCase() + "_" + subIdx + ext;
+            File newFile = new File(saveDir, newFileName);
 
-                        File oldFile = new File(tempPath + File.separator + systemName);
-                        File newFile = new File(saveDir, newFileName);
-
-                        if (oldFile.renameTo(newFile)) {
-                            imageList.add(CreateproductDTO.builder()
-                                    .product_id(productId)
-                                    .image_url(baseDiskPath + newFileName)
-                                    .image_type(dbTypes[i])
-                                    .is_main(dbTypes[i].equals("MAIN") && subIdx == 2 ? 1 : 0)
-                                    .sort_order(globalOrder++)
-                                    .build());
-                            System.out.println("성공! 파일 발견: " + searchName + " -> " + newFileName);
-                            break; // 하나 찾았으면 다음 j로
-                        }
-                    }
+            // [핵심 변경] Files.move 대신 직접 바이트를 읽어서 씁니다 (권한/잠금 문제 회피)
+            try (java.io.FileInputStream fis = new java.io.FileInputStream(oldFile);
+                 java.io.FileOutputStream fos = new java.io.FileOutputStream(newFile)) {
+                
+                byte[] buffer = new byte[4096];
+                int length;
+                while ((length = fis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, length);
                 }
+                fos.flush(); // 디스크에 즉시 기록
+                
+                // 기록 후 즉시 파일 확인
+                if (newFile.exists() && newFile.length() > 0) {
+                    System.out.println("✅ 물리 저장 성공: " + newFile.getAbsolutePath() + " (" + newFile.length() + " bytes)");
+                    
+                    imageList.add(CreateproductDTO.builder()
+                            .product_id(productId)
+                            .image_url(baseDiskPath + newFileName)
+                            .image_type(type)
+                            .is_main(type.equals("MAIN") && subIdx == 1 ? 1 : 0)
+                            .sort_order(currentSortOrder++)
+                            .build());
+                    
+                    // 성공 확인 후 원본 삭제
+                    oldFile.delete();
+                } else {
+                    System.out.println("❌ 파일 생성 실패 (이유 불명): " + newFileName);
+                }
+            } catch (Exception e) {
+                System.out.println("🔥 스트림 복사 에러: " + e.getMessage());
             }
         }
         return imageList;

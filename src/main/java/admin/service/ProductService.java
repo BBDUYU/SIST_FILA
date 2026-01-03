@@ -95,7 +95,7 @@ public class ProductService {
 			// 1. [기본 정보 수정]
 			dao.updateProduct(conn, dto);
 
-			// 2. [물리적 파일 삭제] 사용자가 삭제 버튼 누른 것들 실제 하드에서 지우기
+			/* 2. [물리적 파일 삭제] 사용자가 삭제 버튼 누른 것들 실제 하드에서 지우기
 			if (deleteImageIds != null && deleteImageIds.length > 0) {
 				List<String> deletePaths = dao.getImagePathsByIds(conn, deleteImageIds);
 				for (String path : deletePaths) {
@@ -106,7 +106,7 @@ public class ProductService {
 				}
 				dao.deleteSpecificImages(conn, deleteImageIds); // DB에서 해당 이미지들 삭제
 			}
-
+*/
 			// 3. [기존 이미지 확보 및 정제] DB에 아직 남아있는 이미지들 가져오기
 			List<CreateproductDTO> currentImages = dao.selectImagesByProductId(conn, dto.getProduct_id());
 			List<CreateproductDTO> finalImageList = new ArrayList<>();
