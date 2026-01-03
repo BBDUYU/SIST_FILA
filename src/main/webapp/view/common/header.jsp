@@ -38,7 +38,7 @@
 <script src="${pageContext.request.contextPath}/js/mighty.base.1.5.7.js"></script>
 <script src="${pageContext.request.contextPath}/js/matiz.js"></script>
 <script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
-<script src="${pageContext.request.contextPath}/js/default.js"></script>
+<script src="${pageContext.request.contextPath}/js/default.js?v=202504161631"></script>
 
 <script>
 	jQuery(window.document).ready(function(){
