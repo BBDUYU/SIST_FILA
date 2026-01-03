@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class eventproductDTO {
+public class EventproductDTO {
 	
 	private String product_id;
     private String name;        

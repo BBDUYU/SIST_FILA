@@ -1,12 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <!DOCTYPE html>
 
-<!--[if IE 6]> <html class="no-js lt-ie10 lt-ie9 lt-ie8 ie6" lang="ko-KR"> <![endif]-->
-<!--[if IE 7]> <html class="no-js lt-ie10 lt-ie9 lt-ie8 ie7" lang="ko-KR"> <![endif]-->
-<!--[if IE 8]> <html class="no-js lt-ie10 lt-ie9 ie8" lang="ko-KR"> <![endif]-->
-<!--[if IE 9]> <html class="no-js lt-ie10 ie9" lang="ko-KR"> <![endif]-->
-<!--[if gt IE 9]><!--> <html class="no-js" lang="ko-KR"> <!--<![endif]-->
+<html class="no-js" lang="ko-KR"> <!--<![endif]-->
 <head>
+<meta charset="UTF-8">
 <!-- #HJ 2019-08-19 Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -27,16 +28,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- #HJ BMS 요청 2023-03-05 추가 -->
 <meta name="google-site-verification" content="OzHOVCrgi_B84aCPrCMcKwfjUX3quIxcdPv9NU48xmg" />
 
-<title>FILA KOREA</title>
+<title>장바구니 | FILA</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.1, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
 
-	
+
 	<meta name="title" content="FILA KOREA" />
 	<meta name="description" content="FILA 공식 온라인 스토어, 신상품정보, 신규가입 혜택, 매장안내" />
 	<meta name="keywords" content="FILA,휠라코리아,휠라,FILA KOREA" />
 	<meta name="image" content="http://www.fila.co.kr/images/img_yrl_fila.png" />
-	<meta property="og:url" content="https://www.fila.co.kr/member/join_intro.asp" />
+	<meta property="og:url" content="https://www.fila.co.kr/order/cart.asp" />
 	<meta property="og:title" content="FILA KOREA" />
 	<meta property="og:description" content="FILA 공식 온라인 스토어, 신상품정보, 신규가입 혜택, 매장안내" />
 	<meta property="og:image" content="http://www.fila.co.kr/images/img_yrl_fila.png" />	
@@ -44,32 +45,31 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 	<meta property="og:site_name" content="Fila" />
 	<meta property="og:locale" content="ko_KR" />
 	<META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
-	<link rel="canonical" href="https://www.fila.co.kr/member/join_intro.asp">
+	<link rel="canonical" href="https://www.fila.co.kr/order/cart.asp">
 	
 
 
-<meta name="google-site-verification" content="Dmig64DN96tegHOMDkLPB0oWoVMVUEugRp1Wks6yesc" />
-<meta name="naver-site-verification" content="1b1f51a708ed50b7d8d98cb6b19a05c710b58497" />
-
-<link rel="icon" type="image/x-icon" href="//filacdn.styleship.com/filacontent2/favicon.ico" />
-
-<link href="http://localhost/SIST_FILA/css/SpoqaHanSansNeo.css" rel="stylesheet">
-
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/normalize.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/opt-default.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/swiper-bundle.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/layout.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/product.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/sub.css">
-
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/greensock/TweenMax.min.js"></script>
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/jquery-1.12.4.min.js"></script>
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/mighty.base.1.5.7.min.js"></script>
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/matizResizeMap.1.0.0.min.js"></script>
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/swiper-bundle.min.js"></script>
-
-<script src="/pc/resource/js/pages/default.js?v=202504161631"></script>
-
+	<meta name="google-site-verification" content="Dmig64DN96tegHOMDkLPB0oWoVMVUEugRp1Wks6yesc" />
+	<meta name="naver-site-verification" content="1b1f51a708ed50b7d8d98cb6b19a05c710b58497" />
+	
+	<link rel="icon" type="image/x-icon" href="//filacdn.styleship.com/filacontent2/favicon.ico" />
+	
+	<link href="${pageContext.request.contextPath}/css/SpoqaHanSansNeo.css" rel="stylesheet">
+	
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/normalize.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/opt-default.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/swiper-bundle.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/product.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/sub.css">
+	
+	<script src="${pageContext.request.contextPath}/js/TweenMax.js"></script>
+	<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+	<script src="${pageContext.request.contextPath}/js/mighty.base.1.5.7.js"></script>
+	<script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
+	<script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
+	
+	<script src="${pageContext.request.contextPath}/js/default.js"></script>
 
 	<script>
 	jQuery(window.document).ready(function(){
@@ -160,7 +160,7 @@ cre('send','Pageview');
 <!-- cre.ma / 공통 스크립트 (PC) / 스크립트를 수정할 경우 연락주세요 (support@cre.ma) -->
 <script>(function(i,s,o,g,r,a,m){if(s.getElementById(g)){return};a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.id=g;a.async=1;a.src=r;m.parentNode.insertBefore(a,m)})(window,document,'script','crema-jssdk','//widgets.cre.ma/fila.co.kr/init.js');</script>
 
-		<script> window.cremaAsyncInit = function () { crema.init( null, null ); } </script>
+		<script> window.cremaAsyncInit = function () { crema.init('jyj030818','지영주'); } </script>
 
 <!-- #HJ Opinno 2023-06-01 S -->
 <script src="https://www.googleoptimize.com/optimize.js?id=OPT-WZGPRFT"></script>
@@ -170,16 +170,255 @@ cre('send','Pageview');
 <script src="https://filacokr.api.useinsider.com/ins.js?id=10009917"></script>
 <!-- #HJ INSIDER 2024-01-16 E -->
 <!-- 개별 css, js -->
-<script src="/pc/resource/js/pages/join.js"></script>
-<script src="/pc/resource/js/pages/member.js?v=202208120005"></script>
-<script language="javascript" src="/pc/resource/js/pages/passwordStrengthMeter.js?v=202303160001"></script>
+<script src="/pc/resource/js/pages/order.js?v=2023041907"></script>
+<script>
+var GV_DANGILDELIVERY = "5000";
+var GV_MEMBERID = "jyj030818"
+</script>
+<!-- 2019-01-03 Google_Conversion AW-772098764 gtag3 -->
+<!-- 2019-01-03 Google_Traffic 772108122 gtag4 -->
+<script>
+function gtag_report_conversion(url) {
+	var totalprice = 0;
+	jQuery("input[name=checkwish]:checked").each(function(){
+		totalprice += parseFloat(jQuery(this).attr("data-price"));
+	})
+	totalprice += parseFloat(jQuery("#DeliveryTotal").val())
+
+  gtag('event', 'conversion', {
+      'send_to': 'AW-779324062/9YuYCIiM7o0BEJ6VzvMC',
+      'value': totalprice,
+      'currency': 'KRW'
+  });
+  gtag('event', 'conversion', {
+      'send_to': 'AW-772098764/ZNOnCN38rJIBEMyVlfAC',
+      'value': totalprice,
+      'currency': 'KRW'
+  });
+  gtag('event', 'conversion', {
+      'send_to': 'AW-772108122/lBXiCIqArZIBENrelfAC',
+      'value': totalprice,
+      'currency': 'KRW'
+  });
+  return false;
+}
+</script>
 
 
+<script>
+function changeCheck(obj,cn){
+	
+	jQuery("."+cn).prop("checked",jQuery(obj).is(":checked"))
+}
+function changeCartPrice2(){
+
+	if(jQuery("#todayDeliView").is(":checked")){
+		changeCartPrice3();
+	}else{
+
+		var cprice = 0;
+		var oprice = 0;
+		var cpromo = 0;
+		var addpoint = 0;
+		var miPrice = 0;
+		var maxPrice = 30000;
+		var DeliveryTotal = 3000;
+
+		///1+1시 가격 설정
+		/*
+		jQuery("input[name=checkwish]:checked").each(function(){
+			if (jQuery(this).attr("data-promo") == "True" ){
+				cpromo++;	
+			}
+			if (jQuery(this).attr("data-promo") == "True" && jQuery(this).attr("data-pq") % 2 == 0){
+				cpromo++;
+			}
+		})
+		*/
+		try{
+			console.log(1);
+			jQuery("input[name=checkwish]:checked").each(function(){
+				if (cpromo % 2 == 0 && cpromo > 0 && jQuery(this).attr("data-promo") == "True" ){
+					cprice += (parseFloat(jQuery(this).attr("data-price"))/2);
+				}else if (cpromo > 0 && jQuery(this).attr("data-promo") == "True" && jQuery(this).attr("data-pq") % 2 == 0 ){
+					cprice += (parseFloat(jQuery(this).attr("data-price"))/2);
+				}else{
+					cprice += parseFloat(jQuery(this).attr("data-price"));
+				}
+				oprice += parseFloat(jQuery(this).attr("data-priceOri"));
+				addpoint += parseFloat(jQuery(this).attr("data-addPoint"));
+				miPrice += parseFloat(jQuery(this).attr("data-pricesale"));
+			})
+			
+			if (parseFloat(cprice) <= parseFloat(maxPrice) && parseFloat(cprice) > 0 ){
+				jQuery("#DeliveryTotal").val(DeliveryTotal);
+			}else{
+				jQuery("#DeliveryTotal").val(0);
+			}
+			cprice += parseFloat(jQuery("#DeliveryTotal").val());
+			//oprice += parseFloat(jQuery("#DeliveryTotal").val());
+			jQuery("#ctPice").empty();
+			jQuery("#ctPice").html(PrintComma(oprice));
+			jQuery("#pPrice").empty();
+			jQuery("#pPrice").html(PrintComma(cprice) + "");
+			jQuery("#miPrice").empty();
+			jQuery("#miPrice").html(PrintComma(miPrice) + "");
+			jQuery("#dvPoint").html(PrintComma(addpoint) + "P");
+			
+			jQuery("#dvPrice").empty();
+			jQuery("#dvPrice").html(PrintComma(jQuery("#DeliveryTotal").val()) + "");
+					if ( jQuery("input[id^=checkProduct]").length - jQuery("input[id^=checkProduct]:checked").length == 0  )	{
+						jQuery("#checkAll").prop("checked", true);
+					}else{
+						jQuery("#checkAll").prop("checked", false);
+					}
+		}catch(e){
+			jQuery("input[name=checkwish]:checked").each(function(){
+				if (cpromo % 2 == 0 && cpromo > 0 && jQuery(this).attr("data-promo") == "True" ){
+					cprice += (parseFloat(jQuery(this).attr("data-price"))/2);
+				}else if (cpromo > 0 && jQuery(this).attr("data-promo") == "True" && jQuery(this).attr("data-pq") % 2 == 0 ){
+					cprice += (parseFloat(jQuery(this).attr("data-price"))/2);
+				}else{
+					cprice += parseFloat(jQuery(this).attr("data-price"));
+				}
+				oprice += parseFloat(jQuery(this).attr("data-price"));
+				addpoint += parseFloat(jQuery(this).attr("data-addPoint"));
+			})
+			if (parseFloat(cprice) <= parseFloat(maxPrice) && parseFloat(cprice) > 0 ){
+				jQuery("#DeliveryTotal").val(DeliveryTotal);
+			}else{
+				jQuery("#DeliveryTotal").val(0);
+			}
+			cprice += parseFloat(jQuery("#DeliveryTotal").val());
+			//oprice += parseFloat(jQuery("#DeliveryTotal").val());
+			jQuery("#ctPice").empty();
+			jQuery("#ctPice").html(PrintComma(oprice));
+			jQuery("#pPrice").empty();
+			jQuery("#pPrice").html(PrintComma(cprice) + "");
+			jQuery("#miPrice").empty();
+			jQuery("#miPrice").html(PrintComma(miPrice) + "");
+			jQuery("#dvPoint").html(PrintComma(addpoint) + "P");
+			jQuery("#dvPrice").empty();
+			jQuery("#dvPrice").html(PrintComma(jQuery("#DeliveryTotal").val()) + "");
+					if ( jQuery("input[id^=checkProduct]").length - jQuery("input[id^=checkProduct]:checked").length == 0  )	{
+						jQuery("#checkAll").prop("checked", true);
+					}else{
+						jQuery("#checkAll").prop("checked", false);
+					}
+		}
+	}
+
+	dangilYN();
+}
+
+function setCartQty(obj,cq){
+	var cartqty = jQuery(obj).val();
+	jQuery(".qty" + cq).val(cartqty);
+}
+</script>
+<script>
+// 뷰
+jQuery(function(){
+	// 수량 빼기
+	jQuery(document).on("click",  "#vpop button[id^=qtyMinus]", function() {
+		var maxStock = jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") != undefined ?jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") : ProductStockLimitNumber ; 
+		var minStock = maxStock > 0 ? 1 : 0 ;
+
+		var obj = jQuery(this).next( "input[id^=ProductQuantity]" )
+		var qtyVal = obj.val(); 
+		
+		qtyVal = jQuery.isNumeric(qtyVal) ? qtyVal : minStock ;
+		qtyVal--;
+		qtyVal = qtyVal < minStock ? minStock : qtyVal ;
+		obj.val( qtyVal );
+		var val7 = document.form99.cartPrice.value;
+		$("#ctoprice").html(PrintComma(val7*qtyVal)+"원");
+	})
+	// 수량 더하기
+	jQuery(document).on("click",  "#vpop button[id^=qtyPlus]", function() {
+		var maxStock = jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") != undefined ?jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") : ProductStockLimitNumber ; 
+		var minStock = maxStock > 0 ? 1 : 0 ;
+		//console.log(11);
+		var obj = jQuery(this).prev( "input[id^=ProductQuantity]" ); 
+		var qtyVal = obj.val(); 
+		qtyVal = jQuery.isNumeric(qtyVal) ? qtyVal : minStock ;
+		qtyVal++;
+		qtyVal = qtyVal > maxStock ? maxStock : qtyVal ;
+		obj.val( qtyVal );
+		var val7 = document.form99.cartPrice.value;
+		$("#ctoprice").html(PrintComma(val7*qtyVal)+"원");
+	})
+	jQuery(document).on("blur", "#vpop input[id^=ProductQuantity]", function() {
+		var maxStock = jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") != undefined ?jQuery("input:radio[name='ProductSize_Cart']:checked").attr("data-limit") : ProductStockLimitNumber ; 
+		var minStock = maxStock > 0 ? 1 : 0 ;
+
+		var regex = /[0-9]|\./;
+		var obj = jQuery(this);
+		var val = obj.val();
+		!regex.test( val ) ? obj.val( minStock ) : "" ;
+
+		val < minStock ? obj.val( minStock ) : "" ;
+		val > maxStock ? obj.val( maxStock ) : "" ;
+		var val7 = document.form99.cartPrice.value;
+		$("#ctoprice").html(PrintComma(val7*qtyVal)+"원");
+	})
+	
+})
+</script>
 </head>
-
-<body class="filter--open">
+<body class="">
 	<!-- start of :: wrap -->
 	<div id="wrap">
+		<!-- 2023-12-19 띠배너 추가 -->
+		
+<style>
+	.banner__top {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		min-width: 1200px;
+		height: 30px;
+		background-color: #002053;
+		padding: 0 40px;
+		box-sizing: border-box;
+		z-index: 301;
+	}
+	.banner__top p {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		height: 100%;
+		font-size: 14px;
+		font-family: 'Pretendard', 'Tartuffo-Bold', 'Spoqa Han Sans Neo', sans-serif;
+		font-weight: 700;
+		line-height: 16px;
+		text-align: center;
+		color: rgb(255,255,255);
+	}
+	.banner__top .top__close-btn {
+		position: absolute;
+		right: 33px;
+		top: 50%;
+		width: 30px;
+		height: 30px;
+		transform: translateY(-50%);
+		background: url(/pc/resource/images/common/ban_close_btn_wt_15x15.png) no-repeat center/15px;
+	}
+</style>
+
+
+<script>
+	$(function(){
+		$('.banner__top .top__close-btn').on('click', function(){
+			$('.banner__top').hide();
+		});
+	});
+</script>
+
+		<!-- // 2023-12-19 띠배너 추가 -->
+
 		
 <!-- #HJ 2019-08-19 BODY start Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PK46MQC"
@@ -1409,7 +1648,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 							<div>
 								<p class="tit">인기 검색어</p>
 
-								<p class="update-txt">15:00 업데이트</p>
+								<p class="update-txt">10:00 업데이트</p>
 							</div>
 
 							<div>
@@ -1428,15 +1667,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 									</li>
 
 									<li>
+										<a href="/search/search_result.asp?sWord=FK253CD01X008">FK253CD01X008</a>
+									</li>
+
+									<li>
 										<a href="/search/search_result.asp?sWord=FS253OD03X014">FS253OD03X014</a>
 									</li>
 
 									<li>
 										<a href="/search/search_result.asp?sWord=%uD32C%uD2F0">팬티</a>
-									</li>
-
-									<li>
-										<a href="/search/search_result.asp?sWord=FK253CD01X008">FK253CD01X008</a>
 									</li>
 
 									<li>
@@ -1516,11 +1755,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 		</div>
 
 		<div class="util-account">
-			<button type="button" class="account__btn" onclick="location.href='/login.htm'">account</button>
+			<button type="button" class="account__btn" onclick="location.href='/member/login.asp'">account</button>
 
 			<!-- account layer -->
 			<div class="account__layer">
 				<div class="inner">
+
+					<div class="account-info-box loginMember" >
+						<div>
+							<p class="name">지영주님</p>
+							<p class="level">
+								WHITE
+							</p>
+						</div>
+	
+						<div>
+							<p class="percent">2% 적립</p>
+
+							<a href="/customer/membership.asp">자세히 보기</a>
+						</div>
+	
+					</div>
 
 					<div class="account-menu-box" >
 						<ul>
@@ -1565,70 +1820,213 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 	<!-- //util -->
 </header>		
 <!-- // end of :: header -->	
-<form name="searchFormReal" method="get"  autocomplete="off" action="/search/search_result.asp">
-	<input type="hidden" name="sWord" value />
-	<input type="hidden" name="searchsCateNo" value />
-</form>	
+
+cartList size = ${fn:length(cartList)}
+
+<form name="form6" id="form6"  target="dataFrame"><input type="hidden" name="checkwish"><input type="hidden" name="ProductQuantity"></form>
+<iframe name="dataFrame" id="dataFrame" style="display:none;"></iframe>
 
 
 		<!-- start of :: contents -->
-		<div id="contents" class="mbr__contents">
-			<h2 class="tit__style1">회원가입</h2>
+		<div id="contents" class="odr__contents">
+           	<h2 class="tit__style1">장바구니</h2>
 
-			<!-- join -->
-			<section class="mbr-box">
-					<!-- 카카오 간편 회원가입 -->
-					<div class="join-sec_kakao">
-						<p class="txt">카카오 간편 회원가입으로 보다 간편하게 회원가입이 가능합니다.</p>
-						<div class="btn-box">
-							<a href="javascript:snsJoin('KK');void(0);" class="join_kakao">카카오 1초 간편가입</a>
-							<a href="/member/join_member.asp" class="btn_sld__bk">본인인증 후 회원가입</a>
-						</div>
-					</div>
-					<!-- // 카카오 간편 회원가입 -->
+			<!-- 2023-09-07 상단 띠 배너 추가 (로그인 / 비로그인 상태에 따로 별도 설정) -->
+			<div class="cart-top-ban">
+				<div class="swiper-wrapper">
+
+					<div class="swiper-slide"><p class="txt"><a href="/event/review.asp" target="_self">리뷰 작성 시 최대 3만 포인트 지급</a></p></div>
+
+
+					<div class="swiper-slide"><p class="txt"><a href="/specialoffer/view.asp?seq=373" target="_self">오늘 도착 5,000원 혜택</a></p></div>
+
+
+					<div class="swiper-slide"><p class="txt"><a href="/specialoffer/view.asp?seq=377" target="_self">신규 가입 시 1만원 할인</a></p></div>
+
+
+				</div>
+			</div>
+			<!-- //2023-09-07 상단 띠 배너 추가 (로그인 / 비로그인 상태에 따로 별도 설정) -->
+	
+			<!-- cart tab -->
+			<ul class="odr-tab">
+				<li><a href="${pageContext.request.contextPath}/view/pay/cart.jsp" id="normalli" class="on">일반배송 <sup>${empty cartList ? 0 : fn:length(cartList)}</sup></a></li> <!-- 활성화 class "on" -->
+				<input type="checkbox" id="todayDeliView" onclick="todayDeliViewAll();void(0);" style="display:none"/>
+				<li><a href="${pageContext.request.contextPath}/view/pay/cart2.jsp" id="todayli" ><label for="" >오늘도착 <sup id="todayCnt">0</sup></label></a></li>
+			</ul>
+
+			<!-- //cart tab -->			
+			<!-- // 일반배송일 경우 display: none처리 / 오늘도착 일 경우 block 처리 -->
+			<c:choose>
+			  <c:when test="${empty cartList}">
+			    <div class="cart__empty">
+			      <p class="txt">장바구니에 담긴 상품이 없습니다.</p>
+			      <a class="btn_sld__bk" href="/">쇼핑 계속하기</a>
+			    </div>
+			
+			    <div style="width:70%; margin:60px auto;">
+			      <img src="<c:url value='/images/review_event.jpg'/>" alt="REVIEW EVENT" style="width:100%; display:block;">
+			    </div>
+			  </c:when>
+			
+			  <c:otherwise>
+			
+			    <section class="odr-wrap">
+			      <div class="odr-box">
+			
+			        <div class="odr-hd">
+			          <div>
+			            <input type="checkbox" id="checkAll" checked="checked">
+			            <label for="checkAll">전체선택 <span>(${fn:length(cartList)})</span></label>
+			          </div>
+			          <div class="txt-btn">
+			            <a href="javascript:void(0);">품절삭제</a>
+			            <a href="javascript:void(0);">선택삭제</a>
+			          </div>
+			        </div>
+			
+			        <c:set var="sumOrigin" value="0"/>
+			        <c:set var="sumSale" value="0"/>
+			        <c:set var="sumLine" value="0"/>
+			
+			        <ul class="odr__list">
+			          <c:forEach var="item" items="${cartList}" varStatus="st">
+			            <c:set var="sumOrigin" value="${sumOrigin + (item.originUnitPrice * item.quantity)}"/>
+			            <c:set var="sumSale" value="${sumSale + (item.saleUnitPrice * item.quantity)}"/>
+			            <c:set var="sumLine" value="${sumLine + item.lineAmount}"/>
+			
+			            <li>
+			              <div class="goods_sel">
+			                <input type="checkbox" id="checkProduct${st.index}" checked="checked">
+			                <label for="checkProduct${st.index}">선택</label>
+			              </div>
+			
+			              <div class="goods-thumb">
+			                <a href="<c:url value='/product/view.do?productId=${item.productId}'/>">
+			                  <c:choose>
+			                    <c:when test="${not empty item.mainImageUrl}">
+			                      <img src="${item.mainImageUrl}" alt="${item.productName}">
+			                    </c:when>
+			                    <c:otherwise>
+			                      <img src="<c:url value='/images/noimage.png'/>" alt="no image">
+			                    </c:otherwise>
+			                  </c:choose>
+			                </a>
+			              </div>
+			
+			              <div class="goods-info">
+			                <p class="sex">FILA</p>
+			                <p class="tit">${item.productName}</p>
+			
+			                <div class="info">
+			                  <div><p>수량 : ${item.quantity}개</p></div>
+			                </div>
+			
+			                <div class="pp-box">
+			                  <div class="price">
+			                    <p class="sale">
+			                      <fmt:formatNumber value="${item.saleUnitPrice}" pattern="#,###"/>원
+			                    </p>
+			                  </div>
+			                </div>
+			
+			                <p class="today_tag">오늘도착 가능</p>
+			              </div>
+			
+			              <div class="goods-etc">
+			                <p class="ico">
+			                  <button type="button" class="wish">위시</button>
+			                  <button type="button" class="del">삭제</button>
+			                </p>
+			                <p class="btn-box">
+			                  <button type="button" class="btn_sld__gr">옵션 변경</button>
+			                </p>
+			              </div>
+			            </li>
+			          </c:forEach>
+			        </ul>
+			      </div>
+			
+			      <div class="total-box">
+			        <div class="price-box">
+			          <div class="price-inner">
+			            <dl>
+			              <dt>총 상품금액</dt>
+			              <dd><span id="ctPice"><fmt:formatNumber value="${sumOrigin}" pattern="#,###"/></span>원</dd>
+			            </dl>
+			            <dl>
+			              <dt>상품 할인금액</dt>
+			              <dd class="_type_red">-<span id="miPrice"><fmt:formatNumber value="${sumOrigin - sumSale}" pattern="#,###"/></span>원</dd>
+			            </dl>
+			            <dl>
+			              <dt>배송비</dt>
+			              <dd><span id="dvPrice">0</span>원</dd>
+			            </dl>
+			            <dl class="total-pirce">
+			              <dt>총 결제 예상 금액</dt>
+			              <dd><span id="pPrice"><fmt:formatNumber value="${sumLine}" pattern="#,###"/></span>원</dd>
+			            </dl>
+			
+			            <div class="btn-box">
+			              <a href="javascript:void(0);" class="btn_bg__bk">구매하기</a>
+			            </div>
+			          </div>
+			
+			          <div class="cart-notice-box">
+			            <p>장바구니는 멤버십 회원 로그인 시 15일간 보관됩니다.</p>
+			            <p>더 오래 보관 하고 싶은 상품은 위시리스트에 담아주세요.</p>
+			            <p>장바구니 보관 중 상품가격이나 혜택이 변동될 수 있습니다.</p>
+			          </div>
+			        </div>
+			      </div>
+			
+			    </section>
+			
+			  </c:otherwise>
+			</c:choose>
+			
+
+
+
+			<!-- 2023-09-07 배너 추가 (로그인 여부 상관없이 적용) -->
+			<section class="cart-ban-box">
+				<div class="swiper-wrapper">
+ 
+					<a href="/event/review.asp" class="swiper-slide" target="_self"><img src="//filacdn.styleship.com/filacontent2/data/banner/cart_banner_dt_58.jpg" alt=""></a>
+ 
+					<a href="/specialoffer/view.asp?seq=373" class="swiper-slide" target="_self"><img src="//filacdn.styleship.com/filacontent2/data/banner/cart_banner_dt_03_39.jpg" alt=""></a>
+ 
+					<a href="/specialoffer/view.asp?seq=377" class="swiper-slide" target="_self"><img src="//filacdn.styleship.com/filacontent2/data/banner/cart_banner_dt_04_43.jpg" alt=""></a>
+
+				</div>
 				
-					<!-- 회원가입 혜택 -->
-					<div class="join-benefit-box">
-						<h3 class="tit__style2">회원가입 혜택</h3>	
-						<ul>
-							<li>
-								<span>신규 가입 시 1만원 쿠폰 지급</span>
-							</li>
-							<li>
-								<span>최대 5% 구매 포인트 적립</span>
-							</li>
-							<li>
-								<span>최대 2만원 기념일 쿠폰 지급 </span>
-							</li>
-							<li>
-								<span>오늘도착 서비스 이용 가능</span>
-							</li>
-						</ul>
+				<div class="scroll-bar-box">
+					<div class="cart-sldr-pagination"></div>
+					<div class="pagination-curr-bar">
+						<div></div>
 					</div>
-					<!-- // 회원가입 혜택 -->
+				</div>
 			</section>
-			<!-- //join -->
+			<!-- // 2023-09-07 배너 추가 (로그인 여부 상관없이 적용) -->
+	
+
 		</div>
+
 		<!-- // end of :: contents -->
 
+<!-- 2023-04-03 #HJ GA4 S -->
+
+<!-- 2023-04-03 #HJ GA4 E -->
+	
 		<!-- 하단 고정 버튼 (top, sns) -->
 <div class="bot-fix-box">
 	<div class="inner">
 
-
-		<!-- 2023-10-05 오늘 본 상품 추가 (오늘 본 상품이 없는 경우 나타남) -->
-		<button type="button" class="today-goods__btn">
-			<svg id="btn_time" xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29">
-			  <g id="icon" transform="translate(-0.025 -0.025)">
-				<path id="패스_706" data-name="패스 706" d="M17.05,24.66A14,14,0,1,0,19.5,9.572l.253-3.648" transform="translate(-15.29 -4.475)" fill="none" stroke="#707070" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-				<path id="패스_707" data-name="패스 707" d="M6.537,83.1a14.542,14.542,0,0,0-.3,12.37" transform="translate(-4.475 -75.062)" fill="none" stroke="#707070" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="40 40"/>
-				<path id="패스_708" data-name="패스 708" d="M114.512,80.167v6.806l-3.662,3.662" transform="translate(-99.914 -72.362)" fill="none" stroke="#707070" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-				<line id="선_542" data-name="선 542" x1="3.654" transform="translate(4.307 5.263)" fill="none" stroke="#707070" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-			  </g>
-			</svg>
-
+		<!-- 2023-12-13 오늘 본 상품 있는 경우 (상품 썸네일 변경) -->
+		<button type="button" class="today-goods__thumb today-goods__btn">
+			<img src="//filacdn.styleship.com/filaproduct2/data/productimages/a/1/FS254DJ01F001_234.jpg" alt="">
 		</button>
-		<!-- //2023-10-05 오늘 본 상품 추가 (오늘 본 상품이 없는 경우 나타남) -->
+		<!-- // 2023-12-13 오늘 본 상품 있는 경우 (상품 썸네일 변경) -->
 
 
 		<button type="button" class="kakaotalk__btn" onclick="doBizmsg();void(0);">
@@ -1834,17 +2232,21 @@ wcs_do(_nasa);
 <script type="text/javascript" src="//dynamic.criteo.com/js/ld/ld.js?a=29360" async="true"></script>
 <!-- END Criteo 로더 파일 -->
 
-<!-- Criteo 홈페이지 태그 -->
+<!-- Criteo 장바구니 태그 -->
 <script type="text/javascript">
 window.criteo_q = window.criteo_q || [];
 var deviceType = /iPad/.test(navigator.userAgent) ? "t" : /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test(navigator.userAgent) ? "m" : "d";
 window.criteo_q.push(
  { event: "setAccount", account: 29360},
+ 
+ { event: "setEmail", email: "jyj030818@naver.com", hash_method: "" },
+ { event: "setZipcode", zipcode: "06193" },
 
- { event: "setSiteType", type: deviceType},
- { event: "viewHome"});
+ { event: "setSiteType", type: deviceType}
+	
+);
 </script>
-<!-- END Criteo 홈페이지 태그 -->
+<!-- END Criteo 장바구니 태그 -->
 
 <!-- 2022-11-15 #HJ criteo E -->
 
@@ -1887,7 +2289,7 @@ dataLayer.push ({
 	'event':'page_view_cs',
 	'property' : {
 	  'brand_sub' : 'FILA',
-	  'page_type' : 'JOIN_MEMBER',
+	  'page_type' : 'CART',
 	  'utm_source' : '',
 	  'utm_medium' : '',
 	  'utm_campaign' : '',
@@ -1899,19 +2301,19 @@ dataLayer.push ({
 dataLayer.push ({
 	'event':'user_info',
 	'property' : {
-	  'userId' : '',
-	  'custno' : 'A',
-	  'registration_date' : '',
-	  'login_type' : '',	  	 		
+	  'userId' : '1f22d2e12c6896fa7eea8864590058bc',
+	  'custno' : 'A20251128145726285180',
+	  'registration_date' : '20251128',
+	  'login_type' : 'eshop',	  	 		
 	  'device' : 'desktop',
-	  'logged_in' : 'no',
+	  'logged_in' : 'yes',
 	  'lifetime_value' : 0,
 	  'order_count' : 0,
-	  'grades' : '',
-	  'birth_year' : '',
-	  'gender' : '',
-	  'age' : '',
-	  'employee' : ''	  	  
+	  'grades' : 'WHITE',
+	  'birth_year' : '2003',
+	  'gender' : 'F',
+	  'age' : 22,
+	  'employee' : 'N'	  	  
 	}	
 })	
 </script>
@@ -2354,136 +2756,71 @@ dataLayer.push ({
 <script>
     window.insider_object = window.insider_object || {};
     window.insider_object.page = {
-			"type": "Home"
+			"type": "Basket"
+    }
+</script>
+
+<script>
+    window.insider_object = window.insider_object || {};
+    window.insider_object.user = {
+			"uuid": "20251128145726285180",
+			"gdpr_optin": true,			
+			"gender": "F"
     }
 </script>
 
 <!-- #HJ 2025-06-17 insider E -->
-	</div>
-	<!-- // end of :: wrap -->
-</body>
-<form name="restFrm" method="post" target="dataFrame" action="RestDI.asp">
-	<input type="hidden" name="TempcustNo">
-	<input type="hidden" name="TempName">
-	<input type="hidden" name="memberTel">
-	<input type="hidden" name="joinGbn">
-	<input type="hidden" name="tempDI">
-	<input type="hidden" name="tempCI">
-</form>
-
 <script>
-var LoginPop;
-function loginPop(url){
-	jQuery.ajax({
-		type: "POST",
-		url: "/member/verify_staff.asp",
-		dataType : "JSON",
-		success: function(data) {
-			var formStr = "";
-				formStr +='	<div class="main_popup member-login__popup">';
-				formStr +='			<div class="member__info">';				
-				formStr +='				안녕하세요? '+ data.data1 +'님<br/> ';
-				formStr +='				'+ data.data2 +'<br/>';
-				formStr +='				'+ data.data3 +'';
-				formStr +='				<p>로그인 방식을 선택해 주세요</p>';
-				formStr +='			</div>';
-				formStr +='		<div class="close_area close_style2">';
-				formStr +='			<a href=javascript:staffGo("'+ url +'"); class="btn_close fl">사원 로그인</a>';
-				formStr +='			<a href="'+ url +'" class="btn_close">일반 로그인</a>';
-				formStr +='		</div>'; 
-				formStr +='	</div>';
 
-					layer.source(formStr,'cmtPop', {
-						alignX : 0.5,
-						alignY : 0.5,
-						background : true, 
-						backgroundColor : 'black',
-						backgroundOpacity : 0.7
-						//closeButtonId : 'closeBtn1'
-					});
-/*
-				LoginPop = new CoverLayer(formStr, {
-					bg_color : "white", 		// 백그라운드 색상 기본값:"#000"
-					bg_opacity : 0.75, 		// 백그라운드 투명도. 기본값:0.75
-					close_btn_id : "closeBtn1", 	// 레이어 닫기 버튼 DOM id, 기본값:"closeBtn"
-					z_index : 999999, 			// 레이어의 z-index 값 기본값:99990
-					cast_speed : 500,		// 레이어 생성 트위닝 속도
-					close_click : false,		// 어느곳이나 클릭시 닫힘 여부, 활성화:true, 비활성화:false(기본값)
-					scroll_fix : false
-				});
-				*/
-		},
-		error: function(e) {
-			//alert("e");
-		}
-	});
-}		
-//'''2021-07-07 기증쿠폰관련
-var loginSunsooPop
-function loginSunsooPop(url){
-	jQuery.ajax({
-		type: "POST",
-		url: "/member/verify_sunsoo.asp",
-		dataType : "JSON",
-		success: function(data) {
-			var formStr = "";
-				formStr +='	<div class="main_popup member-login__popup">';
-				formStr +='			<div class="member__info">';				
-				formStr +='				안녕하세요? '+ data.data1 +'님<br/> ';
-				formStr +='				'+ data.data3 +'';
-				formStr +='				<p>로그인 방식을 선택해 주세요</p>';
-				formStr +='			</div>';
-				formStr +='		<div class="close_area close_style2">';
-				formStr +='			<a href=javascript:sunsooGo("'+ url +'"); class="btn_close fl">선수 로그인</a>';
-				formStr +='			<a href="'+ url +'" class="btn_close">일반 로그인</a>';
-				formStr +='		</div>'; 
-				formStr +='	</div>';
+$(function(){
+	$("#todayCnt").html("0");
+})
 
-				$('body').addClass('lyr-qna--open');
-				$('body').append(formStr);
-
-					layer.source(formStr,'cmtPop', {
-						alignX : 0.5,
-						alignY : 0.5,
-						background : true, 
-						backgroundColor : 'black',
-						backgroundOpacity : 0.7
-						//closeButtonId : 'closeBtn1'
-					});
-		},
-		error: function(e) {
-			//alert("e");
-		}
-	});
-}
-function staffGo(url){
-	jQuery.ajax({
-		type: "POST",
-		data: "mode=STAFF",
-		url: "/member/verify_staff.asp",
-		dataType : "JSON",
-		success: function(data) {
-			top.location.href = url;
-		},
-		error: function(e) {
-			//alert("e");
-		}
-	});
-}		
-//'''2021-07-07 기증쿠폰관련
-function sunsooGo(url){
-	jQuery.ajax({
-		type: "POST",
-		data: "mode=SUNSOO",
-		url: "/member/verify_sunsoo.asp",
-		dataType : "JSON",
-		success: function(data) {
-			top.location.href = url;
-		},
-		error: function(e) {
-			//alert("e");
-		}
-	});
-}
 </script>
+	</div>
+    <!-- // end of :: wrap -->    
+    
+<!-- NAVER SCRIPT -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script> 
+<script type="text/javascript"> 
+if (!wcs_add) var wcs_add={};
+wcs_add["wa"] = "s_2dc7206136e";
+if (!_nasa) var _nasa={};
+_nasa["cnv"] = wcs.cnv("3","1"); 
+wcs_do(_nasa);
+</script>
+<!-- NAVER SCRIPT END -->
+
+<!-- #HJ 2018-04-30 AdVisor Facebook event script-->
+<!-- 2023-09-01 Facebook Pixel Code 삭제 tagmanager에 존재함 -->
+<!--AdVisor Facebook event script End-->
+
+<!-- 2020-05-07 #HJ groobee 2020-08-31 교체 S 2020-09-23 ProductNo로 수정 -->
+
+<!-- 2020-05-07 #HJ groobee E -->
+
+
+<!-- Enliple Tracker Start -->
+<script type="text/javascript">
+var ENP_VAR = { conversion: { product: [] } };
+
+// 주문한 각 제품들을 배열에 저장
+ENP_VAR.conversion.product.push(
+
+	
+	);
+
+	ENP_VAR.conversion.totalPrice = '';  // 없는 경우 단일 상품의 정보를 이용해 계산
+	ENP_VAR.conversion.totalQty = '';  // 없는 경우 단일 상품의 정보를 이용해 계산
+	ENP_VAR.conversion.siteCode = "a77f4c3cce5da84764222f25cdd9c40e";
+
+	(function(a,g,e,n,t){a.enp=a.enp||function(){(a.enp.q=a.enp.q||[]).push(arguments)};n=g.createElement(e);n.async=!0;n.defer=!0;n.src="https://cdn.megadata.co.kr/dist/prod/enp_tracker_self_hosted.min.js";t=g.getElementsByTagName(e)[0];t.parentNode.insertBefore(n,t)})(window,document,"script");
+</script>
+<!-- Enliple Tracker End -->
+    
+    
+    
+    
+    
+</body>
 </html>

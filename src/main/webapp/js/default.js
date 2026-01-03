@@ -398,7 +398,7 @@
 					}	
 					else if(type=='login') {
 						alert("로그인 후 이용가능합니다.");
-						location.href = "/member/login.asp"
+						location.href = "/login.htm"
 					}	
 		          }
 		      }
@@ -408,6 +408,7 @@
 	}
 
 	/* #HJ 201704 추가 */
+	/*
 	function globalMenu() {
 		jQuery.ajax({
 			type: "POST",
@@ -452,7 +453,7 @@
 						jQuery("#cart_cnt").attr("data-num",cart);
 				}
 				else {
-						jQuery("#globalMenu1").html("<a href='/member/login.asp'>로그인</a>");
+						jQuery("#globalMenu1").html("<a href='/SIST_FILA/login.htm'>로그인</a>");
 						//jQuery("#globalMenu2").html(joinText);
 						jQuery("#globalMenu2").html("<a href='/member/join_intro.asp' >회원가입</a>");
 						jQuery("#globalMenu3").html("<a href='/member/searchIDPW.asp'>아이디 · 비밀번호 찾기</a>");
@@ -462,7 +463,7 @@
 						jQuery("#globalMenu5").hide();
 						jQuery("#globalMenu6").hide();
 						jQuery("#globalMenu7").hide();
-						jQuery("#globalMenu1m").html("<a href='/member/login.asp'>로그인</a>");
+						jQuery("#globalMenu1m").html("<a href='/SIST_FILA/login.htm'>로그인</a>");
 						jQuery("#globalMenu2m").html("<a href='https://www.fila.co.kr/member/join_intro.asp'>회원가입</a>");				
 						jQuery("#globalMenu3m").html("<a href='/mypage/myOrder.asp'>주문/배송</a>");					
 						jQuery("#globalMenu4m").html("<a href='/customer/notice.asp'>고객센터</a>");
@@ -470,7 +471,7 @@
 				}			
 			},
 			error: function(e) {
-						jQuery("#globalMenu1").html("<a href='/member/login.asp'>로그인</a>");
+						jQuery("#globalMenu1").html("<a href='/SIST_FILA/login.htm'>로그인</a>");
 						//jQuery("#globalMenu2").html(joinText);
 						jQuery("#globalMenu2").html("<a href='/member/join_intro.asp' >회원가입</a>");
 						jQuery("#globalMenu3").html("<a href='/member/searchIDPW.asp'>아이디 · 비밀번호 찾기</a>");
@@ -479,14 +480,14 @@
 						jQuery("#globalMenu5").hide();
 						jQuery("#globalMenu6").hide();
 						jQuery("#globalMenu7").hide();
-						jQuery("#globalMenu1m").html("<a href='/member/login.asp'>로그인</a>");
+						jQuery("#globalMenu1m").html("<a href='/SIST_FILA/login.htm'>로그인</a>");
 						jQuery("#globalMenu2m").html("<a href='https://www.fila.co.kr/member/join_intro.asp'>회원가입</a>");				
 						jQuery("#globalMenu3m").html("<a href='/mypage/myOrder.asp'>주문/배송</a>");					
 						jQuery("#globalMenu4m").html("<a href='/customer/notice.asp'>고객센터</a>");
 						jQuery("#cart_cnt").attr("data-num","0");
 			}
 		});	
-	}
+	}*/
 
 })(jQuery);
 function initXMLHttp() 
@@ -963,7 +964,7 @@ function todayViewRemoveAll(){
 				idName = logindata.idname;
 				if (idName == ""){
 					alert("로그인 후 이용해 주세요.");
-					top.location.href="/member/login.asp";
+					top.location.href="/login.htm";
 				}else{
 					if ($("#promoCheck").is(":checked")){
 
@@ -1035,7 +1036,7 @@ function todayViewRemoveAll(){
 				idName = logindata.idname;
 				if (idName == ""){
 					alert("로그인 후 이용해 주세요.");
-					top.location.href="/member/login.asp";
+					top.location.href="/login.htm";
 				}else{
 					if ($("#promoCheck").is(":checked")){
 
@@ -1142,7 +1143,7 @@ function todayViewRemoveAll(){
 				idName = logindata.idname;
 				if (idName == ""){
 					alert("로그인 후 이용해 주세요.");
-					top.location.href="/member/login.asp";
+					top.location.href="/login.htm";
 				}else{
 					if ($("#promoCheck").is(":checked")){
 
@@ -1214,7 +1215,7 @@ function todayViewRemoveAll(){
 				idName = logindata.idname;
 				if (idName == ""){
 					alert("로그인 후 이용해 주세요.");
-					top.location.href="/member/login.asp";
+					top.location.href="/login.htm";
 				}else{
 					if ($("#promoCheck").is(":checked")){
 
@@ -1286,7 +1287,7 @@ function todayViewRemoveAll(){
 				idName = logindata.idname;
 				if (idName == ""){
 					alert("로그인 후 이용해 주세요.");
-					top.location.href="/member/login.asp";
+					top.location.href="/login.htm";
 				}else{
 					if ($("#promoCheck").is(":checked")){
 
@@ -1358,7 +1359,7 @@ function todayViewRemoveAll(){
 				idName = logindata.idname;
 				if (idName == ""){
 					alert("로그인 후 이용해 주세요.");
-					top.location.href="/member/login.asp";
+					top.location.href="/login.htm";
 				}else{
 					if ($("#promoCheck").is(":checked")){
 
@@ -1463,7 +1464,7 @@ function todayViewRemoveAll(){
 				idName = logindata.idname;
 				if (idName == ""){
 					alert("로그인 후 이용해 주세요.");
-					top.location.href="/member/login.asp";
+					top.location.href="/login.htm";
 				}else{
 					if ($("#promoCheck").is(":checked")){
 
@@ -1590,7 +1591,7 @@ function todayViewRemoveAll(){
 				idName = logindata.idname;
 				if (idName == ""){
 					alert("로그인 후 이용해 주세요.");
-					top.location.href="/member/login.asp";
+					top.location.href="/login.htm";
 				}else{
 					if ($("#promoCheck").is(":checked")){
 
@@ -2048,7 +2049,7 @@ function todayViewRemoveAll(){
 				idName = logindata.idname;
 				if (idName == ""){
 					alert("로그인 후 이용해 주세요.");
-					top.location.href="/member/login.asp";
+					top.location.href="/login.htm";
 				}else{
 					if ($("#promoCheck").is(":checked")){
 

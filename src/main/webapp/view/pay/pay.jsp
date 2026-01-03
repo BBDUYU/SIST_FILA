@@ -1,12 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 
-<!--[if IE 6]> <html class="no-js lt-ie10 lt-ie9 lt-ie8 ie6" lang="ko-KR"> <![endif]-->
-<!--[if IE 7]> <html class="no-js lt-ie10 lt-ie9 lt-ie8 ie7" lang="ko-KR"> <![endif]-->
-<!--[if IE 8]> <html class="no-js lt-ie10 lt-ie9 ie8" lang="ko-KR"> <![endif]-->
-<!--[if IE 9]> <html class="no-js lt-ie10 ie9" lang="ko-KR"> <![endif]-->
-<!--[if gt IE 9]><!--> <html class="no-js" lang="ko-KR"> <!--<![endif]-->
+<html class="no-js" lang="ko-KR"> <!--<![endif]-->
 <head>
+<meta charset="UTF-8">
 <!-- #HJ 2019-08-19 Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -27,16 +24,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- #HJ BMS 요청 2023-03-05 추가 -->
 <meta name="google-site-verification" content="OzHOVCrgi_B84aCPrCMcKwfjUX3quIxcdPv9NU48xmg" />
 
-<title>FILA KOREA</title>
+<title>주문/결제 | FILA</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.1, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
 
-	
+
 	<meta name="title" content="FILA KOREA" />
 	<meta name="description" content="FILA 공식 온라인 스토어, 신상품정보, 신규가입 혜택, 매장안내" />
 	<meta name="keywords" content="FILA,휠라코리아,휠라,FILA KOREA" />
 	<meta name="image" content="http://www.fila.co.kr/images/img_yrl_fila.png" />
-	<meta property="og:url" content="https://www.fila.co.kr/member/join_intro.asp" />
+	<meta property="og:url" content="https://www.fila.co.kr/order/pay.asp?mode=1" />
 	<meta property="og:title" content="FILA KOREA" />
 	<meta property="og:description" content="FILA 공식 온라인 스토어, 신상품정보, 신규가입 혜택, 매장안내" />
 	<meta property="og:image" content="http://www.fila.co.kr/images/img_yrl_fila.png" />	
@@ -44,7 +41,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 	<meta property="og:site_name" content="Fila" />
 	<meta property="og:locale" content="ko_KR" />
 	<META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
-	<link rel="canonical" href="https://www.fila.co.kr/member/join_intro.asp">
+	<link rel="canonical" href="https://www.fila.co.kr/order/pay.asp">
 	
 
 
@@ -53,22 +50,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <link rel="icon" type="image/x-icon" href="//filacdn.styleship.com/filacontent2/favicon.ico" />
 
-<link href="http://localhost/SIST_FILA/css/SpoqaHanSansNeo.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/SpoqaHanSansNeo.css" rel="stylesheet">
+	
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/normalize.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/opt-default.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/swiper-bundle.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/product.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/sub.css">
 
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/normalize.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/opt-default.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/swiper-bundle.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/layout.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/product.css">
-<link rel="stylesheet" href="http://localhost/SIST_FILA/css/sub.css">
+<script src="${pageContext.request.contextPath}/js/TweenMax.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+<script src="${pageContext.request.contextPath}/js/mighty.base.1.5.7.js"></script>
+<script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
+<script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
 
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/greensock/TweenMax.min.js"></script>
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/jquery-1.12.4.min.js"></script>
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/mighty.base.1.5.7.min.js"></script>
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/matizResizeMap.1.0.0.min.js"></script>
-<script src="//filacdn.styleship.com/filacontent2/pc/resource/js/lib/swiper-bundle.min.js"></script>
-
-<script src="/pc/resource/js/pages/default.js?v=202504161631"></script>
+<script src="${pageContext.request.contextPath}/js/default.js"></script>
 
 
 	<script>
@@ -160,7 +157,7 @@ cre('send','Pageview');
 <!-- cre.ma / 공통 스크립트 (PC) / 스크립트를 수정할 경우 연락주세요 (support@cre.ma) -->
 <script>(function(i,s,o,g,r,a,m){if(s.getElementById(g)){return};a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.id=g;a.async=1;a.src=r;m.parentNode.insertBefore(a,m)})(window,document,'script','crema-jssdk','//widgets.cre.ma/fila.co.kr/init.js');</script>
 
-		<script> window.cremaAsyncInit = function () { crema.init( null, null ); } </script>
+		<script> window.cremaAsyncInit = function () { crema.init('jyj030818','지영주'); } </script>
 
 <!-- #HJ Opinno 2023-06-01 S -->
 <script src="https://www.googleoptimize.com/optimize.js?id=OPT-WZGPRFT"></script>
@@ -170,16 +167,28 @@ cre('send','Pageview');
 <script src="https://filacokr.api.useinsider.com/ins.js?id=10009917"></script>
 <!-- #HJ INSIDER 2024-01-16 E -->
 <!-- 개별 css, js -->
-<script src="/pc/resource/js/pages/join.js"></script>
-<script src="/pc/resource/js/pages/member.js?v=202208120005"></script>
-<script language="javascript" src="/pc/resource/js/pages/passwordStrengthMeter.js?v=202303160001"></script>
+<script src="/pc/resource/js/pages/order.js?v=20230317012"></script>
+<script src="/pc/resource/js/pages/sha512.js?v=20230317002"></script>
+	<script language="javascript" type="text/javascript" src="https://stdpay.inicis.com/stdjs/INIStdPay.js" charset="UTF-8"></script>
+	<script src="https://nsp.pay.naver.com/sdk/js/naverpay.min.js"></script>
+	<script type="text/javascript" src="https://static-bill.nhnent.com/payco/checkout/js/payco.js" charset="UTF-8"></script>
+
+		<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script src="/pc/resource/js/pages/searchZip.js?v=202111160002"></script>
+<script>
+jQuery(document).ready(function() {
+	recalc_aj();
+	todayDelivery();
+});
+</script>
+
 
 
 </head>
-
-<body class="filter--open">
+<body class="">
 	<!-- start of :: wrap -->
 	<div id="wrap">
+
 		
 <!-- #HJ 2019-08-19 BODY start Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PK46MQC"
@@ -237,6 +246,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 								</ul>
 
 								<ul>
+									<li>
+										<a href="/event/view.asp?seq=1309">1911 Knit Track</a>
+									</li>
 									<li>
 										<a href="/product/list.asp?no=2246">Holiday Gifts</a>
 									</li>
@@ -1409,7 +1421,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 							<div>
 								<p class="tit">인기 검색어</p>
 
-								<p class="update-txt">15:00 업데이트</p>
+								<p class="update-txt">12:00 업데이트</p>
 							</div>
 
 							<div>
@@ -1428,15 +1440,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 									</li>
 
 									<li>
+										<a href="/search/search_result.asp?sWord=FK253CD01X008">FK253CD01X008</a>
+									</li>
+
+									<li>
 										<a href="/search/search_result.asp?sWord=FS253OD03X014">FS253OD03X014</a>
 									</li>
 
 									<li>
 										<a href="/search/search_result.asp?sWord=%uD32C%uD2F0">팬티</a>
-									</li>
-
-									<li>
-										<a href="/search/search_result.asp?sWord=FK253CD01X008">FK253CD01X008</a>
 									</li>
 
 									<li>
@@ -1516,11 +1528,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 		</div>
 
 		<div class="util-account">
-			<button type="button" class="account__btn" onclick="location.href='/login.htm'">account</button>
+			<button type="button" class="account__btn" onclick="location.href='/member/login.asp'">account</button>
 
 			<!-- account layer -->
 			<div class="account__layer">
 				<div class="inner">
+
+					<div class="account-info-box loginMember" >
+						<div>
+							<p class="name">지영주님</p>
+							<p class="level">
+WHITE
+							</p>
+						</div>
+	
+						<div>
+							<p class="percent">2% 적립</p>
+
+							<a href="/customer/membership.asp">자세히 보기</a>
+						</div>
+	
+					</div>
 
 					<div class="account-menu-box" >
 						<ul>
@@ -1572,63 +1600,575 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 
 		<!-- start of :: contents -->
-		<div id="contents" class="mbr__contents">
-			<h2 class="tit__style1">회원가입</h2>
+		<div id="contents" class="odr__contents">
+           	<h2 class="tit__style1">주문 및 결제</h2>
+		<form name="user" method="post" action> 
+			<section class="odr-wrap">
 
-			<!-- join -->
-			<section class="mbr-box">
-					<!-- 카카오 간편 회원가입 -->
-					<div class="join-sec_kakao">
-						<p class="txt">카카오 간편 회원가입으로 보다 간편하게 회원가입이 가능합니다.</p>
-						<div class="btn-box">
-							<a href="javascript:snsJoin('KK');void(0);" class="join_kakao">카카오 1초 간편가입</a>
-							<a href="/member/join_member.asp" class="btn_sld__bk">본인인증 후 회원가입</a>
+				<!-- order -->
+				<div class="odr-box">
+
+
+					
+
+
+<!-- 주문자 정보 -->
+<input type="hidden" name="sid" value="jyj030818" />  
+<input type="hidden" name="totalpaytemp" value="" />  
+<input type="hidden" name="usemile1" />
+<input type="hidden" name="usemiletemp" value="5000" />
+<input type="hidden" name="ismember" value="1" />
+<input type="hidden" name="addrate" value="" />
+<input type="hidden" name="totalprice" value="" />
+
+<input type="hidden" name="totalpay" value="" />
+<input type="hidden" name="usermile" value="5000" />
+<input type="hidden" name="temptotal" value="" />
+
+<input type="hidden" name="aOrderOName" value="지영주" />  
+<input type="hidden" name="aOrderOZip" value="06193" />  
+
+<input type="hidden" name="aOrderOAddress1" value="서울 강남구 대치동 890-60" />
+<input type="hidden" name="aOrderOAddress2" value="9층, 쌍용교육센터" />
+<input type="hidden" name="aOrderORoadAddress" value="서울 강남구 테헤란로70길 12 (대치동)" />
+<input type="hidden" name="aOrderOEmail" value="" />
+<input type="hidden" name="aOrderOTel11" value="" />
+<input type="hidden" name="aOrderOTel12" value="" />
+<input type="hidden" name="aOrderOTel13" value="" />
+<input type="hidden" name="aOrderOTel21" value="010" />
+<input type="hidden" name="aOrderOTel22" value="1234" />
+<input type="hidden" name="aOrderOTel23" value="5678" />
+
+
+<input type="hidden" id="orderNum"  class="input size4" title="전화번호 앞자리" name="OrderOTel11" value="" maxlength="3" />
+<input type="hidden" class="input size4" title="전화번호 중간자리" name="OrderOTel12" value="" maxlength="4" />
+<input type="hidden"  class="input size4" title="전화번호 뒷자리" name="OrderOTel13" value="" maxlength="4"  />
+
+<input type="hidden" name="OrderOZip" value="06193" />
+<input type="hidden" name="OrderOAddress1" value="서울 강남구 테헤란로70길 12 (대치동)" />
+<input type="hidden" name="OrderOAddress2" value="9층, 쌍용교육센터" />
+<input type="hidden" name="OrderORoadAddress" value="서울 강남구 테헤란로70길 12 (대치동)" />
+<input type="hidden" name="BonusGift" id="BonusGift" class=" BonusGift" value="" />
+
+
+					<!-- 2023-02-01 주문자 정보 (비회원) 추가 -->
+
+
+					<div class="odr-toggle-box ordInfo open" style="display:none;">
+						<div class="hd">
+							<h3>주문자 정보</h3>
+
+							<div>
+								<button type="button" class="toggle__btn">button</button>
+							</div>
+						</div>
+
+						<div class="cn">
+							<div class="addr-info-box">
+								<div class="inp-box">
+									<div class="nm_pn">
+										<div class="name">
+											<input type="text" placeholder ="이름" maxlength="10" name="OrderOName" id="orderName2" value="지영주" readonly>
+										</div>
+										<div class="phn">
+											<input type="number" placeholder ="휴대폰 번호를 '-' 제외하고 숫자만 입력해주세요" name="OrderOTel21" id="OrderOTel21" maxlength="11" value="01021246441"  onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" onKeyDown="this.value=this.value.replace(/[^0-9]/g,'');" onBlur="this.value=this.value.replace(/[^0-9]/g,'');" readonly>
+										</div>
+									</div>
+									<div class="addr">	
+										<div style="display:none;">
+											<input type="text" >
+										</div>
+										<div>
+											<input type="text" class="" maxlength="50" name="OrderOEmail" id="email" placeholder="이메일" value="jyj030818@naver.com">
+										</div>
+									</div>
+								</div>							
+							</div>						
+						</div>
+<script>
+$('#OrderOTel21').keyup(function (e) {
+	let content = $(this).val();        
+    // 글자수 제한
+    if (content.length > 11) {
+        $(this).val($(this).val().substring(0, 11));
+    };
+});
+</script>
+					</div>
+
+
+
+					<!-- // 2023-02-01 배송지 정보 (비회원) 추가 -->
+
+
+
+
+
+					<!-- 배송지 정보 -->
+					<div class="odr-toggle-box _type_addr open"> <!-- 2023-02-21 클래스 추가 _type_addr -->
+						<div class="hd">
+							<h3>배송지 정보</h3>
+							<div>
+								<button type="button" class="delivery-change__btn addrBtn">변경</button>
+							</div>
+	
+						</div>
+
+						<div class="cn">
+							<div class="addr-info-box">
+								<div class="txt-box">
+									<p class="name delivery-change__btn" id="dName">지영주</p>
+									<p class="tel delivery-change__btn" id="dTel">010-1234-5678</p>
+								</div>
+
+								<div class="txt-box">
+									<p class="addr delivery-change__btn" id="dAddr">
+										(06193)&nbsp;서울 강남구 테헤란로70길 12 (대치동)&nbsp;9층, 쌍용교육센터
+									</p>
+									<!--span class="fc09" id="addDelivery"></span-->
+								</div>
+								
+								<!-- 배송 메시지 -->
+								<div class="msg-box">
+									<select onchange="$('#orderMemo').val(this.value);">
+										<option value="">배송요청사항 선택</option>
+										<option value="부재시 문앞에 부탁드려요.">부재시 문앞에 부탁드려요.</option>
+										<option value="경비실에 맡겨주세요.">경비실에 맡겨주세요.</option>
+										<option value="">직접 입력</option>
+									</select>
+									<input type="text" placeholder="내용을 입력해주세요." name="OrderContents" id="orderMemo">
+								</div>
+								<!-- //배송 메시지 -->
+							</div>						
 						</div>
 					</div>
-					<!-- // 카카오 간편 회원가입 -->
-				
-					<!-- 회원가입 혜택 -->
-					<div class="join-benefit-box">
-						<h3 class="tit__style2">회원가입 혜택</h3>	
-						<ul>
-							<li>
-								<span>신규 가입 시 1만원 쿠폰 지급</span>
-							</li>
-							<li>
-								<span>최대 5% 구매 포인트 적립</span>
-							</li>
-							<li>
-								<span>최대 2만원 기념일 쿠폰 지급 </span>
-							</li>
-							<li>
-								<span>오늘도착 서비스 이용 가능</span>
-							</li>
-						</ul>
+					<!-- //배송지 정보 -->
+
+					
+					<input type="hidden" placeholder ="이름" maxlength="10" name="OrderDName" id="orderName" value="지영주">
+					<input type="hidden" placeholder ="휴대폰 번호를 '-' 제외하고 숫자만 입력해주세요" name="OrderDTel21" maxlength="11" value="01012345678">
+					<input type="hidden" class="" readonly name="OrderDZip" value="06193">
+					<input type="hidden" class="" readonly maxlength="100" name="OrderDAddress1" value="서울 강남구 대치동 890-60">
+					<input type="hidden" class="" readonly maxlength="100" name="OrderDRoadAddress" value="서울 강남구 테헤란로70길 12 (대치동)">
+					<input type="hidden" class="" maxlength="100" tabindex="24" name="OrderDAddress2" value="9층, 쌍용교육센터" autocomplete="off">
+
+					<!-- 배송 방법 -->
+					<div class="odr-toggle-box open deliveryTypeBox">
+						<div class="hd">
+							<h3>배송방법</h3>
+						</div>
+
+						<div class="cn" id="todayDelivery">
+							<div class="delivery-type-box">
+								<!-- 배송방법 버튼 -->
+								<input type="radio" name="deliveryOption" id="delivery_method1" value="0" onclick="todayDeliveryCheck();" data-gtm-form-interact-field-id="0" class="_val">
+								<label for="delivery_method1">일반배송</label>
+
+								<input type="radio" name="deliveryOption" id="delivery_method2" value="1" onclick="todayDeliveryCheck();" data-gtm-form-interact-field-id="1">  
+								<label for="delivery_method2">오늘도착</label><br>
+
+											<!--<a href="javascript:popAddDelivery()" class="btn_style6 addDeli"><span class="gr">+</span> 같이 배송</a>-->
+
+								<!-- //배송방법 버튼 -->
+								
+								<!-- 설명 -->
+								<div class="delivery-info-box">
+									<div class="basic-box" style="display: block;">
+										<p class="txt">3만원 이상 무료 배송 / 익일 출고</p>
+									</div>
+
+									<div class="today-box" style="display: none;">
+										<p class="txt">
+											* 멤버쉽회원만 이용가능합니다.<br>
+											<b>* 오전 <strong class="red">11시50분 이후 주문시엔 익일 배송</strong>되며,<br>
+											주말, 공휴일 주문시 이후 평일(영업일)에 출고됩니다.<br></b>
+											* 배송 지역 : 서울 전체<br><br>
+											
+											<span>
+												<!--* 오늘도착 불가능 상품 포함되었습니다.<br />
+												* 오늘도착 가능한 재고가 없습니다.<br />
+												* 배송지를 입력해주세요.-->
+
+												<span class="red">5,000원</span> / <b style="color:blue;">12/30(화)</b> <ee style="color:black;">23시전 도착예정</ee><br>
+	
+											</span></p><p id="useCpn">
+												
+											</p>
+											
+											
+										<p></p>
+									</div>
+								</div>
+								<!-- //설명 -->
+							</div>
+
+
+
+<script>
+	$("#delivery_method1").click();
+	todayDeliveryCheck();
+
+</script>
+</div>
+
 					</div>
-					<!-- // 회원가입 혜택 -->
+					<!-- //배송 방법 -->
+
+
+					<!-- 주문상품 -->
+					<div class="odr-toggle-box open" id="cartList" >
+
+
+						<div class="hd">
+							<h3>주문 상품</h3> <!-- 2024-11-07 상품 수량/가격 위치 변경-->
+							<p class="notice" style="display:none;">* 매장 발송 상품은  물류센터에서 발송되는 상품과 개별 배송되오니 참고 부탁드립니다.</p>
+							<p class="txt _v2">1건&nbsp;/&nbsp;<ee id="TotalPrice_Cart">0</ee>원</p>
+
+							<div>
+								<button type="button" class="toggle__btn">button</button>
+							</div>
+						</div>
+						
+						<div class="cn">
+							<ul class="odr__list __pay">
+
+
+								<li>
+									<div class="goods-thumb"><img src="//filacdn.styleship.com/filaproduct2/data/productimages/a/2/FS254DJ01F001_234.jpg" alt="<한소희 착용> 여성 플로우다운 초코" /></div>
+									<div class="goods-info">
+										<p class="sex">FILA</p>
+										<p class="tit"><한소희 착용> 여성 플로우다운 초코</p>
+
+										<div class="info">
+											<div>
+												<p>색상&nbsp;:&nbsp;234</p>
+											</div>
+
+											<div>
+												<p>사이즈&nbsp;:&nbsp;W80(WXS)</p>
+											</div>
+
+											<div>
+												<p>수량&nbsp;:&nbsp;1</p>
+
+												<!-- 2023-09-07 품절임박 추가 (전체 재고 5개 이하일 경우 노출) -->
+												<!--<p class="oos_tag">품절임박</p>
+												<!-- // 2023-09-07 품절임박 추가 (전체 재고 5개 이하일 경우 노출) -->
+											</div>
+										</div>
+										
+
+										<div class="pp-box">
+
+											<div class="price">
+												<p class="sale">259,000원</p>
+												
+											</div>
+											
+											<!--
+											
+											
+											<p class="point">5,180P</p>
+											
+											
+											-->
+										</div>	
+										
+										<!-- 2023-02-01 오늘 도착 태그 추가 -->
+										
+										<p class="today_tag">오늘도착 가능</p><!-- 오늘도착 불가인 경우 클래스 _v2 추가 -->
+										
+									</div>
+								</li>
+<input type="hidden" name="cart1_coupon1val" id="cart1_coupon1val" value />
+<input type="hidden" name="cart1_coupon2val" id="cart1_coupon2val" value />
+<input type="hidden" name="cart1_coupon3val" id="cart1_coupon3val" value />
+<input type="hidden" name="cart1_coupon4val" id="cart1_coupon4val" value />
+<input type="hidden" name="cart1_coupontval" id="cart1_coupontval" value />
+
+							</ul>
+						</div>
+
+
+
+<script>
+	$("#TotalPrice_Cart").html("259,000");
+	
+</script>
+					</div>
+					<!-- // 주문상품 -->
+						
+					<!-- 2023-02-01 사은품 증정 추가 -->
+
+				<!-- 2020-10-19 gift_area S -->
+
+			<div class="odr-toggle-box open odr-gift-wrap gift-present">
+						<div class="hd">
+							<h3>사은품 증정</h3>
+						</div>
+						<div class="cn">
+							<ul class="thumb3_list">
+
+<!--div>25 실버문 신꾸 패키지 종료 되었습니다.</div-->
+
+							</ul>
+
+						</div>	
+					</div>
+				<!-- 2020-10-19 gift_area E -->
+
+<script>
+	jQuery(".gift-present").hide();
+</script>
+
+					<!-- //2023-02-01 사은품 증정 추가 -->
+
+
+<input type="hidden" name="pay_type" value />
+<input type="hidden" name="OrderTotalPrice" value="259000" />
+<input type="hidden" name="TotalPrice_Cart" value="259000" />
+<!-- Delivery_price가 기본 / transpay가 변형 -->
+<input type="hidden" name="Delivery_price" value="0" />
+<input type="hidden" name="transpay" value="0" />
+<input type="hidden" name="Delivery_coupon" value="" />
+
+<input type="hidden" name="minPoint" value="0" />
+<input type="hidden" name="coup1sale" value="0" />
+<input type="hidden" name="coup2sale" value="0" />
+<input type="hidden" name="coup3sale" value="0" />
+<input type="hidden" name="promoTotal" value="0" />
+
+<input type="hidden" name="OrderUseCoupon" value="" />
+<input type="hidden" name="OrderUseCouponPrice" value="0" />
+<input type="hidden" name="OrderSaleCategory" value="" />
+<input type="hidden" name="OrderSalePrice" value="" />
+
+<input type="hidden" name="OrderIsisland" value="0" />
+<input type="hidden" name="addpay" value="0" />
+<input type="hidden" name="giftEventValue" value="" />
+<!-- 오늘도착 여부 -->
+<input type="hidden" name="OrderIsDangil" value="0" />
+
+<input type="hidden" name="IsTest" value="" />
+
+
+
+					<!-- 결제방법 -->
+					<div class="odr-toggle-box open">
+						<div class="hd">
+							<h3>결제방법을 선택해 주세요.</h3>
+
+							<div>
+								<p class="txt" id="paymethod"></p>
+								<button type="button" class="toggle__btn">button</button>
+							</div>
+						</div>
+
+						<div class="cn">
+							<div class="pay-method-box">
+								<ul>
+									<li>
+										<input type="radio" name="gopaymethod" id="payWay1" value="card" data-method="신용카드" >
+										<label for="payWay1">신용카드</label>
+										<!--span class="tag">혜택</span-->
+									</li>  
+									<li>
+										<input type="radio" name="gopaymethod" id="payWay9" value="iniciskakao" data-method="카카오페이" >
+										<label for="payWay9">
+											<img src="//filacdn.styleship.com/filacontent2//mo/resource/images/sub/pay_kakao.png" alt="" style="width: 60px;" />
+										</label>
+									</li>
+								</ul>
+
+								<div class="chk-pay">
+									<input type="checkbox" id="payChk" name="paymethodSave" value="1" class="cb__style1" checked>
+									<label for="payChk">선택한 결제수단을 다음에도 사용</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- //결제방법 -->
+
+
+					
+				</div>	
+				<!-- // order -->
+	
+				<!-- total price -->
+				<div class="total-box">
+					
+
+					<div class="price-box">
+						<div class="price-inner">
+
+							<dl>
+								<dt>총 상품금액</dt>
+								<dd>259,000원</dd>
+							</dl>
+							<dl>
+								<dt>상품 할인금액</dt>
+								<dd class="_type_red">-<em id="sale_total3">0</em>원</dd>
+							</dl>
+
+							
+
+							<dl>
+								<dt>
+									쿠폰 할인
+									
+									<button type="button" class="coupon__btn">선택</button>									
+								</dt>
+								<dd class="_type_red">-<em id="sale_total2">0</em>원</dd>
+
+								<!-- 쿠폰 선택시 노출 -->
+								<dd class="selected-coupon" id="cpnName" ></dd>
+								<!-- //쿠폰 선택시 노출 -->
+							</dl>
+							
+
+							<dl id="pointArea">
+								<dt>
+									포인트 사용
+									
+									<button type="button" class="point__btn" data-txt1="모두 사용" data-txt2="사용 취소" onclick="is_check0_ALL();">모두사용</button>
+								</dt>
+								<dd class="_type_red">-<input type="text" name="usemile" value="0" style="ime-mode:disabled;" onblur="pay_change0();" onfocus="if (this.value==0) this.value='';void(0);" maxlength="7"  onkeyup="ReturnNumberVal(this,0);pointNumberVal(this);if (event.keyCode==13) pay_change0();void(0);">P</dd>
+								<input type="text" style="display:none;">
+
+								<!-- 쿠폰 선택시 노출 -->
+								<dd class="my-point">보유 포인트 : <ee id="usePoint">5,000</ee>P</dd>
+								<!-- //쿠폰 선택시 노출 -->
+							</dl>
+
+
+
+							<!--dl>
+								<dt>포인트</dt>
+								<dd>-<em id="sale_total3">0</em>원</dd>
+							</dl-->
+							<dl>
+								<dt>배송비</dt>
+								<dd>
+									<em id="transprice2">0</em>원
+									<em class="pcolor1" id="islandPay2"></em>
+									<em class="pcolor1" id="dangilPay2"></em>
+								</dd>
+									
+							</dl>
+							
+							<dl class="total-pirce">
+								<dt>총 주문금액</dt>
+								<dd><span id="div_price22">259,000</span>원<span class="sale_txt" id="salerate2"></span></dd>
+							</dl>
+							
+							<dl class="_type_agree">
+								<dt>주문 내용을 확인했으며, 약관에 동의합니다.</dt>
+								<dd><a href="javascript:;" class="btn_agree_view">약관보기</a></dd>
+							</dl>
+							<input type="hidden" name="use_rnd1" value="ok">
+							
+
+							<div class="btn-box" id="checkoutbtn">
+								<a href="javascript:pay_checkout();void(0);" class="btn_bg__bk on">결제하기</a> <!-- 구매하기 버튼 활성화시 off 제거-->
+							</div>
+
+						</div>
+						
+					</div>
+
+				</div>
+				<!-- //total price -->
+
+				
 			</section>
-			<!-- //join -->
+			</form>
+			
 		</div>
+
 		<!-- // end of :: contents -->
+<script>
+
+	var productData = new Array()
+
+	/*
+	gtag("event", "begin_checkout", {
+		"items": productData
+	});
+	*/
+</script>
+
+<!-- DHIVE - GTM datalayer (purchase) 2019-08-29 S -->
+<script>
+    dataLayer.push({
+        'event': 'checkout',
+        'ecommerce': {
+            'checkout': {
+                'actionField':{'step':1},
+                'products': [
+									
+                ]
+            }
+        }
+    });
+</script>	
+
+<!-- 2023-04-03 #HJ GA4 S -->
+<script>
+window.dataLayer = window.dataLayer || [];
+window.dataLayer.push({
+  event: 'begin_checkout',
+  ecommerce: {
+    items: [{ item_name: '<한소희 착용> 여성 플로우다운 초코', item_id: '1100FS254DJ01F001234', item_no: '61123', price: 259000,item_brand: 'FILA' , item_category: 'WOMEN', item_category2: '의류', item_category3: '패딩/다운점퍼', item_variant: '234', item_variant2: 'W80(WXS)', quantity: 1 }]
+  }
+});
+</script>
+<!-- 2023-04-03 #HJ GA4 E -->
+
+<script>
+	// #HJ 2025-06-05 추가 
+	/*
+  window.InsiderQueue = window.InsiderQueue || [];
+  window.InsiderQueue.push({
+    type : 'custom_event',
+    value : [{
+      event_name : 'checkout_custom',
+      event_parameters : {
+        "currency" : "KRW",
+        "session_id" : "2025122310381610514",
+        "source" : "Web",
+        "device_type" : "PC",
+        "products" : []
+      }
+    }]
+  });
+  */
+
+  function waitForInsider(callback) {
+    if (typeof Insider !== 'undefined') {
+      callback();
+    } else {
+      setTimeout(function () {
+        waitForInsider(callback);
+      }, 500);
+    }
+  }
+
+  waitForInsider(function () {
+		Insider.track('events', [
+			
+		]);
+  });
+</script>
 
 		<!-- 하단 고정 버튼 (top, sns) -->
 <div class="bot-fix-box">
 	<div class="inner">
 
-
-		<!-- 2023-10-05 오늘 본 상품 추가 (오늘 본 상품이 없는 경우 나타남) -->
-		<button type="button" class="today-goods__btn">
-			<svg id="btn_time" xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29">
-			  <g id="icon" transform="translate(-0.025 -0.025)">
-				<path id="패스_706" data-name="패스 706" d="M17.05,24.66A14,14,0,1,0,19.5,9.572l.253-3.648" transform="translate(-15.29 -4.475)" fill="none" stroke="#707070" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-				<path id="패스_707" data-name="패스 707" d="M6.537,83.1a14.542,14.542,0,0,0-.3,12.37" transform="translate(-4.475 -75.062)" fill="none" stroke="#707070" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="40 40"/>
-				<path id="패스_708" data-name="패스 708" d="M114.512,80.167v6.806l-3.662,3.662" transform="translate(-99.914 -72.362)" fill="none" stroke="#707070" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-				<line id="선_542" data-name="선 542" x1="3.654" transform="translate(4.307 5.263)" fill="none" stroke="#707070" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-			  </g>
-			</svg>
-
+		<!-- 2023-12-13 오늘 본 상품 있는 경우 (상품 썸네일 변경) -->
+		<button type="button" class="today-goods__thumb today-goods__btn">
+			<img src="//filacdn.styleship.com/filaproduct2/data/productimages/a/1/FS254DJ01F001_234.jpg" alt="">
 		</button>
-		<!-- //2023-10-05 오늘 본 상품 추가 (오늘 본 상품이 없는 경우 나타남) -->
+		<!-- // 2023-12-13 오늘 본 상품 있는 경우 (상품 썸네일 변경) -->
 
 
 		<button type="button" class="kakaotalk__btn" onclick="doBizmsg();void(0);">
@@ -1840,6 +2380,9 @@ window.criteo_q = window.criteo_q || [];
 var deviceType = /iPad/.test(navigator.userAgent) ? "t" : /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test(navigator.userAgent) ? "m" : "d";
 window.criteo_q.push(
  { event: "setAccount", account: 29360},
+ 
+ { event: "setEmail", email: "jyj030818@naver.com", hash_method: "" },
+ { event: "setZipcode", zipcode: "06193" },
 
  { event: "setSiteType", type: deviceType},
  { event: "viewHome"});
@@ -1887,7 +2430,7 @@ dataLayer.push ({
 	'event':'page_view_cs',
 	'property' : {
 	  'brand_sub' : 'FILA',
-	  'page_type' : 'JOIN_MEMBER',
+	  'page_type' : 'CHECKOUT',
 	  'utm_source' : '',
 	  'utm_medium' : '',
 	  'utm_campaign' : '',
@@ -1899,19 +2442,19 @@ dataLayer.push ({
 dataLayer.push ({
 	'event':'user_info',
 	'property' : {
-	  'userId' : '',
-	  'custno' : 'A',
-	  'registration_date' : '',
-	  'login_type' : '',	  	 		
+	  'userId' : '1f22d2e12c6896fa7eea8864590058bc',
+	  'custno' : 'A20251128145726285180',
+	  'registration_date' : '20251128',
+	  'login_type' : 'eshop',	  	 		
 	  'device' : 'desktop',
-	  'logged_in' : 'no',
+	  'logged_in' : 'yes',
 	  'lifetime_value' : 0,
 	  'order_count' : 0,
-	  'grades' : '',
-	  'birth_year' : '',
-	  'gender' : '',
-	  'age' : '',
-	  'employee' : ''	  	  
+	  'grades' : 'WHITE',
+	  'birth_year' : '2003',
+	  'gender' : 'F',
+	  'age' : 22,
+	  'employee' : 'N'	  	  
 	}	
 })	
 </script>
@@ -2326,7 +2869,7 @@ dataLayer.push ({
 /*
 							jQuery.ajax({
 								type: "POST",
-								data: "pno=&campID=" + campID,
+								data: "pno=61123&campID=" + campID,
 								url: "/ext/insiderCheck.asp",
 								dataType : "JSON",
 								success: function(data) {
@@ -2354,136 +2897,32 @@ dataLayer.push ({
 <script>
     window.insider_object = window.insider_object || {};
     window.insider_object.page = {
-			"type": "Home"
+			"type": "Checkout"
+    }
+</script>
+
+<script>
+    window.insider_object = window.insider_object || {};
+    window.insider_object.user = {
+			"uuid": "20251128145726285180",
+			"gdpr_optin": true,			
+			"gender": "F"
     }
 </script>
 
 <!-- #HJ 2025-06-17 insider E -->
+
 	</div>
-	<!-- // end of :: wrap -->
+    <!-- // end of :: wrap -->    
+<iframe name="pFrame" id="pFrame" width="0" height="0" style="display:none;"></iframe>		
+<div id="payAuto"></div>
+<div id="checkAuto"></div>
+<!-- #HJ 2018-04-30 AdVisor Facebook event script-->
+
+
+<!-- 2020-05-07 #HJ groobee 2020-08-31 교체 S 2020-09-23 ProductNo로 수정 -->
+<!-- 2020-05-07 ''' groobee 2024-03-29 삭제 -->
+<!-- 2020-05-07 #HJ groobee E -->
+
 </body>
-<form name="restFrm" method="post" target="dataFrame" action="RestDI.asp">
-	<input type="hidden" name="TempcustNo">
-	<input type="hidden" name="TempName">
-	<input type="hidden" name="memberTel">
-	<input type="hidden" name="joinGbn">
-	<input type="hidden" name="tempDI">
-	<input type="hidden" name="tempCI">
-</form>
-
-<script>
-var LoginPop;
-function loginPop(url){
-	jQuery.ajax({
-		type: "POST",
-		url: "/member/verify_staff.asp",
-		dataType : "JSON",
-		success: function(data) {
-			var formStr = "";
-				formStr +='	<div class="main_popup member-login__popup">';
-				formStr +='			<div class="member__info">';				
-				formStr +='				안녕하세요? '+ data.data1 +'님<br/> ';
-				formStr +='				'+ data.data2 +'<br/>';
-				formStr +='				'+ data.data3 +'';
-				formStr +='				<p>로그인 방식을 선택해 주세요</p>';
-				formStr +='			</div>';
-				formStr +='		<div class="close_area close_style2">';
-				formStr +='			<a href=javascript:staffGo("'+ url +'"); class="btn_close fl">사원 로그인</a>';
-				formStr +='			<a href="'+ url +'" class="btn_close">일반 로그인</a>';
-				formStr +='		</div>'; 
-				formStr +='	</div>';
-
-					layer.source(formStr,'cmtPop', {
-						alignX : 0.5,
-						alignY : 0.5,
-						background : true, 
-						backgroundColor : 'black',
-						backgroundOpacity : 0.7
-						//closeButtonId : 'closeBtn1'
-					});
-/*
-				LoginPop = new CoverLayer(formStr, {
-					bg_color : "white", 		// 백그라운드 색상 기본값:"#000"
-					bg_opacity : 0.75, 		// 백그라운드 투명도. 기본값:0.75
-					close_btn_id : "closeBtn1", 	// 레이어 닫기 버튼 DOM id, 기본값:"closeBtn"
-					z_index : 999999, 			// 레이어의 z-index 값 기본값:99990
-					cast_speed : 500,		// 레이어 생성 트위닝 속도
-					close_click : false,		// 어느곳이나 클릭시 닫힘 여부, 활성화:true, 비활성화:false(기본값)
-					scroll_fix : false
-				});
-				*/
-		},
-		error: function(e) {
-			//alert("e");
-		}
-	});
-}		
-//'''2021-07-07 기증쿠폰관련
-var loginSunsooPop
-function loginSunsooPop(url){
-	jQuery.ajax({
-		type: "POST",
-		url: "/member/verify_sunsoo.asp",
-		dataType : "JSON",
-		success: function(data) {
-			var formStr = "";
-				formStr +='	<div class="main_popup member-login__popup">';
-				formStr +='			<div class="member__info">';				
-				formStr +='				안녕하세요? '+ data.data1 +'님<br/> ';
-				formStr +='				'+ data.data3 +'';
-				formStr +='				<p>로그인 방식을 선택해 주세요</p>';
-				formStr +='			</div>';
-				formStr +='		<div class="close_area close_style2">';
-				formStr +='			<a href=javascript:sunsooGo("'+ url +'"); class="btn_close fl">선수 로그인</a>';
-				formStr +='			<a href="'+ url +'" class="btn_close">일반 로그인</a>';
-				formStr +='		</div>'; 
-				formStr +='	</div>';
-
-				$('body').addClass('lyr-qna--open');
-				$('body').append(formStr);
-
-					layer.source(formStr,'cmtPop', {
-						alignX : 0.5,
-						alignY : 0.5,
-						background : true, 
-						backgroundColor : 'black',
-						backgroundOpacity : 0.7
-						//closeButtonId : 'closeBtn1'
-					});
-		},
-		error: function(e) {
-			//alert("e");
-		}
-	});
-}
-function staffGo(url){
-	jQuery.ajax({
-		type: "POST",
-		data: "mode=STAFF",
-		url: "/member/verify_staff.asp",
-		dataType : "JSON",
-		success: function(data) {
-			top.location.href = url;
-		},
-		error: function(e) {
-			//alert("e");
-		}
-	});
-}		
-//'''2021-07-07 기증쿠폰관련
-function sunsooGo(url){
-	jQuery.ajax({
-		type: "POST",
-		data: "mode=SUNSOO",
-		url: "/member/verify_sunsoo.asp",
-		dataType : "JSON",
-		success: function(data) {
-			top.location.href = url;
-		},
-		error: function(e) {
-			//alert("e");
-		}
-	});
-}
-</script>
 </html>

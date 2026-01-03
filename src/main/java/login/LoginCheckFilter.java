@@ -29,7 +29,7 @@ public class LoginCheckFilter implements Filter {
 
         // 로그인 안 된 상태
         if (auth == null) {
-            resp.sendRedirect(req.getContextPath() + "/view/user/login.jsp");
+            resp.sendRedirect(req.getContextPath() + "/login.htm");
             return;
         }
 

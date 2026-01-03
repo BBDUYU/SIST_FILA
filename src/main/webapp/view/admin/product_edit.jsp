@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>FILA Admin - 상품 등록</title>
+<title>FILA Admin - 상품 수정</title>
 <style>
 :root {
 	--fila-navy: #00205b;
@@ -24,7 +24,9 @@
 .upload-wrapper { background: #fff; padding: 20px; border: 1px solid var(--border-color); }
 .photo-upload-zone { border: 2px dashed var(--border-color); padding: 25px; text-align: center; background: #fafafa; cursor: pointer; }
 .preview-container { display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; }
-.preview-container img { width: 80px; height: 80px; object-fit: cover; border: 1px solid #eee; }
+.preview-container .img-box { position: relative; width: 80px; height: 80px; }
+.preview-container img { width: 100%; height: 100%; object-fit: cover; border: 1px solid #eee; }
+.del-btn { position: absolute; top: -5px; right: -5px; background: var(--fila-red); color: #fff; width: 18px; height: 18px; border-radius: 50%; font-size: 12px; text-align: center; cursor: pointer; border: none; }
 
 /* 카테고리 선택 */
 .category-container { display: flex; gap: 10px; background: white; padding: 15px; border: 1px solid var(--border-color); }
@@ -49,20 +51,32 @@
 			<jsp:param name="currentPage" value="product" />
 		</jsp:include>
 
-		<form id="productForm" action="createProduct.htm" method="post" enctype="multipart/form-data">
+		<form id="productForm" action="editProduct.htm" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="product_id" value="${product.product_id}">
+			
 			<div id="contents" style="max-width: 1300px; margin: 0 auto; display: flex; gap: 40px;">
 
 				<div style="flex: 1.4;">
-					<h3 class="section-title">상품 비주얼 등록</h3>
+					<h3 class="section-title">상품 비주얼 수정</h3>
 					
 					<div class="input-group">
 						<label>메인 상품 이미지 (최대 13장)</label>
 						<div class="upload-wrapper">
 							<div class="photo-upload-zone" onclick="document.getElementById('mainImgs').click()">
-								<span style="font-size:24px;">+</span><br><span class="desc">클릭하여 메인 이미지 업로드</span>
+								<span style="font-size:24px;">+</span><br><span class="desc">클릭하여 이미지 추가 업로드</span>
 								<input type="file" id="mainImgs" name="mainImages[]" multiple style="display: none" onchange="previewImages(this, 'main-preview')">
 							</div>
-							<div id="main-preview" class="preview-container"></div>
+							<div id="main-preview" class="preview-container">
+								<c:forEach items="${imageList}" var="img">
+									<c:if test="${img.image_type eq 'MAIN'}">
+										<div class="img-box" id="ex-img-${img.product_image_id}">
+											<img src="${pageContext.request.contextPath}${img.image_url}">
+											<input type="hidden" name="existing_image_ids" value="${img.product_image_id}">
+											<button type="button" class="del-btn" onclick="markImageDelete('${img.product_image_id}',this)">×</button>
+										</div>
+									</c:if>
+								</c:forEach>
+							</div>
 						</div>
 					</div>
 
@@ -70,10 +84,20 @@
 						<label>모델컷 이미지 등록</label>
 						<div class="upload-wrapper">
 							<div class="photo-upload-zone" onclick="document.getElementById('modelImgs').click()">
-								<span style="font-size:24px;">+</span><br><span class="desc">클릭하여 모델 촬영 이미지 업로드</span>
+								<span style="font-size:24px;">+</span><br><span class="desc">클릭하여 이미지 추가 업로드</span>
 								<input type="file" id="modelImgs" name="modelImages[]" multiple style="display: none" onchange="previewImages(this, 'model-preview')">
 							</div>
-							<div id="model-preview" class="preview-container"></div>
+							<div id="model-preview" class="preview-container">
+								<c:forEach items="${imageList}" var="img">
+									<c:if test="${img.image_type eq 'MODEL'}">
+										<div class="img-box" id="ex-img-${img.product_image_id}">
+											<img src="${pageContext.request.contextPath}${img.image_url}">
+											<input type="hidden" name="existing_image_ids" value="${img.product_image_id}">
+											<button type="button" class="del-btn" onclick="markImageDelete('${img.product_image_id}',this)">×</button>
+										</div>
+									</c:if>
+								</c:forEach>
+							</div>
 						</div>
 					</div>
 
@@ -81,19 +105,29 @@
 						<label>상세 설명 하단 이미지</label>
 						<div class="upload-wrapper">
 							<div class="photo-upload-zone" onclick="document.getElementById('detailImgs').click()">
-								<span style="font-size:24px;">+</span><br><span class="desc">클릭하여 상세 이미지 업로드</span>
+								<span style="font-size:24px;">+</span><br><span class="desc">클릭하여 이미지 추가 업로드</span>
 								<input type="file" id="detailImgs" name="detailImages[]" multiple style="display: none" onchange="previewImages(this, 'detail-preview')">
 							</div>
-							<div id="detail-preview" class="preview-container"></div>
+							<div id="detail-preview" class="preview-container">
+								<c:forEach items="${imageList}" var="img">
+									<c:if test="${img.image_type eq 'DETAIL'}">
+										<div class="img-box" id="ex-img-${img.product_image_id}">
+											<img src="${pageContext.request.contextPath}${img.image_url}">
+											<input type="hidden" name="existing_image_ids" value="${img.product_image_id}">
+											<button type="button" class="del-btn" onclick="markImageDelete('${img.product_image_id}',this)">×</button>
+										</div>
+									</c:if>
+								</c:forEach>
+							</div>
 						</div>
 					</div>
 				</div>
 
 				<div style="flex: 1; background: #fff; padding: 30px; border: 1px solid var(--border-color); height: fit-content;">
-					<h3 style="color: var(--fila-navy); border-bottom: 1px solid #eee; padding-bottom: 15px; margin-top:0;">상품 정보 설정</h3>
+					<h3 style="color: var(--fila-navy); border-bottom: 1px solid #eee; padding-bottom: 15px; margin-top:0;">상품 정보 수정</h3>
 
 					<div class="input-group">
-						<label>노출 카테고리 지정 (중복 선택 가능)</label>
+						<label>노출 카테고리 지정</label>
 						<div class="category-container">
 							<div class="category-select" id="depth1">
 								<c:forEach items="${list}" var="c"><c:if test="${c.depth eq 1}"><div class="cate-item" onclick="filterCategory(2, '${c.category_id}', this)">${c.name}</div></c:if></c:forEach>
@@ -115,11 +149,10 @@
 							<p style="font-size: 13px; font-weight: bold; margin-bottom: 10px;">스포츠 분류</p>
 							<div class="opt-list">
 							    <c:forEach items="${options}" var="entry">
-							        <%-- 키값이 2인 경우가 스포츠 분류 --%>
 							        <c:if test="${entry.key == 2}">
 							            <c:forEach items="${entry.value}" var="opt">
 							                <label class="opt-item">
-							                    <input type="radio" name="sport_option" value="${opt.v_master_id}" required> 
+							                    <input type="radio" name="sport_option" value="${opt.v_master_id}" ${product.sport_option_id == opt.v_master_id ? 'checked' : ''} required> 
 							                    <span>${opt.value_name}</span>
 							                </label>
 							            </c:forEach>
@@ -128,84 +161,120 @@
 							</div>
 							<p style="font-size: 13px; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">사이즈 <span id="size-target-name" style="color: var(--fila-red);"></span></p>
 							<div id="size-area" class="opt-list">
-						    <c:forEach items="${options}" var="entry">
-						        <%-- 4~8번 사이의 마스터 ID인 경우 사이즈 아이템으로 생성 --%>
-						        <c:if test="${entry.key >= 4 && entry.key <= 8}">
-						            <c:forEach items="${entry.value}" var="opt">
-						                <label class="opt-item size-item m-${entry.key}" style="display: none;">
-						                    <input type="checkbox" name="size_options" value="${opt.v_master_id}"> 
-						                    <span>${opt.value_name}</span>
-						                </label>
-						            </c:forEach>
-						        </c:if>
-						    </c:forEach>
-						    <div id="size-placeholder" style="color: #999; font-size: 12px;">카테고리를 선택하면 사이즈 목록이 나타납니다.</div>
-						</div>
+							    <c:forEach items="${options}" var="entry">
+							        <c:if test="${entry.key >= 4 && entry.key <= 8}">
+							            <c:forEach items="${entry.value}" var="opt">
+							                <label class="opt-item size-item m-${entry.key}" style="display: none;">
+							                    <input type="checkbox" name="size_options" value="${opt.v_master_id}" 
+							                    	<c:forEach items="${productSizes}" var="sId"><c:if test="${sId == opt.v_master_id}">checked</c:if></c:forEach>> 
+							                    <span>${opt.value_name}</span>
+							                </label>
+							            </c:forEach>
+							        </c:if>
+							    </c:forEach>
+							    <div id="size-placeholder" style="color: #999; font-size: 12px;">카테고리를 선택하면 사이즈 목록이 나타납니다.</div>
+							</div>
 						</div>
 					</div>
 
 					<div style="display: flex; gap: 15px;">
 						<div class="input-group" style="flex: 1;">
 							<label>스타일(룩북) 연결</label>
-							<select name="styleId" class="f-input">
+							<select name="style_id" class="f-input">
 								<option value="0">-- 선택 안함 --</option>
-								<c:forEach items="${styleList}" var="s"><option value="${s.styleId}">${s.styleName}</option></c:forEach>
+								<c:forEach items="${styleList}" var="s"><option value="${s.styleId}" ${product.style_id == s.styleId ? 'selected' : ''}>${s.styleName}</option></c:forEach>
 							</select>
 						</div>
 						<div class="input-group" style="flex: 1;">
 							<label>이벤트 섹션 연결</label>
-							<select name="sectionId" class="f-input">
+							<select name="section_id" class="f-input">
 								<option value="0">-- 선택 안함 --</option>
-								<c:forEach items="${eventSectionList}" var="es"><option value="${es.sectionId}">${es.name}</option></c:forEach>
+								<c:forEach items="${eventSectionList}" var="es"><option value="${es.sectionId}" ${product.section_id == es.sectionId ? 'selected' : ''}>${es.name}</option></c:forEach>
 							</select>
 						</div>
 					</div>
 
-					<div class="input-group"><label>제품명</label><input type="text" name="name" class="f-input" required></div>
+					<div class="input-group"><label>제품명</label><input type="text" name="name" class="f-input" value="${product.name}" required></div>
 
 					<div style="display: flex; gap: 10px;">
-						<div class="input-group" style="flex: 1;"><label>판매가(원)</label><input type="number" name="price" class="f-input" required></div>
-						<div class="input-group" style="flex: 0.7;"><label>할인율(%)</label><input type="number" name="discount_rate" class="f-input" value="0"></div>
-						<div class="input-group" style="flex: 1;"><label>초기 재고수량</label><input type="number" name="stock" class="f-input" placeholder="사이즈별 수량" required></div>
+						<div class="input-group" style="flex: 1;"><label>판매가(원)</label><input type="number" name="price" class="f-input" value="${product.price}" required></div>
+						<div class="input-group" style="flex: 0.7;"><label>할인율(%)</label><input type="number" name="discount_rate" class="f-input" value="${product.discount_rate}"></div>
+						<div class="input-group" style="flex: 1;"><label>재고수량</label><input type="number" name="stock" class="f-input" value="${product.stock}" required></div>
 					</div>
 
 					<div class="input-group">
 						<label>상품 상세 설명</label>
-						<textarea name="description" class="f-input" style="height: 100px; resize: none;"></textarea>
+						<textarea name="description" class="f-input" style="height: 100px; resize: none;">${product.description}</textarea>
 					</div>
 
-					<button type="button" class="submit-btn" onclick="registProduct()">상품 등록 완료</button>
+					<button type="button" class="submit-btn" onclick="registProduct()">상품 수정 완료</button>
 				</div>
 			</div>
-			<input type="hidden" id="gender_option_input" name="gender_option" value="">
+			<input type="hidden" id="gender_option_input" name="gender_option" value="${product.gender_option_id}">
 		</form>
-		
 	</div>
 
 	<script>
     let selectedCategories = new Map(); 
     let currentPath = { d1: "", d2: "" };
 
-    // 이미지 미리보기
+    window.onload = function() {
+        // 1. 기존 선택된 카테고리 태그들 복원
+        <c:forEach items="${productCategories}" var="pc">
+            selectedCategories.set("${pc.category_id}", "${pc.full_path}");
+        </c:forEach>
+        renderCategoryUI();
+        
+        // 2. 사이즈 영역 복원
+        const gName = "${product.gender_name}"; // MALE, FEMALE, KIDS
+        const cType = "${product.category_type}"; // 의류, 신발 등
+        restoreSizeDisplay(gName, cType);
+    };
+
+    function restoreSizeDisplay(gName, cType) {
+        let targetId = null;
+        if (cType.includes("신발")) targetId = (gName === "KIDS") ? 8 : 7;
+        else if (cType.includes("의류")) {
+            if (gName === "MALE") targetId = 4;
+            else if (gName === "FEMALE") targetId = 5;
+            else targetId = 6;
+        }
+        if (targetId) {
+            document.getElementById('size-placeholder').style.display = 'none';
+            document.querySelectorAll('.m-' + targetId).forEach(el => el.style.display = 'inline-flex');
+        }
+    }
+
+    function markImageDelete(imageId) {
+        if(confirm("이 이미지를 삭제하시겠습니까? (수정 완료 시 반영됩니다)")) {
+            const container = document.getElementById('hidden-inputs');
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'delete_image_ids';
+            input.value = imageId;
+            container.appendChild(input);
+            document.getElementById('ex-img-' + imageId).remove();
+        }
+    }
+
     function previewImages(input, previewId) {
         const preview = document.getElementById(previewId);
-        const files = Array.from(input.files);
-        console.log(input.id + "에 선택된 파일 개수: " + input.files.length);
-        preview.innerHTML = "";
+        // 수정을 위해 기존꺼 유지하고 새 미리보기만 append 하거나, 
+        // 새 파일 선택 시 새 미리보기만 다시 그리는 로직
         if (input.files) {
             Array.from(input.files).forEach(file => {
                 const reader = new FileReader();
                 reader.onload = e => {
-                    const img = document.createElement("img");
-                    img.src = e.target.result;
-                    preview.appendChild(img);
+                    const div = document.createElement("div");
+                    div.className = "img-box";
+                    div.innerHTML = `<img src="\${e.target.result}">`;
+                    preview.appendChild(div);
                 };
                 reader.readAsDataURL(file);
             });
         }
     }
 
-    // 카테고리 필터링
     function filterCategory(nextDepth, parentId, element) {
         const name = element.innerText.trim();
         if (nextDepth === 2) {
@@ -232,13 +301,11 @@
         if (nextDepth === 3) handleSizeDisplay(element);
     }
 
-    // 다중 카테고리 선택
     function toggleCategory(element, id) {
         const d3Name = element.innerText.trim();
         const fullPath = currentPath.d1 + " > " + currentPath.d2 + " > " + d3Name;
         if (selectedCategories.has(id)) { alert("이미 선택된 카테고리입니다."); return; }
         selectedCategories.set(id, fullPath);
-        
         element.classList.add('active');
         renderCategoryUI();
     }
@@ -246,14 +313,13 @@
     function renderCategoryUI() {
         const tagContainer = document.getElementById('selected-tags');
         const inputContainer = document.getElementById('hidden-inputs');
-        tagContainer.innerHTML = ""; inputContainer.innerHTML = "";
-        
+        inputContainer.querySelectorAll('input[name="category_ids"]').forEach(i => i.remove());
+        tagContainer.innerHTML = ""; 
         selectedCategories.forEach((path, id) => {
             const tag = document.createElement('div');
             tag.className = 'cate-tag';
             tag.innerHTML = path + ' <span onclick="removeCategory(\'' + id + '\')" style="cursor:pointer; font-weight:bold; margin-left:5px;">×</span>';
             tagContainer.appendChild(tag);
-            
             const input = document.createElement('input');
             input.type = "hidden"; input.name = "category_ids"; input.value = id;
             inputContainer.appendChild(input);
@@ -265,17 +331,13 @@
         renderCategoryUI();
     }
 
-    
-
     function handleSizeDisplay(element) {
         const d1Active = document.querySelector('#depth1 .cate-item.active');
         if(!d1Active) return;
         const d1Text = d1Active.innerText.trim();
         const d2Text = element.innerText.trim();
-        
         document.getElementById('size-placeholder').style.display = 'none';
         document.querySelectorAll('.size-item').forEach(el => el.style.display = 'none');
-
         let targetId = null;
         if (d2Text.includes("신발")) targetId = (d1Text === "KIDS") ? 8 : 7;
         else if (d2Text.includes("의류")) {
@@ -288,40 +350,55 @@
             document.querySelectorAll('.m-' + targetId).forEach(el => el.style.display = 'inline-flex');
         }
     }
+
     function registProduct() {
         const form = document.getElementById("productForm"); 
-
-        // 1. 파일 인풋들 처리
         const targetIds = ['mainImgs', 'modelImgs', 'detailImgs'];
         const paramNames = ['mainImages', 'modelImages', 'detailImages'];
 
         targetIds.forEach((id, idx) => {
             const fileInput = document.getElementById(id);
             const files = fileInput.files;
-
             if (files.length > 0) {
                 for (let i = 0; i < files.length; i++) {
                     const dataTransfer = new DataTransfer();
                     dataTransfer.items.add(files[i]);
-
-                    // 동적으로 새로운 파일 인풋 생성 (이름을 다르게 부여)
                     const hiddenInput = document.createElement('input');
                     hiddenInput.type = 'file';
-                    hiddenInput.name = paramNames[idx] + i; // mainImages0, mainImages1...
+                    hiddenInput.name = paramNames[idx].replace('[]', '') + i;
                     hiddenInput.files = dataTransfer.files;
                     hiddenInput.style.display = 'none';
-
                     form.appendChild(hiddenInput);
                 }
-                // 기존 인풋의 name을 제거하여 cos.jar가 헷갈리지 않게 함
-                // (input 태그 자체는 남아있으므로 화면이 깨지거나 에러나지 않음)
                 fileInput.removeAttribute('name'); 
             }
         });
-
-        // 2. 다른 인풋들(텍스트, 셀렉트박스 등)은 폼에 그대로 붙어있으므로 
-        // form.submit() 시점에 한꺼번에 서버로 날아갑니다.
         form.submit();
+    }
+    let deleteImageIds = [];
+
+    function markImageDelete(imageId, btn) { // btn 인자 확인!
+        if(confirm("이 이미지를 삭제하시겠습니까?")) {
+            // 1. 전달받은 버튼(btn)을 기준으로 부모 박스를 찾아 숨김
+            const imgBox = btn.closest('.img-box'); 
+            if (imgBox) {
+                imgBox.style.display = 'none';
+                // 기존 전송 데이터 비활성화
+                const hiddenExisting = imgBox.querySelector('input[name="existing_image_ids"]');
+                if(hiddenExisting) hiddenExisting.disabled = true;
+            }
+
+            // 2. 서버로 보낼 삭제 ID 리스트 생성
+            const container = document.getElementById('hidden-inputs');
+            if (container) {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "deleteImageIds"; 
+                input.value = imageId;
+                container.appendChild(input);
+                console.log("삭제 목록 추가됨 ID:", imageId);
+            }
+        }
     }
 	</script>
 </body>

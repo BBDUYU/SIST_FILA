@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
@@ -171,22 +170,9 @@ body {
 </style>
 </head>
 <body>
-
-	<div class="sidebar">
-		<div class="logo">
-			<a href="${pageContext.request.contextPath}/index.htm"
-				style="text-decoration: none; color: inherit;"> <span
-				style="letter-spacing: 5px;">FILA</span>
-			</a> <span
-				style="font-weight: 300; font-size: 16px; margin-left: 5px; color: rgba(255, 255, 255, 0.7);">ADMIN</span>
-		</div>
-		<div class="nav-item active"
-			onclick="location.href='${pageContext.request.contextPath}/admin/userList.htm'">회원
-			관리</div>
-		<div class="nav-item">상품 관리</div>
-		<div class="nav-item">쿠폰 관리</div>
-		<div class="nav-item">1:1 문의</div>
-	</div>
+		<jsp:include page="../common/sidebar.jsp">
+        <jsp:param name="currentPage" value="user" />
+    </jsp:include>
 
 	<div class="main-content">
 		<div class="card">
@@ -215,7 +201,7 @@ body {
 						</tr>
 						<tr>
 							<th>회원 성함</th>
-							<td>${user.childname}</td>
+							<td>${user.name}</td>
 							<th>회원 등급</th>
 							<td><span
 								style="border: 1px solid #ccc; padding: 2px 6px; font-size: 12px;">${user.grade}</span></td>
@@ -276,16 +262,17 @@ body {
 								<tr>
 									<td><fmt:formatDate value="${p.createAt}"
 											pattern="yyyy-MM-dd HH:mm" /></td>
-									<td><c:choose>
-											<c:when test="${p.type eq '적립' or p.type eq 'SAVED'}">
-												<span style="color: #28a745; font-weight: bold;">+
-													${p.type}</span>
+									<td>
+										<c:choose>
+											<%-- EARN, 적립, SAVED 등을 초록색 + 로 표시 --%>
+											<c:when test="${p.type eq '적립' or p.type eq 'SAVED' or p.type eq 'EARN'}">
+												<span style="color: #28a745; font-weight: bold;">+ ${p.type}</span>
 											</c:when>
 											<c:otherwise>
-												<span style="color: var(--fila-red); font-weight: bold;">-
-													${p.type}</span>
+												<span style="color: var(--fila-red); font-weight: bold;">- ${p.type}</span>
 											</c:otherwise>
-										</c:choose></td>
+										</c:choose>
+									</td>
 									<td style="font-weight: bold;"><fmt:formatNumber
 											value="${p.amout}" pattern="#,###" /> P</td>
 									<td><fmt:formatNumber value="${p.balance}" pattern="#,###" />
@@ -357,18 +344,22 @@ body {
 	</div>
 	<script>
     function showTab(tabName, element) {
+        // 모든 컨텐츠 숨기기
         const contents = document.getElementsByClassName('tab-content');
         for (let i = 0; i < contents.length; i++) {
             contents[i].style.display = 'none';
         }
 
+        // 선택한 섹션 보이기
         document.getElementById('section-' + tabName).style.display = 'block';
 
+        // 모든 탭 버튼에서 active 클래스 제거
         const tabs = document.getElementsByClassName('nav-item-tab');
         for (let i = 0; i < tabs.length; i++) {
             tabs[i].classList.remove('active');
         }
 
+        // 현재 클릭한 버튼에 active 추가
         element.classList.add('active');
     }
     </script>

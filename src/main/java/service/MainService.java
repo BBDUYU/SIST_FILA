@@ -10,8 +10,8 @@ import com.util.JdbcUtil;
 
 import categories.CategoriesDAO;
 import categories.CategoriesDTO;
-import event_product.eventproductDAO;
-import event_product.eventproductDTO;
+import event_product.EventproductDAO;
+import event_product.EventproductDTO;
 import main.MainbannerDAO;
 import main.MainbannerDTO;
 import search.SearchDAO;
@@ -32,7 +32,7 @@ public class MainService {
             // DAO 인스턴스 준비
             CategoriesDAO cDao = CategoriesDAO.getInstance();
             SearchDAO sDao = SearchDAO.getInstance();
-            eventproductDAO epDao = eventproductDAO.getInstance();
+            EventproductDAO epDao = EventproductDAO.getInstance();
             MainbannerDAO ebDao = MainbannerDAO.getInstance();
 
             // 1. 검색어 저장 (검색창 입력 시)
@@ -49,11 +49,11 @@ public class MainService {
             dataMap.put("popularKeywords", popularKeywords);
 
             // 4. 추천 키워드 (이벤트+상품) 조회
-            ArrayList<eventproductDTO> recommendKeywords = epDao.selectRecommendKeywords(conn);
+            ArrayList<EventproductDTO> recommendKeywords = epDao.selectRecommendKeywords(conn);
             dataMap.put("recommendKeywords", recommendKeywords);
 
             // 5. 추천 상품 (슬라이더용 12개) 조회
-            ArrayList<eventproductDTO> recommendProducts = epDao.selectRecommendProducts(conn);
+            ArrayList<EventproductDTO> recommendProducts = epDao.selectRecommendProducts(conn);
             dataMap.put("recommendProducts", recommendProducts);
 
             // 6. 메인 배너 조회 및 정렬 (비디오를 뒤로)
