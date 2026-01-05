@@ -8,12 +8,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @WebFilter(
-    urlPatterns = {
-        "/test/*",
-        "/board/*",
-        "/admin/*"
-    }
-)
+	    urlPatterns = {
+	        "/test/*",
+	        "/board/*",
+	        "/admin/*",
+	        "/mypage.htm",      // 추가
+	        "/inquiry/*"        // 추가
+	    }
+	)
 public class LoginCheckFilter implements Filter {
 
     @Override

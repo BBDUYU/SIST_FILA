@@ -6,6 +6,43 @@
 <!DOCTYPE html>
 
 <html lang="ko">
+<style>
+/* 1. 모달 전체 배경 (어둡게 처리) */
+#modalContainer {
+    display: none; 
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* 배경 70% 어둡게 */
+    z-index: 99999; /* 최상단에 위치 */
+    justify-content: center;
+    align-items: center;
+}
+
+/* 2. 모달 하얀색 박스 (image_6781c1.png 디자인) */
+.modal-content-wrapper {
+    background: #fff;
+    width: 90%;
+    max-width: 900px; /* 휠라 사이트 기준 너비 */
+    height: auto;
+    max-height: 90vh;
+    overflow-y: auto; /* 내용 길면 스크롤 */
+    position: relative;
+    padding: 0; /* 내부 여백은 JSP 안에서 조절 */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* 3. 닫기 버튼 스타일 예시 */
+.modal-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+</style>
 <head>
   <meta charset="UTF-8">
   <title>마이페이지</title>
@@ -19,6 +56,7 @@
 
   <!-- 마이페이지 전용 -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -34,9 +72,13 @@
 
       <!-- 우측 콘텐츠 -->
       <section class="mypage-content">
-
-        <h2 class="mypage-title">최근 주문</h2>
-
+<div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 class="mypage-title">최근 주문</h2>
+      <button type="button" id="openInquiryBtn" 
+              style="padding: 10px 20px; background: #00205b; color: #fff; border: none; cursor: pointer; font-weight: bold;">
+          1:1 문의하기
+      </button>
+  </div>
         <div class="mypage-empty">
           최근 주문 내역이 없습니다.
         </div>
@@ -1662,11 +1704,13 @@ WHITE
 						</ul>
 					</div>
 					<div>
-						<p class="tit">고객센터</p>
-						<ul>
-							<a href="javascript:void(0)">1:1 문의</a>
-							<!--li><a href="">상품 문의</a></li-->
-							<li ><a href="/mypage/as.htm">A/S 현황 조회</a></li>
+						<div class="side-menu-box">
+    <p class="tit">고객센터</p>
+    <ul class="mypage-side-menu">
+        <li><a href="javascript:void(0);" onclick="openInquiryModal();">1:1 문의하기</a></li>
+        <li><a href="/mypage/as.htm">A/S 현황 조회</a></li>
+    </ul>
+</div>
 						</ul>
 					</div>
 				</div>
@@ -2523,9 +2567,30 @@ dataLayer.push ({
 			"gdpr_optin": true,			
 			"gender": "M"
     }
-</script>
-
-
+    </script>
+  
+   
+    <script>
+    function openInquiryModal() {
+        jQuery.ajax({
+            url: '<%=request.getContextPath()%>/view/mypage/inquiry_modal_form.jsp',
+            type: 'GET',
+            success: function(data) {
+                if (jQuery('#modalContainer').length === 0) {
+                    jQuery('body').append('<div id="modalContainer"></div>');
+                }
+                
+                // 가져온 data를 wrapper로 감싸서 넣기
+                var modalHtml = '<div class="modal-content-wrapper">' + data + '</div>';
+                
+                jQuery('#modalContainer').html(modalHtml).css('display', 'flex'); // flex로 중앙정렬
+                jQuery('body').css('overflow', 'hidden'); 
+            }
+        });
+    }
+    </script>
+  
+  
 
   <!-- JS (필요한 것만) -->
   <script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
@@ -2535,5 +2600,6 @@ dataLayer.push ({
 
 	</div>
     <!-- // end of :: wrap -->    
+<div id="modalContainer"></div>
 </body>
 </html>
