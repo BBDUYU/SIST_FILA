@@ -61,9 +61,9 @@
     
     <div class="nav-item ${param.currentPage eq 'product' ? 'active' : ''}" 
          onclick="location.href='${pageContext.request.contextPath}/admin/productList.htm'">상품 관리</div>
-    <div class="nav-sub-item" onclick="location.href='${pageContext.request.contextPath}/admin/createProduct.htm'">ㄴ 상품 등록</div>
     
-    <div class="nav-item ${pageName eq 'coupon' ? 'active' : ''}">쿠폰 관리</div>
+    <div class="nav-item ${pageName eq 'coupon' ? 'active' : ''}"
+    	onclick="location.href='${pageContext.request.contextPath}/admin/coupon_list.htm'">쿠폰 관리</div>
     
     <div class="nav-item ${pageName eq 'inquiry' ? 'active' : ''}" 
          onclick="location.href='${pageContext.request.contextPath}/admin/inquiryList.htm'">
