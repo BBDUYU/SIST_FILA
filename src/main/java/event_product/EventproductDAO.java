@@ -8,15 +8,15 @@ import java.util.ArrayList;
 
 import com.util.JdbcUtil;
 
-public class eventproductDAO {
+public class EventproductDAO {
     
-    private static eventproductDAO instance = new eventproductDAO();
-    public static eventproductDAO getInstance() { return instance; }
-    private eventproductDAO() {}
+    private static EventproductDAO instance = new EventproductDAO();
+    public static EventproductDAO getInstance() { return instance; }
+    private EventproductDAO() {}
 
 
-    public ArrayList<eventproductDTO> selectRecommendKeywords(Connection conn) throws SQLException {
-        ArrayList<eventproductDTO> list = new ArrayList<>();
+    public ArrayList<EventproductDTO> selectRecommendKeywords(Connection conn) throws SQLException {
+        ArrayList<EventproductDTO> list = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
@@ -29,7 +29,7 @@ public class eventproductDAO {
             pstmt = conn.prepareStatement(sqlEvent);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                list.add(eventproductDTO.builder()
+                list.add(EventproductDTO.builder()
                         .event_name(rs.getString("EVENT_NAME"))
                         .slug(rs.getString("SLUG"))
                         .event_id(rs.getInt("EVENT_ID"))
@@ -41,13 +41,12 @@ public class eventproductDAO {
             // STATUS 조건을 빼거나 실제 존재하는 'SALE', 'NEW' 등으로 수정
             String sqlProduct = "SELECT p.NAME, p.PRODUCT_ID FROM EVENT_PRODUCT ep " +
                                 "JOIN PRODUCTS p ON ep.PRODUCT_ID = p.PRODUCT_ID " +
-                                "WHERE p.STATUS IN ('SALE', 'NEW') " + // 데이터에 맞춰 수정
                                 "AND ROWNUM <= 5";
             
             pstmt = conn.prepareStatement(sqlProduct);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                list.add(eventproductDTO.builder()
+                list.add(EventproductDTO.builder()
                         .name(rs.getString("NAME"))
                         .product_id(rs.getString("PRODUCT_ID"))
                         .build());
@@ -61,36 +60,37 @@ public class eventproductDAO {
 
  
     // 추천상품용
-    public ArrayList<eventproductDTO> selectRecommendProducts(Connection conn) throws SQLException {
-        ArrayList<eventproductDTO> list = new ArrayList<>();
+    public ArrayList<EventproductDTO> selectRecommendProducts(Connection conn) throws SQLException {
+        ArrayList<EventproductDTO> list = new ArrayList<>();
         
-        // 이벤트 제품 테이블과 상품 테이블을 조인하여 상위 12개 추출
-     // eventproductDAO.java 수정
         String sql = "SELECT * FROM ( " +
-                     "  SELECT p.PRODUCT_ID, p.NAME, p.PRICE, p.DISCOUNT_RATE " +
-                     "  FROM EVENT_PRODUCT ep " +
-                     "  JOIN PRODUCTS p ON ep.PRODUCT_ID = p.PRODUCT_ID " +
-                     "  WHERE p.STATUS IN ('SALE', 'NEW') " + 
-                     "  ORDER BY p.CREATED_AT DESC " +
-                     ") WHERE ROWNUM <= 12";
+                "  SELECT p.PRODUCT_ID, p.NAME, p.PRICE, p.DISCOUNT_RATE, " +
+                "  (SELECT IMAGE_URL FROM PRODUCT_IMAGE pi WHERE pi.PRODUCT_ID = p.PRODUCT_ID AND pi.IMAGE_TYPE = 'MAIN' AND ROWNUM = 1) as IMG " +
+                "  FROM EVENT_PRODUCT ep " +
+                "  JOIN PRODUCTS p ON ep.PRODUCT_ID = p.PRODUCT_ID " +
+                "  ORDER BY p.PRODUCT_ID DESC " + // EVENT_PRODUCT_ID 대신 p.PRODUCT_ID 사용
+                ") WHERE ROWNUM <= 12";
 
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            pstmt = conn.prepareStatement(sql);
-            rs = pstmt.executeQuery();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                list.add(eventproductDTO.builder()
+                String rawPath = rs.getString("IMG");
+                // 중복 방지를 위한 정제 (C:\... 형태만 남기기)
+                if (rawPath != null && rawPath.contains("path=")) {
+                    rawPath = rawPath.split("path=")[1];
+                }
+                if (rawPath != null) {
+                    rawPath = rawPath.replace("\\", "/");
+                }
+
+                list.add(EventproductDTO.builder()
                         .product_id(rs.getString("PRODUCT_ID"))
                         .name(rs.getString("NAME"))
                         .price(rs.getInt("PRICE"))
                         .discount_rate(rs.getInt("DISCOUNT_RATE"))
+                        .mainImageUrl(rawPath) // [수정] 가져온 경로 세팅
                         .build());
             }
-        } finally {
-            JdbcUtil.close(rs);
-            JdbcUtil.close(pstmt);
         }
         return list;
     }

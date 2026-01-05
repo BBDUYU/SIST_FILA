@@ -1,8 +1,11 @@
 package command;
 
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import event_product.EventproductDTO;
 import service.MainService;
 
 public class MainHandler implements CommandHandler {
@@ -22,11 +25,21 @@ public class MainHandler implements CommandHandler {
         request.getSession().setAttribute("list", mainData.get("categoryList"));
         
         // 나머지 데이터는 request에 저장
-        request.setAttribute("popularKeywords", mainData.get("popularKeywords"));
-        request.setAttribute("recommendKeywords", mainData.get("recommendKeywords"));
-        request.setAttribute("r ecommendProducts", mainData.get("recommendProducts"));
+        request.getSession().setAttribute("popularKeywords", mainData.get("popularKeywords"));
+        request.getSession().setAttribute("recommendKeywords", mainData.get("recommendKeywords"));
         request.setAttribute("bannerList", mainData.get("bannerList"));
 
+        List<EventproductDTO> recommendProducts = (List<EventproductDTO>) mainData.get("recommendProducts");
+        if (recommendProducts != null) {
+            for (EventproductDTO p : recommendProducts) {
+                String img = p.getMainImageUrl(); // DTO에 해당 필드가 있다면
+                if (img != null && img.contains("path=")) {
+                    p.setMainImageUrl(img.split("path=")[1].replace("\\", "/"));
+                }
+            }
+        }
+        
+        request.getSession().setAttribute("recommendProducts", recommendProducts);
         // 4. 이동할 JSP 경로 리턴
         return "/view/main.jsp";
     }

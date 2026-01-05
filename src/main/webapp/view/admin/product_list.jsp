@@ -10,21 +10,28 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
-/* 기본 폰트 및 배경 설정 */
+/* FILA 브랜드 컬러 변수 설정 */
+:root {
+	--fila-navy: #00205b;
+	--fila-red: #e31837;
+	--bg-gray: #f4f4f4;
+}
+
+/* 기본 레이아웃 및 폰트 */
 body {
 	font-family: 'Noto Sans KR', sans-serif;
-	background-color: #f4f4f4;
+	background-color: var(--bg-gray);
 	margin: 0;
 }
 
-/* 섹션 레이아웃 보정 */
+/* 관리자 섹션 보정 */
 .admin-section {
-	margin-left: 240px; /* 사이드바 너비 */
+	margin-left: 240px; /* 사이드바 너비 대응 */
 	padding: 50px 40px;
 	min-height: 100vh;
 }
 
-/* 섹션 타이틀 (FILA RED 포인트) */
+/* 섹션 타이틀 스타일 */
 .section-title {
 	font-size: 22px;
 	font-weight: 800;
@@ -32,6 +39,7 @@ body {
 	letter-spacing: -0.5px;
 	position: relative;
 	padding-left: 15px;
+	margin: 0;
 }
 
 .section-title::before {
@@ -51,16 +59,16 @@ body {
 	border-collapse: collapse;
 	border-top: 2px solid var(--fila-navy);
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	background-color: #fff;
 }
 
 .info-table th {
-	background-color: #fff;
+	background-color: #f9f9f9;
 	color: #333;
 	font-weight: 700;
 	font-size: 13px;
 	padding: 15px 10px;
 	border-bottom: 1px solid #eee;
-	text-transform: uppercase;
 }
 
 .info-table td {
@@ -69,57 +77,56 @@ body {
 	text-align: center;
 	font-size: 14px;
 	color: #555;
-	background-color: #fff;
 	vertical-align: middle;
 }
 
-/* 상품명 좌측 정렬 및 강조 */
-.info-table td:nth-child(4) {
-	text-align: left;
-	padding-left: 20px;
-}
-
-/* 이미지 썸네일 스타일 */
-.info-table img {
-	border: 1px solid #eee;
-	border-radius: 4px;
-	display: block;
-	margin: 0 auto;
-}
-
-/* 버튼 스타일링 */
+/* 신규 상품 등록 버튼 (배경 네이비, 글씨 화이트 고정) */
 .submit-btn {
-	background-color: var(--fila-navy);
-	color: #fff;
+	background-color: var(--fila-navy) !important;
+	color: #ffffff !important;
 	border: none;
 	padding: 10px 20px;
-	font-weight: 600;
+	font-weight: 700;
 	cursor: pointer;
-	transition: 0.3s;
+	transition: all 0.3s ease;
 	font-size: 13px;
+	border-radius: 2px;
+	text-decoration: none;
+	display: inline-block;
 }
 
 .submit-btn:hover {
-	background-color: #001640;
+	background-color: #001640 !important;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* 수정 버튼 (기본 네이비 -> 호버 시 화이트 반전) */
 .small-btn {
-	background-color: #fff;
-	color: var(--fila-navy);
-	border: 1px solid var(--fila-navy);
-	padding: 5px 12px;
+	background-color: var(--fila-navy) !important;
+	color: #ffffff !important;
+	border: 1px solid var(--fila-navy) !important;
+	padding: 6px 15px;
 	font-size: 12px;
 	font-weight: 600;
 	cursor: pointer;
-	transition: 0.2s;
+	transition: all 0.2s ease;
+	border-radius: 2px;
 }
 
 .small-btn:hover {
-	background-color: var(--fila-navy);
-	color: #fff;
+	background-color: #ffffff !important;
+	color: var(--fila-navy) !important;
+	border: 1px solid var(--fila-navy) !important;
 }
 
-/* 재고 상태 표시 */
+/* 썸네일 이미지 */
+.info-table img {
+	border: 1px solid #eee;
+	border-radius: 4px;
+	object-fit: cover;
+}
+
+/* 재고 및 상태 표시 */
 .stock-low {
 	color: var(--fila-red);
 	font-weight: 800;
@@ -128,21 +135,21 @@ body {
 	border-radius: 3px;
 }
 
-/* 판매 상태 뱃지 (옵션) */
-.status-badge {
-	display: inline-block;
-	padding: 4px 8px;
-	border-radius: 20px;
-	font-size: 11px;
+.status-live {
+	color: #2ecc71;
 	font-weight: bold;
-	background: #eee;
+}
+
+.status-soldout {
+	color: var(--fila-red);
+	font-weight: bold;
 }
 </style>
 </head>
 <body>
 	<jsp:include page="../common/sidebar.jsp">
-        <jsp:param name="currentPage" value="product" />
-    </jsp:include>
+		<jsp:param name="currentPage" value="product" />
+	</jsp:include>
 
 	<div class="admin-section">
 		<div class="section-header"
@@ -169,8 +176,9 @@ body {
 			<tbody>
 				<c:forEach var="p" items="${productList}">
 					<tr>
-						<td><img src="${pageContext.request.contextPath}${p.mainImageUrl}" width="50" height="50"
-							style="object-fit: cover;"></td>
+						<td><img
+							src="${pageContext.request.contextPath}/displayImage.do?path=${p.mainImageUrl}"
+							width="50" height="50" style="object-fit: cover;"></td>
 						<td>${p.productid}</td>
 						<td>${p.categoryName}</td>
 						<td style="text-align: left; font-weight: bold;">${p.name}</td>
@@ -192,7 +200,12 @@ body {
 							</c:choose></td>
 						<td>
 							<button class="small-btn"
-								onclick="location.href='editProduct.htm?id=${p.productid}'">수정</button>
+								onclick="location.href='${pageContext.request.contextPath}/admin/editProduct.htm?id=${p.productid}'">수정</button>
+							<button class="small-btn"
+							    style="background-color: #e31837; color: white; border: none;"
+							    onclick="if(confirm('정말 삭제하시겠습니까?')) { location.href='${pageContext.request.contextPath}/admin/deleteProduct.htm?id=${p.productid}'; }">
+							    삭제
+							</button>
 						</td>
 					</tr>
 				</c:forEach>

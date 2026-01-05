@@ -53,6 +53,16 @@ public class ProductsDTO {
     public int getDiscount_rate() { return discount_rate; }
     public void setDiscount_rate(int discount_rate) { this.discount_rate = discount_rate; }
 
-    public String getImage_url() { return image_url; }
-    public void setImage_url(String image_url) { this.image_url = image_url; }
+    public String getImage_url() {
+        // 값이 없으면 빈 문자열 리턴
+        if (this.image_url == null || this.image_url.isEmpty()) return "";
+     
+        // 역슬래시를 슬래시로 바꾸고 서블릿 경로 붙여서 리턴
+        String webPath = this.image_url.replace("\\", "/");
+        return "/SIST_FILA/displayImage.do?path=" + webPath;
+    }
+    
+    public void setImage_url(String image_url) { 
+        this.image_url = image_url; 
+    }
 }

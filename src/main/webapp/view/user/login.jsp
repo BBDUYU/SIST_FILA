@@ -37,8 +37,7 @@
 
 				<div class="inp-box">
 					<div>
-						<input type="text" id="memberId1" name="mb_id"
-							   onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9@._-]/g,'');">
+						<input type="text" id="memberId1" name="mb_id">
 					</div>
 
 					<div>

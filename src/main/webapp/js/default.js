@@ -12,7 +12,7 @@
 
 		},
 		pageMethod : function () {			
-			globalMenu();
+			//globalMenu();
 			la.init();
 			wish.init();
 		}

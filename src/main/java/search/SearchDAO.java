@@ -24,20 +24,21 @@ public class SearchDAO implements ISearch{
      * 기존에 존재하면 검색 횟수 증가, 없으면 새로 추가
      */
     public void upsertKeyword(Connection conn, String keyword) throws SQLException {
+        // VALUES 절에 실제 생성하신 시퀀스명인 'SEARCH_KEYWORDS_SEQ'를 넣어야 합니다.
         String sql = "MERGE INTO SEARCH_KEYWORDS t " +
                      "USING (SELECT ? AS KEYWORD FROM dual) s " +
                      "ON (t.KEYWORD = s.KEYWORD) " +
                      "WHEN MATCHED THEN " +
                      "  UPDATE SET t.SEARCH_COUNT = t.SEARCH_COUNT + 1, t.LAST_SEARCH_DATE = SYSDATE " +
                      "WHEN NOT MATCHED THEN " +
-                     "  INSERT (KEYWORD, SEARCH_COUNT, LAST_SEARCH_DATE) VALUES (s.KEYWORD, 1, SYSDATE)";
+                     "  INSERT (KEYWORD_ID, KEYWORD, SEARCH_COUNT, LAST_SEARCH_DATE) " +
+                     "  VALUES (SEARCH_KEYWORDS_SEQ.NEXTVAL, s.KEYWORD, 1, SYSDATE)"; // 시퀀스명 수정 완료
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, keyword);
             pstmt.executeUpdate();
         }
     }
-
     /**
      * 상위 N개의 인기 검색어 조회
      */
@@ -59,9 +60,9 @@ public class SearchDAO implements ISearch{
                             .keyword_id(rs.getInt("KEYWORD_ID"))
                             .keyword(rs.getString("KEYWORD"))
                             .search_count(rs.getInt("SEARCH_COUNT"))
-                            // rs.getDate는 시/분/초가 잘릴 수 있으므로 필요시 rs.getTimestamp 사용
                             .last_search_date(rs.getTimestamp("LAST_SEARCH_DATE")) 
                             .build();
+                    
                     list.add(dto);
                 }
             }

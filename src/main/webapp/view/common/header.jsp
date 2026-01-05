@@ -38,7 +38,7 @@
 <script src="${pageContext.request.contextPath}/js/mighty.base.1.5.7.js"></script>
 <script src="${pageContext.request.contextPath}/js/matiz.js"></script>
 <script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
-<script src="${pageContext.request.contextPath}/js/default.js?v=20251231_v3"></script>
+<script src="${pageContext.request.contextPath}/js/default.js?v=202504161631"></script>
 
 <script>
 	jQuery(window.document).ready(function(){
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 									        <c:when test="${not empty recentSearch}">
 									            <c:forEach var="word" items="${fn:split(recentSearch, ',')}">
 									                <li data-sword="${word}">
-									                    <a href="/search/search_result.asp?sWord=${fn:escapeXml(word)}">${word}</a>
+									                    <a href="${pageContext.request.contextPath}/product/list.htm?searchItem=${fn:escapeXml(word)}">${word}</a>
 									                    <button type="button" class="delete__btn sWordRemove btn_remove">delete</button>
 									                </li>
 									            </c:forEach>
@@ -259,9 +259,9 @@ document.addEventListener('DOMContentLoaded', () => {
 								                    <c:forEach var="sDto" items="${popularKeywords}">
 								                        <li>
 								                            <%-- 검색 결과 페이지 주소에 맞게 수정하세요 --%>
-								                            <a href="/SIST_FILA/view/main.mm?searchItem=${fn:escapeXml(sDto.keyword)}">
-								                                ${sDto.keyword}
-								                            </a>
+								                            <a href="${pageContext.request.contextPath}/product/list.htm?searchItem=${fn:escapeXml(sDto.keyword)}">
+															    ${sDto.keyword}
+															</a>
 								                        </li>
 								                    </c:forEach>
 								                </c:when>
@@ -287,19 +287,17 @@ document.addEventListener('DOMContentLoaded', () => {
 								                    <c:forEach var="rDto" items="${recommendKeywords}">
 								                        <li>
 								                            <c:choose>
-								                                <%-- 1. 상품 ID가 있으면 상품 상세 페이지로 --%>
-								                                <c:when test="${not empty rDto.product_id}">
-								                                    <a href="/SIST_FILA/view/productDetail.mm?product_id=${rDto.product_id}">
-								                                        ${rDto.name}
-								                                    </a>
-								                                </c:when>
-								                                
-								                                <%-- 2. 슬러그가 있으면 이벤트 페이지로 (이벤트 이름 출력) --%>
-								                                <c:when test="${not empty rDto.slug}">
-								                                    <a href="/SIST_FILA/view/eventView.mm?slug=${rDto.slug}">
-								                                        ${rDto.event_name}
-								                                    </a>
-								                                </c:when>
+																<c:when test="${not empty rDto.product_id}">
+																    <a href="${pageContext.request.contextPath}/product/product_detail.htm?id=${rDto.product_id}">
+																        ${rDto.name}
+																    </a>
+																</c:when>
+																<c:when test="${not empty rDto.slug}">
+																    <%-- 이벤트는 slug 파라미터를 쓰기로 정의하셨으므로 --%>
+																    <a href="${pageContext.request.contextPath}/event/event.htm?slug=${rDto.slug}">
+																        ${rDto.event_name}
+																    </a>
+																</c:when>
 								                            </c:choose>
 								                        </li>
 								                    </c:forEach>
@@ -335,17 +333,15 @@ document.addEventListener('DOMContentLoaded', () => {
 													            <%-- 각 상품 슬라이드 --%>
 													            <div class="goods swiper-slide" data-val="${status.count}" role="group" aria-label="${status.count} / 12">
 													                <div class="photo">
-													                    <div class="before">
-													                        <%-- 상품 상세 페이지 이동 --%>
-													                        <a href="/SIST_FILA/view/productDetail.mm?product_id=${pDto.product_id}">
-													                            <%-- 이미지 경로는 프로젝트의 이미지 저장 규칙에 맞게 수정하세요 --%>
-													                            <img src="/SIST_FILA/images/products/${pDto.product_id}.jpg" alt="${pDto.name}">
-													                        </a>
-													                    </div>
-													                </div>
+																	    <div class="before">
+																	        <a href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${pDto.product_id}">
+																	            <img src="${pageContext.request.contextPath}/displayImage.do?path=C:/fila_upload/product/${pDto.product_id}/${pDto.product_id}_main_1.jpg" alt="${pDto.name}">
+																	        </a>
+																	    </div>
+																	</div>
 													
 													                <div class="info">
-													                    <a href="/SIST_FILA/view/productDetail.mm?product_id=${pDto.product_id}">
+													                    <a href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${pDto.product_id}">
 													                        <div class="top">
 													                            <%-- 카테고리나 태그 데이터가 DTO에 있다면 활용 가능 --%>
 													                            <p class="category">RECOMMEND</p>
@@ -359,24 +355,25 @@ document.addEventListener('DOMContentLoaded', () => {
 													                        <p class="name">${pDto.name}</p>
 													                        
 													                        <div class="price">
-													                            <c:choose>
-													                                <c:when test="${pDto.discount_rate > 0}">
-													                                    <%-- 할인이 있는 경우 계산 로직 (정수 처리) --%>
-													                                    <p class="sale">
-													                                        <fmt:formatNumber value="${pDto.price * (1 - pDto.discount_rate/100)}" type="number" />원
-													                                    </p>
-													                                    <p class="origin" style="text-decoration: line-through; color: #999; font-size: 0.9em;">
-													                                        <fmt:formatNumber value="${pDto.price}" type="number" />원
-													                                    </p>
-													                                </c:when>
-													                                <c:otherwise>
-													                                    <%-- 할인이 없는 경우 --%>
-													                                    <p class="sale">
-													                                        <fmt:formatNumber value="${pDto.price}" type="number" />원
-													                                    </p>
-													                                </c:otherwise>
-													                            </c:choose>
-													                        </div>
+																			    <c:choose>
+																			        <c:when test="${pDto.discount_rate > 0}">
+																			            <%-- 할인가 출력 --%>
+																			            <p class="sale">
+																			                <fmt:formatNumber value="${pDto.price * (100 - pDto.discount_rate) / 100}" type="number" />원
+																			            </p>
+																			            <%-- 원가 출력 (가로줄) --%>
+																			            <p class="normal _sale" >
+																			                <fmt:formatNumber value="${pDto.price}" type="number" />원 
+																			            </p>
+																			            <p class="percent">${pDto.discount_rate}% 할인</p>
+																			        </c:when>
+																			        <c:otherwise>
+																			            <p class="sale">
+																			                <fmt:formatNumber value="${pDto.price}" type="number" />원
+																			            </p>
+																			        </c:otherwise>
+																			    </c:choose>
+																			</div>
 													                    </a>
 													                </div>
 													            </div>
@@ -528,8 +525,8 @@ function searchRun2() {
     }
 
     const cp = "/SIST_FILA"; 
-    const recordUrl = cp + "/record.ss?keyword=" + encodeURIComponent(searchItem);
-    const moveUrl = cp + "/view/main.mm?searchItem=" + encodeURIComponent(searchItem) + "&searchsCateNo=" + encodeURIComponent(cateNo);
+    const recordUrl = cp + "/search/record.htm?keyword=" + encodeURIComponent(searchItem);
+    const moveUrl = cp + "/product/list.htm?searchItem=" + encodeURIComponent(searchItem) + "&searchsCateNo=" + encodeURIComponent(cateNo);
 
     // 3. 서버 기록 및 이동
     // fetch가 안 될 상황을 대비해 0.5초 뒤에는 무조건 이동하게 처리
@@ -539,7 +536,7 @@ function searchRun2() {
             moved = true;
             location.href = moveUrl;
         }
-    }, 500);
+    }, 300);
 
     fetch(recordUrl)
         .then(() => {

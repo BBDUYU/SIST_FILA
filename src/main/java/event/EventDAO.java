@@ -49,7 +49,7 @@ public class EventDAO {
                 e.setDescription(rs.getString("DESCRIPTION"));
                 e.setStartAt(rs.getDate("START_AT"));
                 e.setEndAt(rs.getDate("END_AT"));
-                e.setIsActive(rs.getString("IS_ACTIVE"));
+                e.setIsActive(rs.getInt("IS_ACTIVE"));
                 return e;
             }
         }
