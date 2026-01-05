@@ -1,6 +1,5 @@
 package admin.persistence;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,8 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.util.ConnectionProvider;
-import com.util.JdbcUtil;
+
 
 import admin.domain.CreateproductDTO;
 
