@@ -142,7 +142,28 @@
 						<div id="selected-tags" style="margin-top: 15px; display: flex; gap: 8px; flex-wrap: wrap; min-height: 35px;"></div>
 						<div id="hidden-inputs"></div>
 					</div>
-
+					<div class="input-group" style="margin-top: 30px;">
+					    <label>인기 태그 지정 (중복 선택 가능)</label>
+					    <div class="opt-list" style="background: #fff; border: 1px solid var(--border-color); padding: 15px;">
+					        <c:forEach items="${tagList}" var="c">
+					            <c:if test="${c.category_id >= 4000 && c.category_id < 5000}">
+					                <label class="opt-item tag-item">
+									    <input type="checkbox" name="tag_ids" value="${c.category_id}" 
+									        <c:forEach items="${productCategories}" var="pc">
+									           <c:if test="${pc.CATEGORY_ID == c.category_id || pc.category_id == c.category_id}">
+									                checked
+									            </c:if>
+									        </c:forEach>
+									    > 
+									    <span># ${c.name}</span>
+									</label>
+					            </c:if>
+					        </c:forEach>
+					        <c:if test="${empty tagList}">
+					            <div style="font-size: 12px; color: #999;">등록된 태그가 없습니다. 태그 관리에서 먼저 등록해주세요.</div>
+					        </c:if>
+					    </div>
+					</div>
 					<div class="input-group">
 						<label>상품 옵션 설정</label>
 						<div style="background: #fff; border: 1px solid #333; padding: 20px;">
@@ -220,10 +241,14 @@
 
     window.onload = function() {
         // 1. 기존 선택된 카테고리 태그들 복원
-        <c:forEach items="${productCategories}" var="pc">
-            selectedCategories.set("${pc.category_id}", "${pc.full_path}");
-        </c:forEach>
-        renderCategoryUI();
+       <c:forEach items="${productCategories}" var="pc">
+	        // 카테고리 ID가 4000번 미만인 일반 카테고리만 상단 리스트에 복원
+	        <c:if test="${pc.category_id < 4000}">
+	            // full_path가 없을 경우를 대비해 pc.name 등을 대안으로 설정
+	            selectedCategories.set("${pc.category_id}", "${not empty pc.full_path ? pc.full_path : pc.name}");
+	        </c:if>
+	    </c:forEach>
+	    renderCategoryUI();
         
         // 2. 사이즈 영역 복원
         const gName = "${product.gender_name}"; // MALE, FEMALE, KIDS

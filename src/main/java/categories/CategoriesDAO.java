@@ -119,4 +119,93 @@ public class CategoriesDAO implements ICategories {
         }
         return list;
     }
+    public ArrayList<CategoriesDTO> selectTagList(Connection conn) throws SQLException {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        ArrayList<CategoriesDTO> list = new ArrayList<>();
+        
+        String sql = "SELECT * FROM CATEGORIES WHERE CATEGORY_ID >= 4000 AND DEPTH = 4 ORDER BY CATEGORY_ID DESC";
+        
+        try {
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                CategoriesDTO dto = CategoriesDTO.builder()
+                    .category_id(rs.getInt("category_id"))
+                    .name(rs.getString("name"))
+                    .parent_id(rs.getInt("parent_id"))
+                    .depth(rs.getInt("depth"))
+                    .created_at(rs.getDate("created_at"))
+                    .updated_at(rs.getDate("updated_at"))
+                    .use_yn(rs.getInt("use_yn"))
+                    .build();
+                list.add(dto);
+            }
+        } finally {
+            JdbcUtil.close(rs);
+            JdbcUtil.close(pstmt);
+        }
+        return list;
+    }
+    public int getMaxTagId(Connection conn) throws SQLException {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT MAX(CATEGORY_ID) FROM CATEGORIES WHERE CATEGORY_ID >= 4000 AND CATEGORY_ID < 5000";
+        
+        try {
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int maxId = rs.getInt(1);
+                if (maxId == 0) return 4000; 
+                return maxId;
+            }
+            return 4000;
+        } finally {
+            JdbcUtil.close(rs);
+            JdbcUtil.close(pstmt);
+        }
+    }
+
+    public int insertTag(Connection conn, CategoriesDTO dto) throws SQLException {
+        PreparedStatement pstmt = null;
+        String sql = "INSERT INTO CATEGORIES (CATEGORY_ID, NAME, DEPTH, CREATED_AT, UPDATED_AT, USE_YN) " +
+                     "VALUES (?, ?, 4, SYSDATE, SYSDATE, 1)";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, dto.getCategory_id());
+            pstmt.setString(2, dto.getName());
+            return pstmt.executeUpdate();
+        } finally {
+            JdbcUtil.close(pstmt);
+        }
+    }
+ // 태그 수정 (이름 변경 및 수정일 업데이트)
+    public int updateTag(Connection conn, int categoryId, String tagName) throws SQLException {
+        PreparedStatement pstmt = null;
+        String sql = "UPDATE CATEGORIES SET NAME = ?, UPDATED_AT = SYSDATE WHERE CATEGORY_ID = ?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, tagName);
+            pstmt.setInt(2, categoryId);
+            return pstmt.executeUpdate();
+        } finally {
+            JdbcUtil.close(pstmt);
+        }
+    }
+
+
+ // 태그 상태 변경 (활성화/비활성화 통합)
+    public int updateTagStatus(Connection conn, int categoryId, int status) throws SQLException {
+        PreparedStatement pstmt = null;
+        String sql = "UPDATE CATEGORIES SET USE_YN = ?, UPDATED_at = SYSDATE WHERE CATEGORY_ID = ?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, status);
+            pstmt.setInt(2, categoryId);
+            return pstmt.executeUpdate();
+        } finally {
+            JdbcUtil.close(pstmt);
+        }
+    }
 }

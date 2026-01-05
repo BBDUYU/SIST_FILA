@@ -61,7 +61,10 @@
     
     <div class="nav-item ${param.currentPage eq 'product' ? 'active' : ''}" 
          onclick="location.href='${pageContext.request.contextPath}/admin/productList.htm'">상품 관리</div>
-    
+         
+    <div class="nav-item ${param.currentPage eq 'tag' ? 'active' : ''}" 
+         onclick="location.href='${pageContext.request.contextPath}/admin/tagList.htm'">태그 관리</div>
+         
     <div class="nav-item ${pageName eq 'coupon' ? 'active' : ''}"
     	onclick="location.href='${pageContext.request.contextPath}/admin/coupon_list.htm'">쿠폰 관리</div>
     
