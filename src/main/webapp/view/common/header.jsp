@@ -465,13 +465,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         <div class="account-menu-box">
                             <ul>
-                                <li id="globalMenu1"><a href="/mypage/mypage.asp">마이페이지</a></li>
-                                <li id="globalMenu2"><a href="/mypage/myOrder.asp">주문/배송</a></li>
-                                <li id="globalMenu3"><a href="/mypage/qna.asp">1:1문의</a></li>
-                                <li id="globalMenu7"><a href="/mypage/wishlist.asp">위시리스트</a><strong><a href="/mypage/wishlist.asp">0개</a></strong></li>
-                                <li id="globalMenu4"><a href="/mypage/coupon.asp">쿠폰</a><strong><a href="/mypage/coupon.asp">0개</a></strong></li>
-                                <li id="globalMenu5"><a href="/mypage/point.asp">포인트</a><strong><a href="/mypage/point.asp">0P</a></strong></li>
-                                <li id="globalMenu8"><a href="/specialoffer/list.asp">이벤트</a></li>
+                                <div class="account-menu-box">
+  <ul>
+    <li id="globalMenu1">
+      <a href="${pageContext.request.contextPath}/mypage.htm">마이페이지</a>
+    </li>
+
+    <li id="globalMenu2">
+      <a href="${pageContext.request.contextPath}/mypageOrder.htm">주문/배송</a>
+    </li>
+
+    <li id="globalMenu3">
+      <a href="${pageContext.request.contextPath}/mypageQna.htm">1:1문의</a>
+    </li>
+
+    <li id="globalMenu7">
+      <a href="${pageContext.request.contextPath}/mypageWishlist.htm">위시리스트</a>
+      <strong><a href="${pageContext.request.contextPath}/mypageWishlist.htm">0개</a></strong>
+    </li>
+
+    <li id="globalMenu4">
+      <a href="${pageContext.request.contextPath}/mypageCoupon.htm">쿠폰</a>
+      <strong><a href="${pageContext.request.contextPath}/mypageCoupon.htm">0개</a></strong>
+    </li>
+
+    <li id="globalMenu5">
+      <a href="${pageContext.request.contextPath}/mypagePoint.htm">포인트</a>
+      <strong><a href="${pageContext.request.contextPath}/mypagePoint.htm">0P</a></strong>
+    </li>
+
+    <li id="globalMenu8">
+      <a href="${pageContext.request.contextPath}/event.htm">이벤트</a>
+    </li>
+  </ul>
+</div>
+
                             </ul>
                             <button type="button" class="logout__btn" id="globalMenu6" 
                                     onclick="location.href='${pageContext.request.contextPath}/logout.htm';">로그아웃</button>
