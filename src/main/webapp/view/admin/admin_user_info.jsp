@@ -288,6 +288,67 @@ body {
 							</c:if>
 						</tbody>
 					</table>
+				<div class="section-title" style="margin-top: 50px;">쿠폰 보유 내역</div>
+<table class="info-table" style="text-align: center;">
+    <thead>
+        <tr style="background: #f4f4f4;">
+            <th style="text-align: center;">발급번호</th>
+            <th style="text-align: center;">쿠폰명</th>
+            <th style="text-align: center;">할인혜택</th>
+            <th style="text-align: center;">유효기간</th>
+            <th style="text-align: center;">상태</th>
+            <th style="text-align: center;">사용일시</th>
+        </tr>
+    </thead>
+    <tbody>
+    <c:forEach var="c" items="${user.couponList}">
+        <%-- 행 스타일: 사용 완료했거나, 관리자가 중지(N)시킨 쿠폰은 흐리게 처리 --%>
+        <tr style="${c.isused eq '1' or c.status eq 'N' ? 'background-color: #f9f9f9; color: #bbb;' : ''}">
+            <td>${c.usercouponid}</td>
+            <td style="text-align: left; font-weight: bold;">${c.coupon_name}</td>
+            <td>
+                <c:choose>
+                    <c:when test="${c.discount_type eq 'AMOUNT'}">
+                        <fmt:formatNumber value="${c.price}" pattern="#,###"/>원 할인
+                    </c:when>
+                    <c:when test="${c.discount_type eq 'PERCENT'}">
+                        ${c.price}% 할인
+                    </c:when>
+                    <c:otherwise>무료배송</c:otherwise>
+                </c:choose>
+            </td>
+            <td><fmt:formatDate value="${c.expireddate}" pattern="yyyy-MM-dd" /> 까지</td>
+            
+            <%-- 상태 표시 로직 수정 --%>
+            <td>
+                <c:choose>
+                    <c:when test="${c.isused eq '1'}">
+                        <span style="color: #999;">사용완료</span>
+                    </c:when>
+                    <c:when test="${c.status eq 'N'}">
+                        <span style="color: var(--fila-red); font-weight: bold;">사용불가</span>
+                    </c:when>
+                    <c:otherwise>
+                        <span style="color: #28a745; font-weight: bold;">사용가능</span>
+                    </c:otherwise>
+                </c:choose>
+            </td>
+            
+            <td>
+                <c:choose>
+                    <c:when test="${not empty c.usedat}">
+                        <fmt:formatDate value="${c.usedat}" pattern="yyyy-MM-dd HH:mm" />
+                    </c:when>
+                    <c:otherwise>-</c:otherwise>
+                </c:choose>
+            </td>
+        </tr>
+    </c:forEach>
+    <c:if test="${empty user.couponList}">
+        <tr><td colspan="6" style="padding: 50px; color: #999;">보유 중인 쿠폰이 없습니다.</td></tr>
+    </c:if>
+</tbody>
+</table>
 				</div>
 
 				<div id="section-order" class="tab-content" style="display: none;">

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import admin.domain.CouponDTO;
+import admin.domain.UserInfoDTO;
 
 public class CouponDAO {
     private static CouponDAO instance = new CouponDAO();
@@ -60,6 +61,34 @@ public class CouponDAO {
             return pstmt.executeUpdate();
         }
     }
-
+    public List<UserInfoDTO> getUserCouponList(Connection conn, int userNumber) throws SQLException {
+        String sql = "SELECT uc.USER_COUPON_ID, c.NAME, c.DISCOUNT_TYPE, c.DISCOUNT_VALUE, " +
+                     "uc.IS_USED, uc.USED_AT, uc.EXPIRE_DATE, uc.RECEIVED_AT, c.STATUS " +
+                     "FROM USER_COUPON uc " +
+                     "JOIN COUPON c ON uc.COUPON_ID = c.COUPON_ID " +
+                     "WHERE uc.USER_NUMBER = ? ORDER BY uc.RECEIVED_AT DESC";
+                     
+        List<UserInfoDTO> list = new ArrayList<>();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userNumber);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    UserInfoDTO dto = new UserInfoDTO();
+                    dto.setUsercouponid(rs.getInt("USER_COUPON_ID"));
+                    dto.setIsused(rs.getString("IS_USED")); // 0:미사용, 1:사용
+                    dto.setUsedat(rs.getTimestamp("USED_AT"));
+                    dto.setExpireddate(rs.getTimestamp("EXPIRE_DATE"));
+                    dto.setReceivedat(rs.getTimestamp("RECEIVED_AT"));
+                    
+                    dto.setCoupon_name(rs.getString("NAME")); 
+                    dto.setDiscount_type(rs.getString("DISCOUNT_TYPE"));
+                    dto.setPrice(rs.getInt("DISCOUNT_VALUE")); 
+                    dto.setStatus(rs.getString("STATUS"));
+                    list.add(dto);
+                }
+            }
+        }
+        return list;
+    }
 
 }
