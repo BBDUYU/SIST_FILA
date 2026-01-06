@@ -67,7 +67,8 @@
          
     <div class="nav-item ${pageName eq 'coupon' ? 'active' : ''}"
     	onclick="location.href='${pageContext.request.contextPath}/admin/coupon_list.htm'">쿠폰 관리</div>
-    
+    <div class="nav-item ${pageName eq 'style' ? 'active' : ''}"
+    	onclick="location.href='${pageContext.request.contextPath}/admin/styleList.htm'">스타일 관리</div>
     <div class="nav-item ${pageName eq 'inquiry' ? 'active' : ''}" 
          onclick="location.href='${pageContext.request.contextPath}/admin/inquiryList.htm'">
         1:1 문의 <span style="background: #e21836; padding: 2px 6px; border-radius: 10px; font-size: 10px;">3</span>
