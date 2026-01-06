@@ -97,37 +97,34 @@ public class ProductService {
 	        // 1. 기본 정보 업데이트
 	        dao.updateProduct(conn, dto);
 
-	        // 2. [이미지 처리 로직 전면 수정]
-	        // 핸들러에서 "최종적으로 화면에 떠 있는 모든 이미지 목록"을 newImages로 준다고 가정해야 합니다.
-	        // 만약 newImages가 새로 추가된 것만이 아니라 '최종 리스트'라면 아래처럼 단순화됩니다.
-	        
-	        List<CreateproductDTO> finalImageList = new ArrayList<>();
-	        if (newImages != null) {
+	        // 2. 사용자가 'X' 눌러서 넘긴 이미지만 정확히 삭제
+	        if (deleteImageIds != null && deleteImageIds.length > 0) {
+	            List<String> pathsToDelete = dao.getImagePathsByIds(conn, deleteImageIds);
+	            for (String path : pathsToDelete) {
+	                File file = new File(path);
+	                if (file.exists()) file.delete(); 
+	            }
+	            dao.deleteSpecificImages(conn, deleteImageIds);
+	        }
+
+	        // 3. 새 이미지 추가 등록
+	        if (newImages != null && !newImages.isEmpty()) { // isEmpty 체크 추가
 	            for (CreateproductDTO img : newImages) {
 	                String url = img.getImage_url();
-	                // 경로 정제 (서블릿 주소 제거)
 	                if (url.contains("path=")) {
 	                    url = url.split("path=")[1];
 	                }
-	                // 경로 역슬래시 통일 및 C: 중복 방지
 	                url = url.replace("/", "\\").replace("C:C:", "C:");
 	                img.setImage_url(url);
-	                img.setProduct_id(dto.getProduct_id()); // ID 세팅 누락 방지
-	                finalImageList.add(img);
 	            }
+	            // 여기서 새 이미지만 DB에 추가 (기존 이미지는 가만히 둠)
+	            dao.insertProductImages(conn, newImages); 
 	        }
 
-	        // 3. [DB 청소] - 이 순서가 매우 중요합니다.
-	        dao.deleteRelatedData(conn, dto.getProduct_id());     // 옵션, 카테고리 등 삭제
-	        dao.deleteAllImagesByProductId(conn, dto.getProduct_id()); // 기존 이미지 레코드 싹 삭제
+	        // 4. 연관 데이터 동기화 (이미지 제외)
+	        // [주의] dao.deleteRelatedData 내부에 이미지를 지우는 SQL이 있다면 반드시 제거하세요!
+	        dao.deleteRelatedData(conn, dto.getProduct_id()); 
 
-	        // 4. [데이터 재등록]
-	        if (!finalImageList.isEmpty()) {
-	            // 이제 finalImageList에는 화면에 보이는 '진짜 3장'만 들어있어야 합니다.
-	            dao.insertProductImages(conn, finalImageList);
-	        }
-
-	        // 5. 기타 연관 데이터 재등록
 	        dao.insertCategoryRelations(conn, dto.getProduct_id(), categoryIds, genderOption);
 	        if (tagIds != null && tagIds.length > 0) {
 	            dao.insertCategoryRelations(conn, dto.getProduct_id(), tagIds, null);
@@ -139,8 +136,6 @@ public class ProductService {
 	        if (sectionId > 0) dao.insertEventProduct(conn, dto.getProduct_id(), sectionId);
 
 	        conn.commit();
-	        System.out.println("✅ 상품 수정 및 이미지 동기화 완료: " + dto.getProduct_id());
-
 	    } catch (Exception e) {
 	        JdbcUtil.rollback(conn);
 	        e.printStackTrace();
