@@ -67,6 +67,9 @@ public class MainService {
             }
             dataMap.put("bannerList", bannerList);
 
+            ArrayList<CategoriesDTO> activeTags = cDao.selectTagList(conn);
+            dataMap.put("activeTags", activeTags);
+            
             return dataMap;
 
         } catch (Exception e) {

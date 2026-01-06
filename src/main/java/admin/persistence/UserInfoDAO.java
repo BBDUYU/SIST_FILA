@@ -43,7 +43,6 @@ public class UserInfoDAO implements IUserInfo {
         }
         return list;
     }
- // UserInfoDAO.java
     @Override
     public UserInfoDTO selectOne(Connection conn, int userNum) throws SQLException {
         UserInfoDTO userDto = null;
@@ -100,7 +99,6 @@ public class UserInfoDAO implements IUserInfo {
         }
         return userDto;
     }
- // UserInfoDAO.java에 추가
     public ArrayList<UserInfoDTO> selectPointList(Connection conn, int userNum) throws SQLException {
         ArrayList<UserInfoDTO> list = new ArrayList<>();
         
@@ -136,4 +134,5 @@ public class UserInfoDAO implements IUserInfo {
         }
         return list;
     }
+    
 }

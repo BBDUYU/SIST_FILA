@@ -1,29 +1,32 @@
 package admin.command;
 
 import java.sql.Connection;
-import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import admin.domain.ProductDTO;
-import admin.persistence.ProductDAO;
+
 import com.util.ConnectionProvider;
 import command.CommandHandler;
+import admin.persistence.StyleDAO;
+import admin.domain.StyleDTO;
 
-public class ProductListHandler implements CommandHandler {
+public class StyleListHandler implements CommandHandler {
 
     @Override
     public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        
+        StyleDAO styleDAO = StyleDAO.getInstance();
+
+        List<StyleDTO> styleList = null;
         try (Connection conn = ConnectionProvider.getConnection()) {
-            ProductDAO dao = ProductDAO.getInstance();
-            ArrayList<ProductDTO> list = dao.selectProductList(conn);
-            
-            request.setAttribute("productList", list);
-            return "/view/admin/product_list.jsp"; // 이동할 JSP 경로
-            
+            styleList = styleDAO.selectStyleList(conn);
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
         }
+
+        request.setAttribute("styleList", styleList);
+        
+        request.setAttribute("pageName", "style");
+
+        return "/view/admin/style_list.jsp";
     }
 }

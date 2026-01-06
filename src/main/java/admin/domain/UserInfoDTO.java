@@ -70,6 +70,8 @@ public class UserInfoDTO {
 	private Date usedat;
 	private Date expireddate;
 	private Date receivedat;
+	private String coupon_name;          
+	private String discount_type;
 	
 	//문의 내역
 	private int inquiryid;
@@ -84,5 +86,5 @@ public class UserInfoDTO {
 	// UserInfoDTO.java 내부에 추가
 	private java.util.List<UserInfoDTO> childList;
 	private java.util.List<UserInfoDTO> pointList;
-	
+	private java.util.List<UserInfoDTO> couponList;
 }

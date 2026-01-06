@@ -26,12 +26,33 @@ public class ProductsDAO {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-        // [수정 완료] LSEFT -> LEFT (제 오타 수정했습니다)
-        String sql = " SELECT P.PRODUCT_ID, P.NAME, P.PRICE, P.DISCOUNT_RATE, P.STATUS, "
-                   + "        P.CREATED_AT, P.CATEGORY_ID, I.IMAGE_URL " 
-                   + " FROM PRODUCTS P "
-                   + " LEFT JOIN PRODUCT_IMAGE I ON P.PRODUCT_ID = I.PRODUCT_ID AND I.IS_MAIN = 1 "
-                   + " ORDER BY P.CREATED_AT DESC ";
+        String sql = 
+                "SELECT P.*, I.IMAGE_URL, " +
+                "       (SELECT NAME FROM ( " +
+                "            SELECT NAME, LEVEL as LVL " +
+                "            FROM CATEGORIES " +
+                "            START WITH CATEGORY_ID = P.CATEGORY_ID " +
+                "            CONNECT BY PRIOR PARENT_ID = CATEGORY_ID " +
+                "            ORDER BY LVL DESC " + // 가장 높은 조상(DEPTH 1)이 1번으로 오게 함
+                "        ) WHERE ROWNUM = 1) as DEPTH1_NAME, " + 
+                "       (SELECT M.VALUE_NAME FROM OPTION_VALUE_MASTERS M " +
+                "        JOIN PRODUCT_OPTION_VALUES V ON M.V_MASTER_ID = V.V_MASTER_ID " +
+                "        JOIN PRODUCT_OPTION_GROUPS G ON V.OPTION_GROUP_ID = G.OPTION_GROUP_ID " +
+                "        WHERE G.PRODUCT_ID = P.PRODUCT_ID AND G.MASTER_ID = 2 AND ROWNUM = 1) as TAG_NAME, " +
+                "       NVL(R.REVIEW_COUNT, 0) as REVIEW_COUNT, " +
+                "       NVL(R.AVG_RATING, 0.0) as AVG_RATING, " +
+                "       NVL(W.WISH_COUNT, 0) as WISH_COUNT " +
+                "FROM PRODUCTS P " +
+                "LEFT JOIN PRODUCT_IMAGE I ON P.PRODUCT_ID = I.PRODUCT_ID AND I.IS_MAIN = 1 " +
+                "LEFT JOIN ( " +
+                "    SELECT PRODUCT_ID, COUNT(*) as REVIEW_COUNT, ROUND(AVG(RATING), 1) as AVG_RATING " +
+                "    FROM REVIEW GROUP BY PRODUCT_ID " +
+                ") R ON P.PRODUCT_ID = R.PRODUCT_ID " +
+                "LEFT JOIN ( " +
+                "    SELECT PRODUCT_ID, COUNT(*) as WISH_COUNT " +
+                "    FROM WISHLIST GROUP BY PRODUCT_ID " +
+                ") W ON P.PRODUCT_ID = W.PRODUCT_ID " +
+                "ORDER BY P.CREATED_AT DESC";
 
         try {
             pstmt = conn.prepareStatement(sql);
@@ -49,26 +70,65 @@ public class ProductsDAO {
     // -----------------------------------------------------------
     // 2. 카테고리별 상품 목록 조회
     // -----------------------------------------------------------
-    public List<ProductsDTO> selectProductsByCategory(Connection conn, int categoryId) throws SQLException {
+    public List<ProductsDTO> selectProductsByCategory(Connection conn, int cateId) {
         List<ProductsDTO> list = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         
-        String sql = " SELECT P.PRODUCT_ID, P.NAME, P.PRICE, P.DISCOUNT_RATE, P.STATUS, P.CREATED_AT, P.CATEGORY_ID, I.IMAGE_URL " 
-                   + " FROM PRODUCTS P LEFT JOIN PRODUCT_IMAGE I ON P.PRODUCT_ID = I.PRODUCT_ID AND I.IS_MAIN = 1 "
-                   + " WHERE P.CATEGORY_ID IN ( "
-                   + "     SELECT CATEGORY_ID FROM CATEGORIES "
-                   + "     START WITH CATEGORY_ID = ? CONNECT BY PRIOR CATEGORY_ID = PARENT_ID "
-                   + " ) "
-                   + " ORDER BY P.CREATED_AT DESC ";
+        String sql = 
+                "SELECT P.*, I.IMAGE_URL, " +
+                "       (SELECT NAME FROM CATEGORIES WHERE CATEGORY_ID = P.CATEGORY_ID) as CATE_NAME, " +
+                "       (SELECT NAME FROM CATEGORIES WHERE CATEGORY_ID = (SELECT PARENT_ID FROM CATEGORIES WHERE CATEGORY_ID = P.CATEGORY_ID)) as DEPTH1_NAME, " +
+                "       (SELECT M.VALUE_NAME FROM OPTION_VALUE_MASTERS M " +
+                "        JOIN PRODUCT_OPTION_VALUES V ON M.V_MASTER_ID = V.V_MASTER_ID " +
+                "        JOIN PRODUCT_OPTION_GROUPS G ON V.OPTION_GROUP_ID = G.OPTION_GROUP_ID " +
+                "        WHERE G.PRODUCT_ID = P.PRODUCT_ID AND G.MASTER_ID = 2 AND ROWNUM = 1) as TAG_NAME, " +
+                "       NVL(R.REVIEW_COUNT, 0) as REVIEW_COUNT, " +
+                "       NVL(R.AVG_RATING, 0.0) as AVG_RATING, " +
+                "       NVL(W.WISH_COUNT, 0) as WISH_COUNT " +
+                "FROM PRODUCTS P " +
+                "LEFT JOIN PRODUCT_IMAGE I ON P.PRODUCT_ID = I.PRODUCT_ID AND I.IS_MAIN = 1 " +
+                "LEFT JOIN ( " +
+                "    SELECT PRODUCT_ID, COUNT(*) as REVIEW_COUNT, ROUND(AVG(RATING), 1) as AVG_RATING " +
+                "    FROM REVIEW GROUP BY PRODUCT_ID " +
+                ") R ON P.PRODUCT_ID = R.PRODUCT_ID " +
+                "LEFT JOIN ( " +
+                "    SELECT PRODUCT_ID, COUNT(*) as WISH_COUNT " +
+                "    FROM WISHLIST GROUP BY PRODUCT_ID " +
+                ") W ON P.PRODUCT_ID = W.PRODUCT_ID " +
+                "WHERE P.CATEGORY_ID IN ( " +
+                "    SELECT CATEGORY_ID FROM CATEGORIES " +
+                "    START WITH CATEGORY_ID = ? CONNECT BY PRIOR CATEGORY_ID = PARENT_ID " +
+                ") " +
+                "ORDER BY P.CREATED_AT DESC";
+
         try {
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, categoryId);
+            pstmt.setInt(1, cateId);
             rs = pstmt.executeQuery();
-            while (rs.next()) list.add(makeDTO(rs));
+            
+            while (rs.next()) {
+                ProductsDTO dto = new ProductsDTO();
+                dto.setProduct_id(rs.getString("PRODUCT_ID"));
+                dto.setName(rs.getString("NAME"));
+                dto.setPrice(rs.getInt("PRICE"));
+                dto.setDiscount_rate(rs.getInt("DISCOUNT_RATE"));
+                dto.setImage_url(rs.getString("IMAGE_URL")); 
+                
+                // 추가된 필드들
+                dto.setDepth1_name(rs.getString("DEPTH1_NAME"));
+                dto.setTag_name(rs.getString("TAG_NAME"));
+                dto.setReview_count(rs.getInt("REVIEW_COUNT"));
+                dto.setReview_score(rs.getDouble("AVG_RATING"));
+                dto.setLike_count(rs.getInt("WISH_COUNT"));
+                
+                list.add(dto);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            JdbcUtil.close(rs);
-            JdbcUtil.close(pstmt);
+            try { if(rs != null) rs.close(); } catch(Exception e) {}
+            try { if(pstmt != null) pstmt.close(); } catch(Exception e) {}
         }
         return list;
     }
@@ -147,25 +207,28 @@ public class ProductsDAO {
         List<ProductsOptionDTO> options = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        String sql = " SELECT G.OPTION_NAME, V.VALUE_NAME FROM PRODUCT_OPTION_GROUPS G "
-                   + " JOIN PRODUCT_OPTION_VALUES V ON G.OPTION_GROUP_ID = V.OPTION_GROUP_ID "
-                   + " WHERE G.PRODUCT_ID = ? ORDER BY G.OPTION_GROUP_ID ASC, V.VALUE_ID ASC ";
+        
+        String sql = " SELECT OVM.VALUE_NAME "
+                   + " FROM PRODUCT_OPTION_GROUPS POG "
+                   + " JOIN PRODUCT_OPTION_VALUES POV ON POG.OPTION_GROUP_ID = POV.OPTION_GROUP_ID "
+                   + " JOIN OPTION_VALUE_MASTERS OVM ON POV.V_MASTER_ID = OVM.V_MASTER_ID "
+                   + " WHERE POG.PRODUCT_ID = ? AND OVM.V_MASTER_ID BETWEEN 500 AND 599 "
+                   + " ORDER BY OVM.V_MASTER_ID ASC ";
+
         try {
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, productId);
             rs = pstmt.executeQuery();
-            String currentGroupName = "";
-            ProductsOptionDTO currentOption = null;
+            
             while (rs.next()) {
-                String groupName = rs.getString("OPTION_NAME");
-                String valueName = rs.getString("VALUE_NAME");
-                if (!groupName.equals(currentGroupName)) {
-                    currentOption = new ProductsOptionDTO(groupName);
-                    options.add(currentOption);
-                    currentGroupName = groupName;
-                }
-                if (currentOption != null) currentOption.addValue(valueName);
+                ProductsOptionDTO dto = new ProductsOptionDTO();
+                dto.setOptionValue(rs.getString("VALUE_NAME"));
+                dto.setStock(99); // ★ 임시로 재고가 있는 것으로 설정 (에러 방지)
+                options.add(dto);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
         } finally {
             JdbcUtil.close(rs);
             JdbcUtil.close(pstmt);
@@ -201,6 +264,8 @@ public class ProductsDAO {
     // [헬퍼] DTO 생성
     private ProductsDTO makeDTO(ResultSet rs) throws SQLException {
         ProductsDTO dto = new ProductsDTO();
+        
+        // 1. 기본 정보
         dto.setProduct_id(rs.getString("PRODUCT_ID"));
         dto.setName(rs.getString("NAME"));
         dto.setPrice(rs.getInt("PRICE"));
@@ -208,13 +273,27 @@ public class ProductsDAO {
         dto.setStatus(rs.getString("STATUS"));
         dto.setCreated_at(rs.getDate("CREATED_AT"));
         dto.setCategory_id(rs.getInt("CATEGORY_ID")); 
+        
+        // 2. 이미지 (없으면 기본 이미지)
         String img = rs.getString("IMAGE_URL");
         if(img == null) img = "//filacdn.styleship.com/filaproduct2/data/productimages/a/1/FS261FT01X001_234.jpg"; 
         dto.setImage_url(img);
+        
+        // 3. 통계 및 이름 ('의류' 등이 DEPTH1_NAME으로 들어감)
+        try {
+            dto.setDepth1_name(rs.getString("DEPTH1_NAME")); 
+            dto.setTag_name(rs.getString("TAG_NAME"));     
+            dto.setReview_count(rs.getInt("REVIEW_COUNT"));
+            dto.setReview_score(rs.getDouble("AVG_RATING"));
+            dto.setLike_count(rs.getInt("WISH_COUNT"));
+        } catch (SQLException e) {
+            // 컬럼이 없는 쿼리일 경우 무시
+        }
+        
         return dto;
     }
     
- // -----------------------------------------------------------
+    // -----------------------------------------------------------
     // ★ [추가] 상품의 태그(스포츠/라이프스타일 등) 가져오기
     // -----------------------------------------------------------
     public String getProductTag(Connection conn, String productId, int masterId) throws SQLException {
@@ -246,5 +325,20 @@ public class ProductsDAO {
         return tagName;
     }
     
+   /* 상세 컬러 메서드 컷~!!~!~!~
+    * // 같은 이름의 상품(다른 색상)들 가져오기 public List<ProductsDTO>
+    * selectColorVariants(Connection conn, String productName) { List<ProductsDTO>
+    * list = new ArrayList<>(); PreparedStatement pstmt = null; ResultSet rs =
+    * null; // 리스트 페이지처럼 이미지를 가져오도록 조인 추가 String sql =
+    * " SELECT P.PRODUCT_ID, I.IMAGE_URL FROM PRODUCTS P " +
+    * " LEFT JOIN PRODUCT_IMAGE I ON P.PRODUCT_ID = I.PRODUCT_ID AND I.IS_MAIN = 1 "
+    * + " WHERE P.NAME = ? ORDER BY P.PRODUCT_ID ASC "; try { pstmt =
+    * conn.prepareStatement(sql); pstmt.setString(1, productName); rs =
+    * pstmt.executeQuery(); while (rs.next()) { ProductsDTO dto = new
+    * ProductsDTO(); dto.setProduct_id(rs.getString("PRODUCT_ID"));
+    * dto.setImage_url(rs.getString("IMAGE_URL")); // 이미지 URL 추가! list.add(dto); }
+    * } catch (Exception e) { e.printStackTrace(); } finally { JdbcUtil.close(rs);
+    * JdbcUtil.close(pstmt); } // 제공된 JdbcUtil 사용 return list; }
+    */
     
 }
