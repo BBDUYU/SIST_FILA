@@ -1,8 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <!DOCTYPE html>
 <html>
 <head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <title>FILA Admin - 상품 등록</title>
 <style>
 :root {
@@ -309,39 +311,38 @@
         }
     }
     function registProduct() {
-        const form = document.getElementById("productForm"); 
+        const form = document.getElementById("productForm");
 
-        // 1. 파일 인풋들 처리
-        const targetIds = ['mainImgs', 'modelImgs', 'detailImgs'];
-        const paramNames = ['mainImages', 'modelImages', 'detailImages'];
+        if (!form.name.value) { alert("제품명을 입력하세요."); form.name.focus(); return; }
+        if (selectedCategories.size === 0) { alert("카테고리를 최소 하나 이상 선택하세요."); return; }
 
-        targetIds.forEach((id, idx) => {
-            const fileInput = document.getElementById(id);
-            const files = fileInput.files;
+        const formData = new FormData(form);
 
-            if (files.length > 0) {
-                for (let i = 0; i < files.length; i++) {
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(files[i]);
-
-                    // 동적으로 새로운 파일 인풋 생성 (이름을 다르게 부여)
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'file';
-                    hiddenInput.name = paramNames[idx] + i; // mainImages0, mainImages1...
-                    hiddenInput.files = dataTransfer.files;
-                    hiddenInput.style.display = 'none';
-
-                    form.appendChild(hiddenInput);
+        $.ajax({
+            url: form.action,
+            type: 'POST',
+            data: formData,
+            processData: false, 
+            contentType: false, 
+            dataType: 'json',
+            beforeSend: function() {
+                $(".submit-btn").prop("disabled", true).text("등록 중...");
+            },
+            success: function(res) {
+                if (res.status === "success") {
+                    alert("상품 등록이 완료되었습니다.");
+                    location.href = res.redirect; 
+                } else {
+                    alert("등록 실패: " + res.message);
+                    $(".submit-btn").prop("disabled", false).text("상품 등록 완료");
                 }
-                // 기존 인풋의 name을 제거하여 cos.jar가 헷갈리지 않게 함
-                // (input 태그 자체는 남아있으므로 화면이 깨지거나 에러나지 않음)
-                fileInput.removeAttribute('name'); 
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                alert("서버 통신 중 오류가 발생했습니다.");
+                $(".submit-btn").prop("disabled", false).text("상품 등록 완료");
             }
         });
-
-        // 2. 다른 인풋들(텍스트, 셀렉트박스 등)은 폼에 그대로 붙어있으므로 
-        // form.submit() 시점에 한꺼번에 서버로 날아갑니다.
-        form.submit();
     }
 	</script>
 </body>
