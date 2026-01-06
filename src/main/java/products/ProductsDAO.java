@@ -26,7 +26,6 @@ public class ProductsDAO {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-        // [수정 완료] LSEFT -> LEFT (제 오타 수정했습니다)
         String sql = " SELECT P.PRODUCT_ID, P.NAME, P.PRICE, P.DISCOUNT_RATE, P.STATUS, "
                    + "        P.CREATED_AT, P.CATEGORY_ID, I.IMAGE_URL " 
                    + " FROM PRODUCTS P "

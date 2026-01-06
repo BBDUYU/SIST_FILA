@@ -4,6 +4,8 @@ import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +17,8 @@ import com.util.ConnectionProvider;
 import admin.domain.CreateproductDTO;
 import admin.persistence.CreateproductDAO;
 import admin.service.ProductService;
+import categories.CategoriesDAO;
+import categories.CategoriesDTO;
 import command.CommandHandler;
 
 public class ProductCreateHandler implements CommandHandler {
@@ -28,7 +32,15 @@ public class ProductCreateHandler implements CommandHandler {
         if (request.getMethod().equalsIgnoreCase("GET")) {
         	ProductService service = ProductService.getInstance(); 
             
-            service.getAdminFullFormData(request);            
+            service.getAdminFullFormData(request);       
+            
+            try (Connection conn = ConnectionProvider.getConnection()) {
+                CategoriesDAO categoryDao = CategoriesDAO.getInstance();
+                // 활성화(USE_YN=1)된 태그만 가져오도록 dao에 작성한 selectTagList 호출
+                ArrayList<CategoriesDTO> tagList = categoryDao.selectTagList(conn);
+                request.setAttribute("tagList", tagList); // JSP의 ${tagList}와 이름 일치
+            }
+            
             if (isEdit) {
                 // 수정 모드일 때: 기존 상품 정보를 불러와서 request에 담기
                 String productId = request.getParameter("id");
@@ -36,13 +48,10 @@ public class ProductCreateHandler implements CommandHandler {
                 request.setAttribute("product", product);
                 ArrayList<CreateproductDTO> imageList = service.getProductImages(productId);
                 request.setAttribute("imageList", imageList);
-                
-                // 3. [추가] 기존 선택된 사이즈 ID 리스트 (DAO에 구현 필요)
-                // request.setAttribute("productSizes", service.getProductSizeIds(productId));
-                
-                // 4. [추가] 기존 선택된 카테고리 정보 (DAO에 구현 필요)
-                // request.setAttribute("productCategories", service.getProductCategories(productId));
+
                 request.setAttribute("mode", "edit");
+                List<Map<String, Object>> productCategories = service.getProductCategories(productId);
+                request.setAttribute("productCategories", productCategories);
                 return "/view/admin/product_edit.jsp"; // 수정 페이지로 이동
             }
             request.setAttribute("mode", "create");
@@ -65,7 +74,7 @@ public class ProductCreateHandler implements CommandHandler {
 
             try (Connection conn = ConnectionProvider.getConnection()) {
                 String[] categoryIds = multi.getParameterValues("category_ids");
-                
+                String[] tagIds = multi.getParameterValues("tag_ids");
                 String styleParam = multi.getParameter("styleId");
                 String sectionParam = multi.getParameter("sectionId");
                 int styleId = (styleParam != null && !styleParam.isEmpty()) ? Integer.parseInt(styleParam) : 0;
@@ -97,7 +106,7 @@ public class ProductCreateHandler implements CommandHandler {
                     		product,             
                             imageList,           
                             deleteImageIds,      
-                            categoryIds,        
+                            categoryIds,tagIds,        
                             multi.getParameter("gender_option"), 
                             multi.getParameter("sport_option"), 
                             multi.getParameterValues("size_options"),
@@ -107,7 +116,7 @@ public class ProductCreateHandler implements CommandHandler {
                     );
                 } else {
                     service.createProduct(
-                        product, categoryIds, 
+                        product, categoryIds,tagIds, 
                         multi.getParameter("gender_option"), 
                         multi.getParameter("sport_option"), 
                         multi.getParameterValues("size_options"), 
@@ -181,10 +190,10 @@ public class ProductCreateHandler implements CommandHandler {
                 // 기록 후 즉시 파일 확인
                 if (newFile.exists() && newFile.length() > 0) {
                     System.out.println("✅ 물리 저장 성공: " + newFile.getAbsolutePath() + " (" + newFile.length() + " bytes)");
-                    
+                    String dbImageUrl = (baseDiskPath + newFileName).replace("/", "\\");
                     imageList.add(CreateproductDTO.builder()
                             .product_id(productId)
-                            .image_url(baseDiskPath + newFileName)
+                            .image_url(dbImageUrl)
                             .image_type(type)
                             .is_main(type.equals("MAIN") && subIdx == 1 ? 1 : 0)
                             .sort_order(currentSortOrder++)
