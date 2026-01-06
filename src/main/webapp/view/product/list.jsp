@@ -48,12 +48,24 @@ $(document).ready(function() {
                 
                 <div class="head">
                     <div class="tit-box">
-                    <p class="tit">
-                        <c:if test="${not empty mainTitle}">
-                        ${mainTitle} <b>&gt;</b>
-                        </c:if>
-                        <e>${subTitle}</e>
-                    </p></div>
+					    <p class="tit" style="white-space: nowrap;">
+					        <c:if test="${not empty mainTitle}">
+					            ${mainTitle} <b>&gt;</b>
+					        </c:if>
+					        <e>
+					            <c:choose>
+					                <%-- 현재 카테고리 ID가 부모 ID와 같거나 0이면 '전체' 출력 --%>
+					                <c:when test="${currentCateId eq sidebarParentId || currentCateId eq 0}">
+					                    전체
+					                </c:when>
+					                <%-- 그 외의 경우에만 기존 subTitle(NewFeatured 등) 출력 --%>
+					                <c:otherwise>
+					                    ${subTitle}
+					                </c:otherwise>
+					            </c:choose>
+					        </e>
+					    </p>
+					</div>
                     <div class="sorting-box">
                    <div>
                        <button type="button" class="filter__btn">필터</button>
@@ -137,33 +149,52 @@ $(document).ready(function() {
                                         <button type="button" class="wish__btn wish" onclick="alert('찜하기 기능 준비중!')">wish</button>
                                     </div>
                                     <div class="info">
-                                        <a href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${item.product_id}">
-                                            <div class="top">
-                                                <p class="category">FILA</p>
-                                                <div class="tag">
-                                                    <c:if test="${item.discount_rate > 0}">
-                                                        <p style="color:#cf0a2c; font-weight:bold;">SALE</p>
-                                                    </c:if>
-                                                    <c:if test="${item.status == 'NEW'}">
-                                                        <p style="color:blue; font-weight:bold;">NEW</p>
-                                                    </c:if>
-                                                </div>
-                                            </div>
-                                            <p class="name">${item.name}</p> 
-                                            <div class="price">
-                                                <c:choose>
-                                                    <c:when test="${item.discount_rate > 0}">
-                                                        <p class="sale"><fmt:formatNumber value="${finalPrice}" pattern="#,###" />원</p>
-                                                        <p class="normal _sale"><fmt:formatNumber value="${item.price}" pattern="#,###" />원</p>
-                                                        <p class="percent">${item.discount_rate}%</p>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <p class="sale"><fmt:formatNumber value="${item.price}" pattern="#,###" />원</p>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </div>
-                                        </a>
-                                    </div>
+									    <a href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${item.product_id}">
+									        <div class="top">
+									            <%-- DEPTH 1 이름 (FEMALE 등) --%>
+									            <p class="category">${item.depth1_name}</p>
+									        
+									            <div class="tag">
+									                <c:if test="${not empty item.tag_name}">
+									                    <p>${item.tag_name}</p>
+									                </c:if>
+									            </div>											
+									        </div>
+									
+									        <p class="name">${item.name}</p>
+									
+									        <div class="price">
+									            <c:choose>
+									                <c:when test="${item.discount_rate > 0}">
+									                    <p class="sale">
+									                        <fmt:formatNumber value="${item.price * (1 - item.discount_rate/100.0)}" pattern="#,###" />원
+									                    </p>
+									                    <p class="normal _sale"><fmt:formatNumber value="${item.price}" pattern="#,###" />원</p>
+									                    <p class="percent">${item.discount_rate}%</p>
+									                </c:when>
+									                <c:otherwise>
+									                    <p class="sale"><fmt:formatNumber value="${item.price}" pattern="#,###" />원</p>
+									                </c:otherwise>
+									            </c:choose>
+									        </div>
+									
+									        <div class="bot" style="display: flex; gap: 10px; margin-top: 10px; font-size: 12px; color: #888;">
+									            <div>
+									                <%-- 찜 개수 아이콘 추가 --%>
+									                <p class="ico-heart" style="display: flex; align-items: center;">
+									                    <span style="margin-right:3px;"></span> ${item.like_count}
+									                </p>
+									            </div>
+									            <div>
+									                <%-- 리뷰 평점 아이콘 추가 및 포맷팅 --%>
+									                <p class="ico-star" style="display: flex; align-items: center;">
+									                    <span style="color: #ffc107; margin-right:3px;"></span> 
+									                    <fmt:formatNumber value="${item.review_score}" pattern="0.0" /> (${item.review_count})
+									                </p>
+									            </div>
+									        </div>
+									    </a>									
+									</div>
                                 </li>
                             </c:forEach>
                         </ul>
