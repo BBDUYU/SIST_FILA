@@ -5,41 +5,47 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>마이페이지</title>
 
-  <link rel="stylesheet" href="/css/normalize.css">
-  <link rel="stylesheet" href="/css/layout.css">
-  <link rel="stylesheet" href="/css/sub.css">
+  <script>
+    // 컨텍스트 패스 (예: /SIST_FILA)
+    const contextPath = '${pageContext.request.contextPath}';
+
+    // ✅ 모달 HTML(레이어) 불러오는 URL (여기만 네 프로젝트 라우팅에 맞게 쓰면 됨)
+    // 예시1) 핸들러: /mypage/qna/writeLayer.htm
+    // 예시2) jsp 조각: /view/mypage/qna/qna_write_layer.jsp (직접 접근 가능하면)
+    const QNA_LAYER_URL = contextPath + '/mypage/qna/writeLayer.htm';
+  </script>
+
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/normalize.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sub.css">
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="mypage">
-
 <div id="wrap">
 
-  <!-- HEADER -->
   <jsp:include page="/view/common/header.jsp" />
 
-  <!-- CONTENTS -->
   <main id="contents" class="mypage__contents">
 
-    <!-- 상단 블루 영역 -->
     <section class="mypage__tab">
       <div class="inner">
 
         <div class="my-info-box">
           <div class="top">
             <p class="level">WHITE</p>
-            <a href="/customer/membership.htm" class="benefit__btn">혜택보기</a>
+            <a href="${pageContext.request.contextPath}/customer/membership.htm" class="benefit__btn">혜택보기</a>
           </div>
 
           <p class="name">
             <span>${loginUser.name}</span>님
           </p>
 
-          <a href="/mypage/modify.htm" class="info-modify__btn">내 정보 변경</a>
+          <a href="${pageContext.request.contextPath}/mypage/modify.htm" class="info-modify__btn">내 정보 변경</a>
         </div>
 
         <div class="my-link-box">
@@ -52,94 +58,155 @@
       </div>
     </section>
 
-    <!-- 본문 -->
     <section class="mypage__area">
 
-      <!-- 좌측 메뉴 -->
       <aside class="my-lnb">
-  <h2 class="tit__style4">마이페이지</h2>
+        <h2 class="tit__style4">마이페이지</h2>
 
-  <div>
-    <p class="tit">쇼핑정보</p>
-    <ul>
-      <li><a href="/mypage/order.htm">주문 · 배송 조회</a></li>
-      <li><a href="/mypage/cancel.htm">교환 · 취소 · 반품 조회</a></li>
-      <li><a href="/mypage/review.htm">리뷰</a></li>
-    </ul>
-  </div>
+        <div>
+          <p class="tit">쇼핑정보</p>
+          <ul>
+            <li><a href="${pageContext.request.contextPath}/mypage/order.htm">주문 · 배송 조회</a></li>
+            <li><a href="${pageContext.request.contextPath}/mypage/cancel.htm">교환 · 취소 · 반품 조회</a></li>
+            <li><a href="${pageContext.request.contextPath}/mypage/review.htm">리뷰</a></li>
+          </ul>
+        </div>
 
-  <div>
-    <p class="tit">상품정보</p>
-    <ul>
-      <li><a href="/mypage/wishlist.htm">위시리스트</a></li>
-      <li><a href="/mypage/today.htm">오늘 본 상품</a></li>
-      <li><a href="/mypage/custom.htm">커스텀 스튜디오</a></li>
-      <li><a href="/mypage/restock.htm">재입고 알림</a></li>
-    </ul>
-  </div>
+        <div>
+          <p class="tit">상품정보</p>
+          <ul>
+            <li><a href="${pageContext.request.contextPath}/mypage/wishlist.htm">위시리스트</a></li>
+            <li><a href="${pageContext.request.contextPath}/mypage/today.htm">오늘 본 상품</a></li>
+            <li><a href="${pageContext.request.contextPath}/mypage/custom.htm">커스텀 스튜디오</a></li>
+            <li><a href="${pageContext.request.contextPath}/mypage/restock.htm">재입고 알림</a></li>
+          </ul>
+        </div>
 
-  <div>
-    <p class="tit">회원정보</p>
-    <ul>
-      <li><a href="/mypage/modify.htm">내 정보 변경</a></li>
-      <li><a href="/mypage/address.htm">배송지 관리</a></li>
-      <li><a href="/mypage/login.htm">로그인 관리</a></li>
-    </ul>
-  </div>
+        <div>
+          <p class="tit">회원정보</p>
+          <ul>
+            <li><a href="${pageContext.request.contextPath}/mypage/modify.htm">내 정보 변경</a></li>
+            <li><a href="${pageContext.request.contextPath}/mypage/address.htm">배송지 관리</a></li>
+            <li><a href="${pageContext.request.contextPath}/mypage/login.htm">로그인 관리</a></li>
+          </ul>
+        </div>
 
-  <div>
-    <p class="tit">고객센터</p>
-    <ul>
-      <li>
-  <a href="${pageContext.request.contextPath}/mypage/qna.htm"> 1:1 문의 </a>
-</li>
+        <div>
+          <p class="tit">고객센터</p>
+          <ul>
+            <li><a href="${pageContext.request.contextPath}/mypage/qna.htm">1:1 문의</a></li>
+            <li><a href="${pageContext.request.contextPath}/mypage/as.htm">A/S 현황 조회</a></li>
+          </ul>
+        </div>
+      </aside>
 
-      <li><a href="/mypage/as.htm">A/S 현황 조회</a></li>
-    </ul>
-  </div>
-</aside>
-
-
-      <!-- 우측 콘텐츠 -->
       <section class="my-con">
-        <h2 class="tit__style4">최근 주문</h2>
-        <p class="odr-txt_none">최근 주문 내역이 없습니다.</p>
+        <c:if test="${not empty contentPage}">
+          <jsp:include page="${contentPage}" />
+        </c:if>
       </section>
 
     </section>
-
   </main>
 
-  <!-- FOOTER -->
   <jsp:include page="/view/common/footer.jsp" />
-
 </div>
 
-<!-- 하단 고정 버튼 -->
 <div class="bot-fix-box">
   <div class="inner">
-    <button class="today-goods__btn"></button>
-    <button class="kakaotalk__btn"></button>
-    <button class="top__btn">top</button>
+    <button class="today-goods__btn" type="button"></button>
+    <button class="kakaotalk__btn" type="button"></button>
+    <button class="top__btn" type="button">top</button>
   </div>
 </div>
 
 <script>
-function openInquiryModal() {
-  // 이미 열려있으면 중복 방지
-  if (document.querySelector('.common__layer._qna_write')) return;
+  // =========================
+  // 1:1 문의 모달(레이어) 제어
+  // =========================
 
-  fetch('/mypage/qna/write.ajax')
-    .then(res => res.text())
-    .then(html => {
-      document.body.insertAdjacentHTML('beforeend', html);
-    })
-    .catch(err => {
-      console.error('문의 모달 로드 실패', err);
-    });
-}
+  window.openInquiryModal = function () {
+    // 이미 열려 있으면 중복 생성 방지
+    if (document.querySelector('#qnaWriteLayer')) return;
+
+    // ✅ fetch가 빠져있어서 니 코드가 터졌던 거임
+    fetch(QNA_LAYER_URL, { method: 'GET' })
+      .then(res => {
+        if (!res.ok) throw new Error(res.status);
+        return res.text();
+      })
+      .then(html => {
+        document.body.insertAdjacentHTML('beforeend', html);
+        bindQnaModalEvents();
+      })
+      .catch(err => console.error('모달 로드 실패', err));
+  };
+
+  window.bindQnaModalEvents = function () {
+    const layer = document.querySelector('#qnaWriteLayer');
+    if (!layer) return;
+
+    // 닫기 버튼(네 모달 마크업에 맞춰 selector는 필요하면 바꿔)
+    layer.querySelector('.btn_close')?.addEventListener('click', closeQnaModal);
+    layer.querySelector('.btn_cancel')?.addEventListener('click', closeQnaModal);
+
+    // dim 클릭 닫기
+    layer.querySelector('.layer_dim')?.addEventListener('click', closeQnaModal);
+
+    // ESC 닫기
+    document.addEventListener('keydown', onEscClose);
+  };
+
+  function onEscClose(e) {
+    if (e.key === 'Escape') closeQnaModal();
+  }
+
+  window.closeQnaModal = function () {
+    document.removeEventListener('keydown', onEscClose);
+    document.querySelector('#qnaWriteLayer')?.remove();
+  };
+
+  // =========================
+  // 버튼 클릭 시 모달 열기
+  // =========================
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.qna-page__writeBtn');
+    if (!btn) return;
+    openInquiryModal();
+  });
 </script>
 
+<script>
+(function () {
+  const form = document.getElementById('qnaWriteForm');
+  if (!form) return;
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    fetch('${pageContext.request.contextPath}/mypage/qna/write_submit.ajax', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.result === 'success') {
+        alert('문의가 등록되었습니다.');
+        document.querySelector('#qnaWriteLayer')?.remove();
+        location.reload();
+      } else {
+        alert(data.message || '등록 실패');
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert('서버 오류');
+    });
+  });
+})();
+</script>
 
 
 </body>

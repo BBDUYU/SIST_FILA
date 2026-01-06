@@ -1,19 +1,3 @@
-$(function () {
-  loadInquiryList();
-});
-
-function loadInquiryList() {
-  $.ajax({
-    url: contextPath + '/mypage/qna/list.ajax',
-    type: 'GET',
-    dataType: 'html',
-    success: function (html) {
-      $('#qnaListArea').html(html);
-    }
-  });
-}
-
-
 function openInquiryModal() {
   console.log('1:1 문의 모달 열기');
 
@@ -25,18 +9,23 @@ function openInquiryModal() {
       document.body.insertAdjacentHTML('beforeend', html);
       bindQnaModalEvents();
     })
-    .catch(console.error);
+    .catch(err => console.error(err));
 }
 
 function bindQnaModalEvents() {
   const layer = document.querySelector('#qnaWriteLayer');
   if (!layer) return;
 
-  layer.querySelector('.btn_close')?.addEventListener('click', closeQnaModal);
-  layer.querySelector('.btn_cancel')?.addEventListener('click', closeQnaModal);
-  layer.querySelector('.layer_dim')?.addEventListener('click', closeQnaModal);
+  const closeBtn = layer.querySelector('.btn_close');
+  const cancelBtn = layer.querySelector('.btn_cancel');
+  const dim = layer.querySelector('.layer_dim');
+
+  closeBtn && closeBtn.addEventListener('click', closeQnaModal);
+  cancelBtn && cancelBtn.addEventListener('click', closeQnaModal);
+  dim && dim.addEventListener('click', closeQnaModal);
 }
 
 function closeQnaModal() {
-  document.querySelector('#qnaWriteLayer')?.remove();
+  const layer = document.querySelector('#qnaWriteLayer');
+  if (layer) layer.remove();
 }
