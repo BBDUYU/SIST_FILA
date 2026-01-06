@@ -15,6 +15,7 @@ public class ProductsDTO {
     private Date updated_at;        // 수정일
     private String status;          // 상태 (SALE, SOLDOUT 등)
     private int discount_rate;      // 할인율
+    private int product_count; // 카테고리별 상품 개수를 담을 변수
     
     // 2. PRODUCT_IMAGE 테이블 컬럼 (조인해서 가져올 대표 이미지)
     private String image_url;       // 대표 이미지 URL
@@ -65,4 +66,7 @@ public class ProductsDTO {
     public void setImage_url(String image_url) { 
         this.image_url = image_url; 
     }
+    
+    public int getProduct_count() { return product_count; }
+    public void setProduct_count(int product_count) { this.product_count = product_count; }
 }

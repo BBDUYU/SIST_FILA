@@ -12,6 +12,10 @@ public class ProductsOptionDTO {
     private String groupName; // 옵션 종류 (예: "색상", "사이즈")
     private List<String> values = new ArrayList<>(); // 옵션 값 목록
 
+    // ★ 추가: 상세 옵션 데이터용 변수
+    private String optionValue; // 사이즈 이름 (예: "90(S)", "100(L)")
+    private int stock;          // 재고량
+
     public ProductsOptionDTO() {}
     public ProductsOptionDTO(String groupName) {
         this.groupName = groupName;
@@ -20,10 +24,5 @@ public class ProductsOptionDTO {
     public void addValue(String value) {
         this.values.add(value);
     }
-
-    // Getter & Setter
-    public String getGroupName() { return groupName; }
-    public void setGroupName(String groupName) { this.groupName = groupName; }
-    public List<String> getValues() { return values; }
-    public void setValues(List<String> values) { this.values = values; }
+    
 }

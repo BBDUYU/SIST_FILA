@@ -5,8 +5,8 @@
 <!DOCTYPE html>
 <html class="no-js" lang="ko-KR"><!--<![endif]-->
 <head>
-	<meta charset="UTF-8">
-	<meta name="format-detection" content="telephone=no">
+   <meta charset="UTF-8">
+   <meta name="format-detection" content="telephone=no">
 
 <title>의류 | FILA</title>
 
@@ -23,27 +23,27 @@
 <script>
 //필터 초기화 버튼 노출관련
 $(document).ready(function() {
-	$("input:checkbox").on('click', function() {
-		  if ($("input:checkbox:checked").length == 0){
-			  $("#resetB").hide();
-		  }else{
-			  $("#resetB").show();
-		  }
+   $("input:checkbox").on('click', function() {
+        if ($("input:checkbox:checked").length == 0){
+           $("#resetB").hide();
+        }else{
+           $("#resetB").show();
+        }
     });
   if ($("input:checkbox:checked").length == 0){
-	  $("#resetB").hide();
+     $("#resetB").hide();
   }else{
-	  $("#resetB").show();
+     $("#resetB").show();
   }
 });
 </script>
  -->
-	<!-- start of :: wrap -->
-	<div id="wrap" style="padding-top: 120px;">
-		<!-- header include -->
-		
-		
-		<section class="goods-list-box _thumb04">
+   <!-- start of :: wrap -->
+   <div id="wrap" style="padding-top: 120px;">
+      <!-- header include -->
+      
+      
+      <section class="goods-list-box _thumb04">
                 <h2 class="hidden">상품 리스트</h2>
                 
                 <div class="head">
@@ -55,28 +55,64 @@ $(document).ready(function() {
                         <e>${subTitle}</e>
                     </p></div>
                     <div class="sorting-box">
-                        <div><button type="button" class="filter__btn">필터</button></div>
-                    </div>
+                   <div>
+                       <button type="button" class="filter__btn">필터</button>
+                       <button type="button" class="filter-reset__btn" id="resetB" onclick="filterReset();$(this).hide();" style="display:none;">필터 초기화</button>
+               
+                       <div>
+                           <button type="button" class="comparison__btn">비교</button>
+                           <div class="lyr-box">
+                               <button type="button" class="lyr-comparison__btn">
+                                   <%-- 선택된 비교 상품 개수를 동적으로 표시 (기본값 0) --%>
+                                   <span id="compareCnt">0</span>개 비교하기
+                               </button>
+                               <button type="button" class="comparison-close__btn">close</button>
+                           </div>
+                       </div>
+                   </div>
+               
+                   <div>
+                       <%-- 정렬 기준 유지 로직 추가 --%>
+                       <select onchange="changeSort(this.value);">
+                           <option value="1" ${param.sort eq '1' ? 'selected' : ''}>신상품순</option>
+                           <option value="4" ${param.sort eq '4' ? 'selected' : ''}>판매순</option>
+                           <option value="7" ${param.sort eq '7' ? 'selected' : ''}>리뷰순</option>
+                           <option value="2" ${param.sort eq '2' ? 'selected' : ''}>낮은가격순</option>
+                           <option value="3" ${param.sort eq '3' ? 'selected' : ''}>높은가격순</option>
+                       </select>
+               
+                       <div class="col-box">
+                           <%-- 현재 단수(3단/4단)에 따라 active 클래스 추가 --%>
+                           <button type="button" class="col3__btn ${cookie.displayCol.value eq '3' ? 'active' : ''}" onclick="changeCol(3)">3단</button>
+                           <button type="button" class="col4__btn ${cookie.displayCol.value eq '4' ? 'active' : ''}" onclick="changeCol(4)">4단</button>
+                       </div>
+                   </div>
+               </div>
                 </div>
 
                 <div class="con">
                     <div class="filter-box">
                         <div class="category-box">
                             <ul>
-                            	<li class="${ currentCateId eq 0 || currentCateId eq sidebarParentId ? 'on' : '' }">
-	                                <a href="${pageContext.request.contextPath}/product/list.htm?category=${sidebarParentId > 0 ? sidebarParentId : currentCateId}">
-	                                    전체
-	                                </a>
-	                            </li>
-	                            
+                               <li class="${ currentCateId eq 0 || currentCateId eq sidebarParentId ? 'on' : '' }">
+                            <a href="${pageContext.request.contextPath}/product/list.htm?category=${sidebarParentId > 0 ? sidebarParentId : currentCateId}"
+                               <c:if test="${ currentCateId eq 0 || currentCateId eq sidebarParentId }">
+                                   data-num="${totalSidebarCount}"
+                               </c:if>>
+                                전체
+                            </a>
+                        </li>
+                               
                                 <c:forEach items="${sidebarList}" var="side">
-	                                <li class="${ currentCateId eq side.category_id ? 'on' : '' }">
-	                                    <a href="${pageContext.request.contextPath}/product/list.htm?category=${side.category_id}">
-	                                        ${side.name} 
-	                                        <span class="count" style="font-size:11px; color:#888;"></span>
-	                                    </a>
-	                                </li>
-	                            </c:forEach>
+                            <li class="${ currentCateId eq side.category_id ? 'on' : '' }">
+                                <a href="${pageContext.request.contextPath}/product/list.htm?category=${side.category_id}" 
+                                   <c:if test="${ currentCateId eq side.category_id }">
+                                       data-num="${side.product_count}"
+                                   </c:if>>
+                                    ${side.name} 
+                                </a>
+                            </li>
+                        </c:forEach>
                             </ul>
                         </div>
                     </div>
@@ -138,10 +174,10 @@ $(document).ready(function() {
                     </div>
                 </div>
             </section>
-		
-			
-			<!-- 추천 상품 -->
-			<section class="goods-scroll-box _type_v2 _gs01">
+      
+         
+         <!-- 추천 상품 -->
+         <section class="goods-scroll-box _type_v2 _gs01">
                 <div class="hd"><h2>고객님을 위한 추천 상품</h2></div>
                 <div class="slider-box">
                     <div class="goods__slider swiper">
@@ -171,14 +207,14 @@ $(document).ready(function() {
                     </div>
                 </div>              
             </section>
-			<!-- //추천 상품 -->
+         <!-- //추천 상품 -->
 
-		</div>
-		<!-- // end of :: contents -->
+      </div>
+      <!-- // end of :: contents -->
 
 
 
-		<!-- 하단 고정 버튼 (top, sns) -->
+      <!-- 하단 고정 버튼 (top, sns) -->
 <div class="bot-fix-box"> 
     <div class="inner">
         <button type="button" class="today-goods__btn" onclick="alert('준비중입니다')">

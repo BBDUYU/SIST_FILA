@@ -1,6 +1,9 @@
 package products.service;
 
+import java.io.File;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +108,18 @@ public class ProductService {
             } else {
                  sidebarList = cDao.selectMainCategories(conn); 
             }
+            
+            if (sidebarList != null) {
+                int totalCount = 0; // 전체 개수를 담을 변수
+                for (CategoriesDTO side : sidebarList) {
+                    int realCount = pDao.getProductCount(conn, side.getCategory_id());
+                    side.setProduct_count(realCount);
+                    
+                    totalCount += realCount; // 각 카테고리의 개수를 더함
+                }
+                // 계산된 전체 합계를 JSP로 보냄
+                request.setAttribute("totalSidebarCount", totalCount);
+            }
 
             // 5. 상품 리스트 조회
             List<ProductsDTO> list = null;
@@ -135,61 +150,99 @@ public class ProductService {
         try {
             conn = DBConn.getConnection();
             ProductsDAO pDao = ProductsDAO.getInstance();
+            CategoriesDAO cDao = CategoriesDAO.getInstance();
             
             // 1. 파라미터 받기
             String productId = request.getParameter("product_id");
-            
-            if(productId == null || productId.isEmpty()) {
-                request.setAttribute("errorMsg", "잘못된 접근입니다 (상품 ID 없음).");
-                return;
-            }
+            if(productId == null || productId.isEmpty()) return;
 
-            // 2. DB 조회
+            // 2. 기본 상품 정보 조회
             ProductsDTO dto = pDao.getProduct(conn, productId);
-            List<ProductsOptionDTO> options = pDao.getProductOptions(conn, productId);
             
-            if (dto == null) {
-                request.setAttribute("errorMsg", "존재하지 않는 상품입니다.");
-                return;
-            }
-            
-            // 3. 할인가 계산
-            int finalPrice = dto.getPrice();
-            if(dto.getDiscount_rate() > 0) {
-                finalPrice = dto.getPrice() * (100 - dto.getDiscount_rate()) / 100;
-            }
-            
-            // 4. 옵션 분리 (색상/사이즈)
-            ProductsOptionDTO colorOption = null;
-            ProductsOptionDTO sizeOption = null;
-            
-            if(options != null) {
-                for(ProductsOptionDTO opt : options) {
-                    if(opt.getGroupName().contains("색상") || opt.getGroupName().contains("Color")) {
-                        colorOption = opt;
-                    } 
-                    else if(opt.getGroupName().contains("사이즈") || opt.getGroupName().contains("Size")) {
-                        sizeOption = opt;
+            // -----------------------------------------------------------
+            // 3. 상품 정보가 있을 때만 모든 로직 실행 (Null 방지)
+            // -----------------------------------------------------------
+            if (dto != null) {
+                productId = dto.getProduct_id();
+                
+                // [A] 이미지 파일 스캔 (C:\fila_upload\product\ID 폴더 기반)
+                List<String> mainImages = new ArrayList<>();
+                List<String> modelImages = new ArrayList<>();
+                List<String> detailImages = new ArrayList<>();
+                
+                File dir = new File("C:\\fila_upload\\product\\" + productId);
+                if (dir.exists() && dir.isDirectory()) {
+                    File[] files = dir.listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            String name = file.getName();
+                            if (name.contains("_main_")) mainImages.add(name);
+                            else if (name.contains("_model_")) modelImages.add(name);
+                            else if (name.contains("_detail_")) detailImages.add(name);
+                        }
                     }
                 }
+                Collections.sort(mainImages);
+                Collections.sort(modelImages);
+                Collections.sort(detailImages);
+
+                // [B] 사이즈 옵션 데이터 구성
+                // 사이즈(500번대): VALUES와 MASTER를 조인해서 실제 사이즈 이름과 재고를 가져옴
+                List<ProductsOptionDTO> sizeOptions = pDao.getProductOptions(conn, productId);
+                
+                // [C] 하단 추천 상품 (같은 카테고리 내 랜덤 12개)
+                List<ProductsDTO> relatedList = pDao.selectProductsByCategory(conn, dto.getCategory_id());
+
+                // [D] 대분류(Depth 1) 추적 및 genderTag (FEMALE/MALE) 설정
+                CategoriesDTO curDto = cDao.selectCategory(conn, dto.getCategory_id());
+                String genderTag = "FILA"; // 기본값
+                if (curDto != null) {
+                    String depth1Name = "";
+                    if (curDto.getDepth() == 1) depth1Name = curDto.getName();
+                    else if (curDto.getDepth() == 2) {
+                        CategoriesDTO parent = cDao.selectCategory(conn, curDto.getParent_id());
+                        if (parent != null) depth1Name = parent.getName();
+                    } else if (curDto.getDepth() == 3) {
+                        CategoriesDTO parent = cDao.selectCategory(conn, curDto.getParent_id());
+                        if (parent != null) {
+                            CategoriesDTO grandParent = cDao.selectCategory(conn, parent.getParent_id());
+                            if (grandParent != null) depth1Name = grandParent.getName();
+                        }
+                    }
+                    // 한글 대분류를 영문으로 변환
+                    if ("여성".equals(depth1Name)) genderTag = "FEMALE";
+                    else if ("남성".equals(depth1Name)) genderTag = "MALE";
+                    else if (!depth1Name.isEmpty()) genderTag = depth1Name;
+                }
+
+                // [E] 할인가 계산
+                int finalPrice = dto.getPrice();
+                if(dto.getDiscount_rate() > 0) {
+                    finalPrice = dto.getPrice() * (100 - dto.getDiscount_rate()) / 100;
+                }
+
+                // [F] 스타일 태그 (스포츠/라이프스타일 분류 정보)
+                String styleTag = pDao.getProductTag(conn, productId, 2);
+                if (styleTag == null) styleTag = "라이프스타일";
+
+                // -----------------------------------------------------------
+                // 4. JSP 전송 (Attribute 설정)
+                // -----------------------------------------------------------
+                request.setAttribute("product", dto);
+                request.setAttribute("mainImages", mainImages);
+                request.setAttribute("modelImages", modelImages);
+                request.setAttribute("detailImages", detailImages);
+                request.setAttribute("sizeOptions", sizeOptions);     // 사이즈 리스트
+                request.setAttribute("relatedList", relatedList);     // 추천 상품
+                request.setAttribute("finalPrice", finalPrice);
+                request.setAttribute("styleTag", styleTag);
+                request.setAttribute("genderTag", genderTag);
+                
+                // JSP의 <c:if test="${not empty sizeOption}"> 호환용
+                if(sizeOptions != null && !sizeOptions.isEmpty()) {
+                    request.setAttribute("sizeOption", "Y");
+                }
             }
-            
-            // ------------------------------------------------------------------
-            // [수정 포인트] 상품 태그(스포츠/라이프스타일) DB에서 가져오기
-            // ------------------------------------------------------------------
-            // (숫자 2는 DB의 OPTION_MASTERS 테이블에서 '스포츠/스타일' 분류 ID라고 가정함)
-            String styleTag = pDao.getProductTag(conn, productId, 2);
-            
-            if (styleTag == null) {
-                styleTag = "라이프스타일"; 
-            }
-            
-            // 5. 결과 저장 (JSP로 보냄)
-            request.setAttribute("product", dto);        
-            request.setAttribute("finalPrice", finalPrice);
-            request.setAttribute("colorOption", colorOption); 
-            request.setAttribute("sizeOption", sizeOption);
-            request.setAttribute("styleTag", styleTag); 
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -197,4 +250,6 @@ public class ProductService {
             DBConn.close();
         }
     }
+    
+    
 }
