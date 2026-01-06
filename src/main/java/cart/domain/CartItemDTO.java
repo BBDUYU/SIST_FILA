@@ -3,7 +3,7 @@ package cart.domain;
 public class CartItemDTO {
   private int cartItemId;
   private int userNumber;
-  private int productId;
+  private String productId;
 
   private String productName;
 
@@ -22,8 +22,8 @@ public class CartItemDTO {
   public int getUserNumber() { return userNumber; }
   public void setUserNumber(int userNumber) { this.userNumber = userNumber; }
 
-  public int getProductId() { return productId; }
-  public void setProductId(int productId) { this.productId = productId; }
+  public String getProductId() { return productId; }
+  public void setProductId(String productId) { this.productId = productId; }
 
   public String getProductName() { return productName; }
   public void setProductName(String productName) { this.productName = productName; }
