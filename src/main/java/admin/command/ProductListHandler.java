@@ -19,7 +19,7 @@ public class ProductListHandler implements CommandHandler {
             ArrayList<ProductDTO> list = dao.selectProductList(conn);
             
             request.setAttribute("productList", list);
-            return "/view/admin/product_list.jsp"; // 이동할 JSP 경로
+            return "/view/admin/productlist.jsp"; // 이동할 JSP 경로
             
         } catch (Exception e) {
             e.printStackTrace();
