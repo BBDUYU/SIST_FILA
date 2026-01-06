@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix ="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <!DOCTYPE html>
 <html>
@@ -25,12 +25,16 @@
 	href="http://localhost/SIST_FILA/css/opt-default.css">
 <link rel="stylesheet"
 	href="http://localhost/SIST_FILA/css/swiper-bundle.css">
-  
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/product.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/sub.css">
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/css/layout.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/css/product.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/css/sub.css">
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
 
 <script src="${pageContext.request.contextPath}/js/TweenMax.js"></script>
@@ -38,7 +42,8 @@
 <script src="${pageContext.request.contextPath}/js/mighty.base.1.5.7.js"></script>
 <script src="${pageContext.request.contextPath}/js/matiz.js"></script>
 <script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
-<script src="${pageContext.request.contextPath}/js/default.js?v=202504161631"></script>
+<script
+	src="${pageContext.request.contextPath}/js/default.js?v=202504161631"></script>
 
 <script>
 	jQuery(window.document).ready(function(){
@@ -46,7 +51,6 @@
 	});  
 </script>
 <style>
-
 </style>
 <script>
 $(document).on('click', '.search-open__btn', function () {
@@ -71,7 +75,7 @@ $(document).on('click', '.cancel__btn', function () {
 </head>
 
 <body class="hd__style1 _style_main">
-<script>
+	<script>
 document.addEventListener('DOMContentLoaded', () => {
 	  const body = document.body;
 
@@ -93,14 +97,16 @@ document.addEventListener('DOMContentLoaded', () => {
 			<a href="${pageContext.request.contextPath}/index.htm">FILA</a>
 		</h1>
 		<!-- //logo -->
-		
+
 		<!-- gnb -->
 		<nav class="gnb">
 			<ul class="gnb">
 				<c:forEach items="${list}" var="d1">
 					<!-- ===== 1 DEPTH : FEMALE / MALE / KIDS ===== -->
 					<c:if test="${d1.depth eq 1}">
-						<li><a href="${pageContext.request.contextPath}/product/list.htm?category=${d1.category_id}">${d1.name}</a> <!-- ===== 2 DEPTH WRAP ===== -->
+						<li><a
+							href="${pageContext.request.contextPath}/product/list.htm?category=${d1.category_id}">${d1.name}</a>
+							<!-- ===== 2 DEPTH WRAP ===== -->
 							<div class="depth2-box">
 								<div class="inner">
 
@@ -113,13 +119,15 @@ document.addEventListener('DOMContentLoaded', () => {
 												test="${d2.depth eq 2 && d2.parent_id eq d1.category_id}">
 												<div class="category-group">
 
-													<a href="${pageContext.request.contextPath}/product/list.htm?category=${d2.category_id}"
+													<a
+														href="${pageContext.request.contextPath}/product/list.htm?category=${d2.category_id}"
 														class="link-tit"> ${d2.name} </a>
 
 													<!-- ===== 3 DEPTH ===== -->
 													<div>
 														<ul>
-															<li><a href="${pageContext.request.contextPath}/product/list.htm?category=${d2.category_id}">
+															<li><a
+																href="${pageContext.request.contextPath}/product/list.htm?category=${d2.category_id}">
 																	전체보기 </a></li>
 
 															<c:forEach items="${list}" var="d3">
@@ -161,8 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			<div class="util-search">
 				<button type="button" class="search-open__btn">search</button>
-				<form action="#" name="searchForm2"
-					method="get" autocomplete="off" onsubmit="searchRun2(); return false;">
+				<form action="#" name="searchForm2" method="get" autocomplete="off"
+					onsubmit="searchRun2(); return false;">
 					<!-- search layer -->
 					<div class="search__layer">
 
@@ -183,15 +191,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 							<div class="search-input-box">
-							    <div>
-							        <button type="button" class="close__btn"></button>
-							
-							        <input type="search" placeholder="검색어 입력" name="searchItem" id="searchItem2" value="">
-							        <input type="hidden" name="searchsCateNo" id="searchsCateNo" value="">
-							
-							        <button type="button" class="search__btn" onclick="searchRun2();">search</button>
-							    </div>
-							    <button type="button" class="cancel__btn">취소</button>
+								<div>
+									<button type="button" class="close__btn"></button>
+
+									<input type="search" placeholder="검색어 입력" name="searchItem"
+										id="searchItem2" value=""> <input type="hidden"
+										name="searchsCateNo" id="searchsCateNo" value="">
+
+									<button type="button" class="search__btn"
+										onclick="searchRun2();">search</button>
+								</div>
+								<button type="button" class="cancel__btn">취소</button>
 							</div>
 						</div>
 
@@ -224,22 +234,24 @@ document.addEventListener('DOMContentLoaded', () => {
 										    // request scope에 저장해서 JSTL에서 사용
 										    request.setAttribute("recentSearch", recentSearch);
 										%>
-									
-									<ul class="latest__list" id="sWordHistory">
-									    <c:choose>
-									        <c:when test="${not empty recentSearch}">
-									            <c:forEach var="word" items="${fn:split(recentSearch, ',')}">
-									                <li data-sword="${word}">
-									                    <a href="${pageContext.request.contextPath}/product/list.htm?searchItem=${fn:escapeXml(word)}">${word}</a>
-									                    <button type="button" class="delete__btn sWordRemove btn_remove">delete</button>
-									                </li>
-									            </c:forEach>
-									        </c:when>
-									        <c:otherwise>
-									            <li class="no_search_list">최근 검색어가 없습니다.</li>
-									        </c:otherwise>
-									    </c:choose>
-									</ul>									
+
+										<ul class="latest__list" id="sWordHistory">
+											<c:choose>
+												<c:when test="${not empty recentSearch}">
+													<c:forEach var="word"
+														items="${fn:split(recentSearch, ',')}">
+														<li data-sword="${word}"><a
+															href="${pageContext.request.contextPath}/product/list.htm?searchItem=${fn:escapeXml(word)}">${word}</a>
+															<button type="button"
+																class="delete__btn sWordRemove btn_remove">delete</button>
+														</li>
+													</c:forEach>
+												</c:when>
+												<c:otherwise>
+													<li class="no_search_list">최근 검색어가 없습니다.</li>
+												</c:otherwise>
+											</c:choose>
+										</ul>
 									</div>
 								</div>
 								<!-- //최근 검색어 -->
@@ -252,23 +264,22 @@ document.addEventListener('DOMContentLoaded', () => {
 										<!-- <p class="update-txt">19:00 업데이트</p> -->
 									</div>
 
-									<div> 
+									<div>
 										<ul>
 											<c:choose>
-								                <c:when test="${not empty popularKeywords}">
-								                    <c:forEach var="sDto" items="${popularKeywords}">
-								                        <li>
-								                            <%-- 검색 결과 페이지 주소에 맞게 수정하세요 --%>
-								                            <a href="${pageContext.request.contextPath}/product/list.htm?searchItem=${fn:escapeXml(sDto.keyword)}">
-															    ${sDto.keyword}
-															</a>
-								                        </li>
-								                    </c:forEach>
-								                </c:when>
-								                <c:otherwise>
-								                    <li>검색 기록이 없습니다.</li>
-								                </c:otherwise>
-								            </c:choose>
+												<c:when test="${not empty popularKeywords}">
+													<c:forEach var="sDto" items="${popularKeywords}">
+														<li>
+															<%-- 검색 결과 페이지 주소에 맞게 수정하세요 --%> <a
+															href="${pageContext.request.contextPath}/product/list.htm?searchItem=${fn:escapeXml(sDto.keyword)}">
+																${sDto.keyword} </a>
+														</li>
+													</c:forEach>
+												</c:when>
+												<c:otherwise>
+													<li>검색 기록이 없습니다.</li>
+												</c:otherwise>
+											</c:choose>
 										</ul>
 									</div>
 								</div>
@@ -279,36 +290,34 @@ document.addEventListener('DOMContentLoaded', () => {
 									<div>
 										<p class="tit">추천 검색어</p>
 									</div>
-   
+
 									<div>
-								        <ul>
-								            <c:choose>
-								                <c:when test="${not empty recommendKeywords}">
-								                    <c:forEach var="rDto" items="${recommendKeywords}">
-								                        <li>
-								                            <c:choose>
+										<ul>
+											<c:choose>
+												<c:when test="${not empty recommendKeywords}">
+													<c:forEach var="rDto" items="${recommendKeywords}">
+														<li><c:choose>
 																<c:when test="${not empty rDto.product_id}">
-																    <a href="${pageContext.request.contextPath}/product/product_detail.htm?id=${rDto.product_id}">
-																        ${rDto.name}
-																    </a>
+																	<a
+																		href="${pageContext.request.contextPath}/product/product_detail.htm?id=${rDto.product_id}">
+																		${rDto.name} </a>
 																</c:when>
 																<c:when test="${not empty rDto.slug}">
-																    <%-- 이벤트는 slug 파라미터를 쓰기로 정의하셨으므로 --%>
-																    <a href="${pageContext.request.contextPath}/event/event.htm?slug=${rDto.slug}">
-																        ${rDto.event_name}
-																    </a>
+																	<%-- 이벤트는 slug 파라미터를 쓰기로 정의하셨으므로 --%>
+																	<a
+																		href="${pageContext.request.contextPath}/event/event.htm?slug=${rDto.slug}">
+																		${rDto.event_name} </a>
 																</c:when>
-								                            </c:choose>
-								                        </li>
-								                    </c:forEach>
-								                </c:when>
-								                <c:otherwise>
-								                    <%-- 데이터가 없을 경우 기본 표시 --%>
-								                    <li>추천 검색어가 없습니다.</li>
-								                </c:otherwise>
-								            </c:choose>
-								        </ul>
-								    </div>
+															</c:choose></li>
+													</c:forEach>
+												</c:when>
+												<c:otherwise>
+													<%-- 데이터가 없을 경우 기본 표시 --%>
+													<li>추천 검색어가 없습니다.</li>
+												</c:otherwise>
+											</c:choose>
+										</ul>
+									</div>
 								</div>
 								<!-- //추천 검색어 -->
 
@@ -328,64 +337,78 @@ document.addEventListener('DOMContentLoaded', () => {
 														id="headerProduct" aria-live="polite">
 														<!-- 반복 -->
 														<c:choose>
-													    <c:when test="${not empty recommendProducts}">
-													        <c:forEach var="pDto" items="${recommendProducts}" varStatus="status">
-													            <%-- 각 상품 슬라이드 --%>
-													            <div class="goods swiper-slide" data-val="${status.count}" role="group" aria-label="${status.count} / 12">
-													                <div class="photo">
-																	    <div class="before">
-																	        <a href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${pDto.product_id}">
-																	            <img src="${pageContext.request.contextPath}/displayImage.do?path=C:/fila_upload/product/${pDto.product_id}/${pDto.product_id}_main_1.jpg" alt="${pDto.name}">
-																	        </a>
-																	    </div>
-																	</div>
-													
-													                <div class="info">
-													                    <a href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${pDto.product_id}">
-													                        <div class="top">
-													                            <%-- 카테고리나 태그 데이터가 DTO에 있다면 활용 가능 --%>
-													                            <p class="category">RECOMMEND</p>
-													                            <div class="tag">
-													                                <c:if test="${pDto.discount_rate > 0}">
-													                                    <span class="sale-tag">${pDto.discount_rate}%</span>
-													                                </c:if>
-													                            </div>
-													                        </div>
-													
-													                        <p class="name">${pDto.name}</p>
-													                        
-													                        <div class="price">
-																			    <c:choose>
-																			        <c:when test="${pDto.discount_rate > 0}">
-																			            <%-- 할인가 출력 --%>
-																			            <p class="sale">
-																			                <fmt:formatNumber value="${pDto.price * (100 - pDto.discount_rate) / 100}" type="number" />원
-																			            </p>
-																			            <%-- 원가 출력 (가로줄) --%>
-																			            <p class="normal _sale" >
-																			                <fmt:formatNumber value="${pDto.price}" type="number" />원 
-																			            </p>
-																			            <p class="percent">${pDto.discount_rate}% 할인</p>
-																			        </c:when>
-																			        <c:otherwise>
-																			            <p class="sale">
-																			                <fmt:formatNumber value="${pDto.price}" type="number" />원
-																			            </p>
-																			        </c:otherwise>
-																			    </c:choose>
+															<c:when test="${not empty recommendProducts}">
+																<c:forEach var="pDto" items="${recommendProducts}"
+																	varStatus="status">
+																	<%-- 각 상품 슬라이드 --%>
+																	<div class="goods swiper-slide"
+																		data-val="${status.count}" role="group"
+																		aria-label="${status.count} / 12">
+																		<div class="photo">
+																			<div class="before">
+																				<a
+																					href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${pDto.product_id}">
+																					<img
+																					src="${pageContext.request.contextPath}/displayImage.do?path=C:/fila_upload/product/${pDto.product_id}/${pDto.product_id}_main_1.jpg"
+																					alt="${pDto.name}">
+																				</a>
 																			</div>
-													                    </a>
-													                </div>
-													            </div>
-													        </c:forEach>
-													    </c:when>
-													    <c:otherwise>
-													        <div class="swiper-slide">추천 상품이 없습니다.</div>
-													    </c:otherwise>
-													</c:choose>
+																		</div>
+
+																		<div class="info">
+																			<a
+																				href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${pDto.product_id}">
+																				<div class="top">
+																					<%-- 카테고리나 태그 데이터가 DTO에 있다면 활용 가능 --%>
+																					<p class="category">RECOMMEND</p>
+																					<div class="tag">
+																						<c:if test="${pDto.discount_rate > 0}">
+																							<span class="sale-tag">${pDto.discount_rate}%</span>
+																						</c:if>
+																					</div>
+																				</div>
+
+																				<p class="name">${pDto.name}</p>
+
+																				<div class="price">
+																					<c:choose>
+																						<c:when test="${pDto.discount_rate > 0}">
+																							<%-- 할인가 출력 --%>
+																							<p class="sale">
+																								<fmt:formatNumber
+																									value="${pDto.price * (100 - pDto.discount_rate) / 100}"
+																									type="number" />
+																								원
+																							</p>
+																							<%-- 원가 출력 (가로줄) --%>
+																							<p class="normal _sale">
+																								<fmt:formatNumber value="${pDto.price}"
+																									type="number" />
+																								원
+																							</p>
+																							<p class="percent">${pDto.discount_rate}%할인</p>
+																						</c:when>
+																						<c:otherwise>
+																							<p class="sale">
+																								<fmt:formatNumber value="${pDto.price}"
+																									type="number" />
+																								원
+																							</p>
+																						</c:otherwise>
+																					</c:choose>
+																				</div>
+																			</a>
+																		</div>
+																	</div>
+																</c:forEach>
+															</c:when>
+															<c:otherwise>
+																<div class="swiper-slide">추천 상품이 없습니다.</div>
+															</c:otherwise>
+														</c:choose>
 
 
-												
+
 													</div>
 													<span class="swiper-notification" aria-live="assertive"
 														aria-atomic="true"></span>
@@ -419,97 +442,121 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				<!-- account layer -->
 				<div class="account__layer">
-    <div class="inner">
-        <c:choose>
-            <%-- 1. 로그인 안 된 상태 --%>
-            <c:when test="${empty auth}">
-                <div class="account-menu-box">
-                    <ul>
-                        <li id="globalMenu1"><a href="${pageContext.request.contextPath}/login.htm">로그인</a></li>
-                        <li id="globalMenu2"><a href="/member/join_intro.asp">회원가입</a></li>
-                        <li id="globalMenu3"><a href="/member/searchIDPW.asp">아이디 · 비밀번호 찾기</a></li>
-                        <li id="globalMenu7" style="display: none;">&nbsp;</li>
-                        <li id="globalMenu4"></li>
-                        <li id="globalMenu5" style="display: none;">&nbsp;</li>
-                        <li id="globalMenu8"><a href="/specialoffer/list.asp">이벤트</a></li>
-                    </ul>
-                </div>
-            </c:when>
+					<div class="inner">
+						<c:choose>
+							<%-- 1. 로그인 안 된 상태 --%>
+							<c:when test="${empty auth}">
+								<div class="account-menu-box">
+									<ul>
+										<li id="globalMenu1"><a
+											href="${pageContext.request.contextPath}/login.htm">로그인</a></li>
+										<li id="globalMenu2"><a href="/member/join_intro.asp">회원가입</a></li>
+										<li id="globalMenu1"><a
+											href="${pageContext.request.contextPath}/mypage.htm">마이페이지</a>
+										</li>
 
-            <%-- 2. 로그인 된 상태 --%>
-            <c:otherwise>
-                <c:choose>
-                    <%-- 2-1. 관리자 로그인 상태 (ID에 admin 포함) --%>
-                    <c:when test="${fn:contains(auth.id, 'admin')}">
-                        <div class="account-menu-box">
-                            <ul>
-                                <li id="globalMenu9"><a href="${pageContext.request.contextPath}/admin/userList.htm">관리자 페이지</a></li>
-                            </ul>
-                            <button type="button" class="logout__btn" id="globalMenu6" 
-                                    onclick="location.href='${pageContext.request.contextPath}/logout.htm';">로그아웃</button>
-                        </div>
-                    </c:when>
+										<li id="globalMenu2"><a
+											href="${pageContext.request.contextPath}/mypageOrder.htm">주문/배송</a>
+										</li>
 
-                    <%-- 2-2. 일반 사용자 로그인 상태 --%>
-                    <c:otherwise>
-                        <div class="account-info-box loginMember">
-                            <div>
-                                <p class="name">${auth.name}님</p>
-                                <p class="level">WHITE</p>
-                            </div>
-                            <div>
-                                <p class="percent">2% 적립</p>
-                                <a href="/customer/membership.asp">자세히 보기</a>
-                            </div>
-                        </div>
+										<li id="globalMenu_qna"><a
+											href="${pageContext.request.contextPath}/view/mypage/qna.jsp">
+												1:1 문의 </a></li>
 
-                        <div class="account-menu-box">
-                            <ul>
-                                <div class="account-menu-box">
-  <ul>
-    <li id="globalMenu1">
-      <a href="${pageContext.request.contextPath}/mypage.htm">마이페이지</a>
-    </li>
 
-    <li id="globalMenu2">
-      <a href="${pageContext.request.contextPath}/mypageOrder.htm">주문/배송</a>
-    </li>
+										<li id="globalMenu7"><a
+											href="${pageContext.request.contextPath}/mypageWishlist.htm">위시리스트</a>
+											<strong><a
+												href="${pageContext.request.contextPath}/mypageWishlist.htm">0개</a></strong>
+										</li>
+										<li id="globalMenu3"><a href="/member/searchIDPW.asp">아이디
+												· 비밀번호 찾기</a></li>
+										<li id="globalMenu7" style="display: none;">&nbsp;</li>
+										<li id="globalMenu4"></li>
+										<li id="globalMenu5" style="display: none;">&nbsp;</li>
+										<li id="globalMenu8"><a href="/specialoffer/list.asp">이벤트</a></li>
+									</ul>
+								</div>
+							</c:when>
 
-    <li id="globalMenu3">
-      <a href="${pageContext.request.contextPath}/mypageQna.htm">1:1문의</a>
-    </li>
+							<%-- 2. 로그인 된 상태 --%>
+							<c:otherwise>
+								<c:choose>
+									<%-- 2-1. 관리자 로그인 상태 (ID에 admin 포함) --%>
+									<c:when test="${fn:contains(auth.id, 'admin')}">
+										<div class="account-menu-box">
+											<ul>
+												<li id="globalMenu9"><a
+													href="${pageContext.request.contextPath}/admin/userList.htm">관리자
+														페이지</a></li>
+											</ul>
+											<button type="button" class="logout__btn" id="globalMenu6"
+												onclick="location.href='${pageContext.request.contextPath}/logout.htm';">로그아웃</button>
+										</div>
+									</c:when>
 
-    <li id="globalMenu7">
-      <a href="${pageContext.request.contextPath}/mypageWishlist.htm">위시리스트</a>
-      <strong><a href="${pageContext.request.contextPath}/mypageWishlist.htm">0개</a></strong>
-    </li>
+									<%-- 2-2. 일반 사용자 로그인 상태 --%>
+									<c:otherwise>
+										<div class="account-info-box loginMember">
+											<div>
+												<p class="name">${auth.name}님</p>
+												<p class="level">WHITE</p>
+											</div>
+											<div>
+												<p class="percent">2% 적립</p>
+												<a href="/customer/membership.asp">자세히 보기</a>
+											</div>
+										</div>
 
-    <li id="globalMenu4">
-      <a href="${pageContext.request.contextPath}/mypageCoupon.htm">쿠폰</a>
-      <strong><a href="${pageContext.request.contextPath}/mypageCoupon.htm">0개</a></strong>
-    </li>
+										<div class="account-menu-box">
+											<ul>
+												<div class="account-menu-box">
+													<ul>
+														<li id="globalMenu1"><a
+															href="${pageContext.request.contextPath}/mypage.htm">마이페이지</a>
+														</li>
 
-    <li id="globalMenu5">
-      <a href="${pageContext.request.contextPath}/mypagePoint.htm">포인트</a>
-      <strong><a href="${pageContext.request.contextPath}/mypagePoint.htm">0P</a></strong>
-    </li>
+														<li id="globalMenu2"><a
+															href="${pageContext.request.contextPath}/mypageOrder.htm">주문/배송</a>
+														</li>
+														<li><a
+															href="${pageContext.request.contextPath}/inquiry/list.htm">
+																1:1 문의 </a></li>
 
-    <li id="globalMenu8">
-      <a href="${pageContext.request.contextPath}/event.htm">이벤트</a>
-    </li>
-  </ul>
-</div>
+														<li id="globalMenu7"><a
+															href="${pageContext.request.contextPath}/mypageWishlist.htm">위시리스트</a>
+															<strong><a
+																href="${pageContext.request.contextPath}/mypageWishlist.htm">0개</a></strong>
+														</li>
 
-                            </ul>
-                            <button type="button" class="logout__btn" id="globalMenu6" 
-                                    onclick="location.href='${pageContext.request.contextPath}/logout.htm';">로그아웃</button>
-                        </div>
-                    </c:otherwise>
-                </c:choose>
-            </c:otherwise>
-        </c:choose>
-    </div>
-</div>
+														<li id="globalMenu4"><a
+															href="${pageContext.request.contextPath}/mypageCoupon.htm">쿠폰</a>
+															<strong><a
+																href="${pageContext.request.contextPath}/mypageCoupon.htm">0개</a></strong>
+														</li>
+
+														<li id="globalMenu5"><a
+															href="${pageContext.request.contextPath}/mypagePoint.htm">포인트</a>
+															<strong><a
+																href="${pageContext.request.contextPath}/mypagePoint.htm">0P</a></strong>
+														</li>
+
+														<li id="globalMenu8"><a
+															href="${pageContext.request.contextPath}/event.htm">이벤트</a>
+														</li>
+													</ul>
+												</div>
+
+											</ul>
+											<button type="button" class="logout__btn" id="globalMenu6"
+												onclick="location.href='${pageContext.request.contextPath}/logout.htm';">로그아웃</button>
+										</div>
+									</c:otherwise>
+								</c:choose>
+							</c:otherwise>
+						</c:choose>
+					</div>
+				</div>
 				<!-- //account layer -->
 			</div>
 
@@ -519,9 +566,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			</div>
 		</div>
 		<!-- //util -->
+
+
 	</header>
 
-<script>
+	<script>
 function searchRun2() {
     const searchInput = document.getElementById("searchItem2");
     const searchItem = searchInput ? searchInput.value.trim() : "";
