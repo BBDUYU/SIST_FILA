@@ -33,50 +33,68 @@
                 <div class="sticky-box">
                     <div class="goods-detail-box">
 
+                  <!-- 상세페이지 메인 이미지 -->
                         <div class="photo-list-box _style1"> <ul>
-                                <li>
-                                    <img src="${product.image_url}" alt="${product.name}" onError="$(this).parent('li').hide();" />
-                                </li>
-                            </ul>
-
-                            <div class="view-slider-box">
-                                <div class="inner">
-                                    <div class="view-photo__slider swiper">
-                                        <div class="swiper-wrapper"></div>
-                                    </div>
-                                    <div class="slider-btn-box">
-                                        <button type="button" class="prev__btn"></button>
-                                        <div class="slider-scrollbar"></div>
-                                        <button type="button" class="next__btn"></button>
-                                    </div>
-                                    </div>
-                            </div>
-                            </div>
+                       <c:forEach var="imgName" items="${mainImages}">
+                           <li>
+                               <img src="${pageContext.request.contextPath}/displayImage.do?path=C:/fila_upload/product/${product.product_id}/${imgName}" 
+                                    alt="${product.name}" 
+                                    onerror="$(this).parent('li').hide();">
+                           </li>
+                       </c:forEach>
+                   </ul>
+               
+                   <div class="view-slider-box">
+                       <div class="inner">
+                           <div class="view-photo__slider swiper">
+                               <div class="swiper-wrapper">
+                                   <c:forEach var="imgName" items="${mainImages}">
+                                       <div class="swiper-slide">
+                                           <img src="${pageContext.request.contextPath}/displayImage.do?path=C:/fila_upload/product/${product.product_id}/${imgName}" alt="">
+                                       </div>
+                                   </c:forEach>
+                               </div>
+                           </div>
+               
+                           <div class="slider-btn-box">
+                               <button type="button" class="prev__btn"></button>
+                               <div class="slider-scrollbar"></div>
+                               <button type="button" class="next__btn"></button>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+               <!-- 상세페이지 메인 이미지  끝 -->
+               
                         <div class="detail-box">
 
                             <div class="product-notice-banner">
                                 <img src="//filacdn.styleship.com/filacontent2/data/ContentsFile/PDP_img_d.jpg" alt="">
                             </div>
-                            <div class="model-cut-box">
-                                <div class="hd">
-                                    <p class="tit">모델컷</p>
-                                </div>
-                                
-                                <div class="cn">
-                                    <div class="mc-slider-box">
-                                        <div class="mc__slider">
-                                            <div class="swiper-wrapper">
-                                                <div class="swiper-slide">
-                                                    <img src="http://filacdn.styleship.com/filaproduct2/data/productImages/model01/4/FS254DJ01F001_561.jpg" alt="">
-                                                </div>
-                                                <div class="swiper-slide">
-                                                    <img src="http://filacdn.styleship.com/filaproduct2/data/productImages/model02/4/FS254DJ01F001_561.jpg" alt="">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="mc-swiper-pagination"></div>
-                                    </div>
-                                    </div>
+                            
+                            <!-- 모델컷 리스트가 비어있지 않을 때만 전체 영역 출력 -->
+                     <c:if test="${not empty modelImages}">
+                         <div class="model-cut-box">
+                             <div class="hd">
+                                 <p class="tit">모델컷</p>
+                             </div>
+                             
+                             <div class="cn">
+                                 <div class="mc-slider-box">
+                                     <!-- swiper 클래스를 유지해야 슬라이드가 작동합니다 -->
+                                     <div class="mc__slider swiper">
+                                         <div class="swiper-wrapper">
+                                             <c:forEach var="mImg" items="${modelImages}">
+                                                 <div class="swiper-slide">
+                                                     <img src="${pageContext.request.contextPath}/displayImage.do?path=C:/fila_upload/product/${product.product_id}/${mImg}" alt="">
+                                                 </div>
+                                             </c:forEach>
+                                         </div>
+                                         <!-- 페이지네이션 -->
+                                         <div class="mc-swiper-pagination"></div>
+                                     </div>
+                                 </div>
+                             </div>
 
                                 <div class="mc-info-box">
                                     <p>
@@ -85,22 +103,17 @@
                                     </p>
                                 </div>
                                 </div>
-                            <div class="top-img-box">
-                                <div class="img"><img src="//filacdn.styleship.com/filacontent2/data/filastyle/img_FlowDown_04_d_31.jpg" alt=""></div>
-                                <p class="txt"></p>
-                            </div>
-                            <div class="top-img-box">
-                                <div class="img"><img src="//filacdn.styleship.com/filacontent2/data/filastyle/img_FlowDown_01_57.jpg" alt=""></div>
-                                <p class="txt"></p>
-                            </div>
-                            <div class="top-img-box">
-                                <div class="img"><img src="//filacdn.styleship.com/filacontent2/data/filastyle/img_FlowDown_02_42.jpg" alt=""></div>
-                                <p class="txt"></p>
-                            </div>
-                            <div class="top-img-box">
-                                <div class="img"><img src="//filacdn.styleship.com/filacontent2/data/filastyle/img_FlowDown_03_74.jpg" alt=""></div>
-                                <p class="txt"></p>
-                            </div>
+                            </c:if>
+                            <!-- 상세페이지 디테일 이미지 -->
+                            <c:forEach var="dImg" items="${detailImages}">
+                         <div class="top-img-box">
+                             <div class="img">
+                                 <img src="${pageContext.request.contextPath}/displayImage.do?path=C:/fila_upload/product/${product.product_id}/${dImg}" 
+                                      alt="" style="width:100%;">
+                             </div>
+                         </div>
+                     </c:forEach>
+                            <!-- 상세페이지 디테일 이미지 끝 -->
 
                             <div class="checkpoint-box">
                                 <div class="hd">
@@ -133,15 +146,18 @@
                         <div class="info-box">
                             <div class="scroll-box">
                                 <div class="tag">
+                                   <!-- 성별 -->
                                     <p>
-                                        <c:choose>
-                                            <c:when test="${product.category_id >= 1000 && product.category_id < 2000 || product.category_id == 10}">WOMEN</c:when>
-                                            <c:when test="${product.category_id >= 2000 && product.category_id < 3000 || product.category_id == 20}">MEN</c:when>
-                                            <c:when test="${product.category_id >= 3000 && product.category_id < 4000 || product.category_id == 30}">KIDS</c:when>
-                                            <c:otherwise>FILA</c:otherwise>
-                                        </c:choose>
-                                    </p>
-                                    <!-- <p>SEMI-OVER핏</p> -->
+                                <c:choose>
+                                    <%-- 여성 카테고리 대역일 때 --%>
+                                    <c:when test="${product.category_id >= 1000 && product.category_id < 2000 || product.category_id == 10}">FEMALE</c:when>
+                                    <%-- 남성 카테고리 대역일 때 --%>
+                                    <c:when test="${product.category_id >= 2000 && product.category_id < 3000 || product.category_id == 20}">MALE</c:when>
+                                    <c:when test="${product.category_id >= 3000 && product.category_id < 4000 || product.category_id == 30}">KIDS</c:when>
+                                    <c:otherwise>FILA</c:otherwise>
+                                </c:choose>
+                            </p>
+                                    <!-- 라이프스타일 -->
                                     <p>${styleTag}</p>
                                 </div>
 
@@ -164,9 +180,6 @@
                                 </div>
                                 <div class="goods-material">
                                     <p>
-                                        <b>제품소재</b> <br>겉감: 폴리에스터 100%, 안감: 나일론 100%, 충전재: 오리 솜털 80%, 오리 깃털 20%
-                                    </p>
-                                    <p>
                                         <b>상품코드</b> <br>${product.product_id}
                                     </p>
                                 </div>
@@ -183,48 +196,25 @@
                             <div class="scroll-box">
 
                                 <div class="option-choice-box">
-                                    
-                                    <c:if test="${not empty colorOption}">
-                                        <div class="_color">
-                                            <p class="tit">${colorOption.groupName}</p>
-                                            <div>
-                                                <div class="color__slider swiper">
-                                                    <ul class="swiper-wrapper">
-                                                        <c:forEach var="colorVal" items="${colorOption.values}" varStatus="status">
-                                                            <li class="swiper-slide ${status.first ? 'on' : ''}">
-                                                                <a href="javascript:void(0);" title="${colorVal}">
-                                                                    <img src="${product.image_url}" alt="${colorVal}" />
-                                                                </a>
-                                                            </li>
-                                                        </c:forEach>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </c:if>
-
                                     <c:if test="${not empty sizeOption}">
                                         <div class="_size">
-                                            <p class="tit">${sizeOption.groupName}</p>
-                                            <div class="layer-btn-box">
-                                                <div>
-                                                    <button type="button" class="bell__btn" id="alim" onclick="alert('로그인 후 이용가능합니다.');">입고 알림</button>
-                                                    <button type="button" class="inventory__btn">주변 매장 재고</button>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div class="size__slider swiper size">
-                                                    <ul class="swiper-wrapper" id="vSize">
-                                                        <c:forEach var="sizeVal" items="${sizeOption.values}" varStatus="status">
-                                                            <li class="swiper-slide">
-                                                                <input type="radio" name="size" id="size_${status.index}" value="${sizeVal}">
-                                                                <label for="size_${status.index}">${sizeVal}</label>
-                                                            </li>
-                                                        </c:forEach>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
+                                  <p class="tit">사이즈</p>
+                                  <div class="size__slider swiper size">
+                                      <ul class="swiper-wrapper">
+                                          <c:forEach var="opt" items="${sizeOptions}" varStatus="st">
+                                              <li class="swiper-slide">
+                                                  <input type="radio" id="rdSize${st.index}" name="ProductSize" 
+                                                         class="rd__style ${opt.stock == 0 ? 'sold' : ''}" 
+                                                         value="${opt.optionValue}" 
+                                                         ${opt.stock == 0 ? 'disabled' : ''}>
+                                                  <label for="rdSize${st.index}">
+                                                      ${opt.optionValue}
+                                                  </label>
+                                              </li>
+                                          </c:forEach>
+                                      </ul>
+                                  </div>
+                              </div>
                                     </c:if>
 
                                     <div class="_qty" id="vpop">
@@ -279,6 +269,67 @@
                         </div>
                         </div>
                     </div>
+                    
+                    <div class="goods-scroll-box _gs01">
+                   <h2>이 상품을 본 고객이 함께 본 상품</h2>
+               
+                   <div class="slider-box">
+                       <div class="goods__slider swiper">
+                           <div class="swiper-wrapper" id="recopickProduct">
+                               
+                               <c:forEach var="item" items="${relatedList}">
+                                   <div class="goods swiper-slide">
+                                       <div class="photo">
+                                           <div class="before">
+                                               <a href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${item.product_id}">
+                                                   <%-- 상품별 폴더 안의 1번 메인 이미지 호출 --%>
+                                                   <img src="${pageContext.request.contextPath}/displayImage.do?path=C:/fila_upload/product/${item.product_id}/${item.product_id}_main_1.jpg" 
+                                                        alt="${item.name}" 
+                                                        onerror="this.src='${pageContext.request.contextPath}/images/no_image.jpg';">
+                                               </a>
+                                           </div>
+                                       </div>
+               
+                                       <div class="info">
+                                           <a href="${pageContext.request.contextPath}/product/view.htm?product_id=${item.product_id}">
+                                               <div class="top">
+                                                   <p class="category">공용</p>
+                                                   <div class="tag">
+                                                       <%-- 상세페이지에서 가져온 styleTag 재사용 --%>
+                                                       <p>${styleTag}</p>
+                                                   </div>
+                                               </div>
+               
+                                               <p class="name">${item.name}</p>
+               
+                                               <div class="price">
+                                                   <%-- 할인가 계산 및 콤마 표시 --%>
+                                                   <p class="sale">
+                                                       <fmt:formatNumber value="${item.price * (100 - item.discount_rate) / 100}" type="number"/>원
+                                                   </p>
+                                                   <c:if test="${item.discount_rate > 0}">
+                                                       <p class="normal _sale"><fmt:formatNumber value="${item.price}" type="number"/>원</p>
+                                                       <p class="percent">${item.discount_rate}% 할인</p>
+                                                   </c:if>
+                                               </div>
+                                           </a>
+               
+                                           <button type="button" class="wish__btn wish" data-wish="${item.product_id}">wish</button>
+                                       </div>
+                               
+                                       <button type="button" class="cart__btn btn_sld__gr" onclick="wish_Cart_action('${item.product_id}');">장바구니 담기</button>
+                                   </div>
+                               </c:forEach>
+               
+                           </div>
+                       </div>
+               
+                       <div class="scroll-bar-box">
+                           <div class="goods-slider-scrollbar swiper-scrollbar-horizontal"></div>
+                       </div>
+                   </div>
+               </div>
+                    
             </section>
             
             <form name="qoptForm" id="qoptForm">
@@ -303,6 +354,28 @@
         <form name="form6" id="form6"  target="dataFrame"><input type="hidden" name="checkwish"><input type="hidden" name="ProductQuantity"></form>
         <iframe name="dataFrame" id="dataFrame" style="display:none;"></iframe>
     </div>
+
+<script>
+$(document).ready(function() {
+    // 모델컷 슬라이더 설정
+    if ($('.mc__slider').length > 0) {
+        new Swiper('.mc__slider', {
+            slidesPerView: 1,
+            spaceBetween: 0,
+            loop: ($('.mc__slider .swiper-slide').length > 1), // 슬라이드가 2장 이상일 때만 루프 실행
+            pagination: {
+                el: '.mc-swiper-pagination',
+                clickable: true,
+            },
+            autoHeight: true,
+            // 슬라이더가 처음엔 안 보였다가 나타날 때 크기를 다시 계산하게 해줌
+            observer: true,
+            observeParents: true
+        });
+    }
+}); // ← 아까 여기 밑에 쓸데없는 '}' 가 하나 더 붙어있었을 거예요!
+</script>
+
 </body>
 </html>
 </c:if>

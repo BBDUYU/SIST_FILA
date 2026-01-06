@@ -48,26 +48,41 @@ public class ProductsDAO {
     // -----------------------------------------------------------
     // 2. 카테고리별 상품 목록 조회
     // -----------------------------------------------------------
-    public List<ProductsDTO> selectProductsByCategory(Connection conn, int categoryId) throws SQLException {
+    public List<ProductsDTO> selectProductsByCategory(Connection conn, int cateId) {
         List<ProductsDTO> list = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         
-        String sql = " SELECT P.PRODUCT_ID, P.NAME, P.PRICE, P.DISCOUNT_RATE, P.STATUS, P.CREATED_AT, P.CATEGORY_ID, I.IMAGE_URL " 
-                   + " FROM PRODUCTS P LEFT JOIN PRODUCT_IMAGE I ON P.PRODUCT_ID = I.PRODUCT_ID AND I.IS_MAIN = 1 "
-                   + " WHERE P.CATEGORY_ID IN ( "
-                   + "     SELECT CATEGORY_ID FROM CATEGORIES "
-                   + "     START WITH CATEGORY_ID = ? CONNECT BY PRIOR CATEGORY_ID = PARENT_ID "
-                   + " ) "
-                   + " ORDER BY P.CREATED_AT DESC ";
+        String sql = "SELECT P.*, I.IMAGE_URL "
+                   + "FROM PRODUCTS P "
+                   + "LEFT JOIN PRODUCT_IMAGE I ON P.PRODUCT_ID = I.PRODUCT_ID AND I.IS_MAIN = 1 "
+                   + "WHERE P.CATEGORY_ID IN ( "
+                   + "    SELECT CATEGORY_ID FROM CATEGORIES "
+                   + "    START WITH CATEGORY_ID = ? CONNECT BY PRIOR CATEGORY_ID = PARENT_ID "
+                   + ") "
+                   + "ORDER BY P.CREATED_AT DESC";
+
         try {
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, categoryId);
+            pstmt.setInt(1, cateId);
             rs = pstmt.executeQuery();
-            while (rs.next()) list.add(makeDTO(rs));
+            
+            while (rs.next()) {
+                ProductsDTO dto = new ProductsDTO();
+                dto.setProduct_id(rs.getString("PRODUCT_ID"));
+                dto.setName(rs.getString("NAME"));
+                dto.setPrice(rs.getInt("PRICE"));
+                dto.setDiscount_rate(rs.getInt("DISCOUNT_RATE"));
+                
+                dto.setImage_url(rs.getString("IMAGE_URL")); 
+                
+                list.add(dto);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            JdbcUtil.close(rs);
-            JdbcUtil.close(pstmt);
+            try { if(rs != null) rs.close(); } catch(Exception e) {}
+            try { if(pstmt != null) pstmt.close(); } catch(Exception e) {}
         }
         return list;
     }
@@ -146,25 +161,28 @@ public class ProductsDAO {
         List<ProductsOptionDTO> options = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        String sql = " SELECT G.OPTION_NAME, V.VALUE_NAME FROM PRODUCT_OPTION_GROUPS G "
-                   + " JOIN PRODUCT_OPTION_VALUES V ON G.OPTION_GROUP_ID = V.OPTION_GROUP_ID "
-                   + " WHERE G.PRODUCT_ID = ? ORDER BY G.OPTION_GROUP_ID ASC, V.VALUE_ID ASC ";
+        
+        String sql = " SELECT OVM.VALUE_NAME "
+                   + " FROM PRODUCT_OPTION_GROUPS POG "
+                   + " JOIN PRODUCT_OPTION_VALUES POV ON POG.OPTION_GROUP_ID = POV.OPTION_GROUP_ID "
+                   + " JOIN OPTION_VALUE_MASTERS OVM ON POV.V_MASTER_ID = OVM.V_MASTER_ID "
+                   + " WHERE POG.PRODUCT_ID = ? AND OVM.V_MASTER_ID BETWEEN 500 AND 599 "
+                   + " ORDER BY OVM.V_MASTER_ID ASC ";
+
         try {
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, productId);
             rs = pstmt.executeQuery();
-            String currentGroupName = "";
-            ProductsOptionDTO currentOption = null;
+            
             while (rs.next()) {
-                String groupName = rs.getString("OPTION_NAME");
-                String valueName = rs.getString("VALUE_NAME");
-                if (!groupName.equals(currentGroupName)) {
-                    currentOption = new ProductsOptionDTO(groupName);
-                    options.add(currentOption);
-                    currentGroupName = groupName;
-                }
-                if (currentOption != null) currentOption.addValue(valueName);
+                ProductsOptionDTO dto = new ProductsOptionDTO();
+                dto.setOptionValue(rs.getString("VALUE_NAME"));
+                dto.setStock(99); // ★ 임시로 재고가 있는 것으로 설정 (에러 방지)
+                options.add(dto);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
         } finally {
             JdbcUtil.close(rs);
             JdbcUtil.close(pstmt);
@@ -213,7 +231,7 @@ public class ProductsDAO {
         return dto;
     }
     
- // -----------------------------------------------------------
+    // -----------------------------------------------------------
     // ★ [추가] 상품의 태그(스포츠/라이프스타일 등) 가져오기
     // -----------------------------------------------------------
     public String getProductTag(Connection conn, String productId, int masterId) throws SQLException {
@@ -245,5 +263,20 @@ public class ProductsDAO {
         return tagName;
     }
     
+   /* 상세 컬러 메서드 컷~!!~!~!~
+    * // 같은 이름의 상품(다른 색상)들 가져오기 public List<ProductsDTO>
+    * selectColorVariants(Connection conn, String productName) { List<ProductsDTO>
+    * list = new ArrayList<>(); PreparedStatement pstmt = null; ResultSet rs =
+    * null; // 리스트 페이지처럼 이미지를 가져오도록 조인 추가 String sql =
+    * " SELECT P.PRODUCT_ID, I.IMAGE_URL FROM PRODUCTS P " +
+    * " LEFT JOIN PRODUCT_IMAGE I ON P.PRODUCT_ID = I.PRODUCT_ID AND I.IS_MAIN = 1 "
+    * + " WHERE P.NAME = ? ORDER BY P.PRODUCT_ID ASC "; try { pstmt =
+    * conn.prepareStatement(sql); pstmt.setString(1, productName); rs =
+    * pstmt.executeQuery(); while (rs.next()) { ProductsDTO dto = new
+    * ProductsDTO(); dto.setProduct_id(rs.getString("PRODUCT_ID"));
+    * dto.setImage_url(rs.getString("IMAGE_URL")); // 이미지 URL 추가! list.add(dto); }
+    * } catch (Exception e) { e.printStackTrace(); } finally { JdbcUtil.close(rs);
+    * JdbcUtil.close(pstmt); } // 제공된 JdbcUtil 사용 return list; }
+    */
     
 }
