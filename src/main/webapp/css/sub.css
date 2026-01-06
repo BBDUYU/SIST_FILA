@@ -9162,4 +9162,58 @@ input:not(:disabled)._type_line_red {border-color: rgb(255,0,0) !important;}
 .agt_top_v2 .agt_brand span:last-of-type {
 	border-right: 0;
 }
+/* =========================
+   MYPAGE LAYOUT
+========================= */
+
+.mypage__area {
+  display: flex;
+  gap: 120px;
+}
+
+/* 좌측 메뉴 */
+.my-lnb {
+  width: 340px;
+  padding-top: 20px;
+}
+
+/* 섹션 블록 */
+.my-lnb > div {
+  padding: 32px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* 섹션 제목 */
+.my-lnb .tit {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+/* 메뉴 리스트 */
+.my-lnb ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.my-lnb li {
+  margin-bottom: 12px;
+}
+
+.my-lnb a {
+  font-size: 15px;
+  color: #111;
+  text-decoration: none;
+}
+
+.my-lnb a:hover {
+  text-decoration: underline;
+}
+
+/* 우측 콘텐츠 */
+.my-con {
+  flex: 1;
+}
+
 /* //2025-11-24 대리점개설 수정 */

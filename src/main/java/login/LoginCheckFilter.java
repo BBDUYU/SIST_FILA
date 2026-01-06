@@ -9,33 +9,38 @@ import javax.servlet.http.HttpSession;
 
 @WebFilter(
 	    urlPatterns = {
-	        "/test/*",
-	        "/board/*",
+	        "/mypage/*",
 	        "/admin/*",
-	        "/mypage.htm",      // 추가
-	        "/inquiry/*"        // 추가
+	        "/board/*",
+	        "/test/*"
 	    }
 	)
-public class LoginCheckFilter implements Filter {
+	public class LoginCheckFilter implements Filter {
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response,
-                         FilterChain chain)
-            throws IOException, ServletException {
+	    @Override
+	    public void doFilter(ServletRequest request, ServletResponse response,
+	                         FilterChain chain)
+	            throws IOException, ServletException {
 
-        HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse resp = (HttpServletResponse) response;
+	        HttpServletRequest req = (HttpServletRequest) request;
+	        HttpServletResponse resp = (HttpServletResponse) response;
 
-        HttpSession session = req.getSession(false);
-        Object auth = (session == null) ? null : session.getAttribute("auth");
+	        HttpSession session = req.getSession(false);
+	        Object auth = (session == null) ? null : session.getAttribute("auth");
 
-        // 로그인 안 된 상태
-        if (auth == null) {
-            resp.sendRedirect(req.getContextPath() + "/login.htm");
-            return;
-        }
+	        boolean isAjax = req.getRequestURI().endsWith(".ajax");
 
-        // 로그인 되어 있으면 통과
-        chain.doFilter(request, response);
-    }
-}
+	        if (auth == null) {
+	            if (isAjax) {
+	                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	            } else {
+	                resp.sendRedirect(req.getContextPath() + "/login.htm");
+	            }
+	            return;
+	        }
+
+
+	        chain.doFilter(request, response);
+	    }
+	}
+

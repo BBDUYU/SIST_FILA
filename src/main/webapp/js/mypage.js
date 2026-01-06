@@ -120,31 +120,90 @@
 				});
 			},
 			qna: function(){
-				var popup = function(){
-					$.ajax({
-						type: 'GET',
-						url: '/pc/mypage/pop_qna_write.asp',
-						data: '',
-						dataType: 'html',
-						success: function(html) {
-							$('body').addClass('lyr-qna--open');
-							$('body').append(html);
-						},
-						error: function(e) {
-							console.log(e)
-						}
-					});
-				};
 
-				$('body').on('click', '.qna-write__btn', function(){
-					popup();
-				});
+			    // 모달 열기
+			    var popup = function(){
+			        $.ajax({
+			            type: 'GET',
+			            url: '/mypage/qna/write.ajax',
+			            dataType: 'html',
+			            success: function(html) {
+			                $('body').addClass('lyr-qna--open');
+			                $('body').append(html);
+			            },
+			            error: function(e) {
+			                console.log(e);
+			            }
+			        });
+			    };
 
-				$('body').on('click', '.common__layer._qna_write .close__btn', function(){
-					$('body').removeClass('lyr-qna--open');
-					$('.common__layer._qna_write').remove();
-				});
-			},
+			    // 1:1 문의하기 버튼
+			    $('body').on('click', '.qna-write__btn', function(){
+			        popup();
+			    });
+
+			    // 닫기 (X / 취소 / dim)
+			    $('body').on(
+			        'click',
+			        '.common__layer._qna_write .btn_close, \
+			         .common__layer._qna_write .btn_cancel, \
+			         .common__layer._qna_write .layer_dim',
+			        function(){
+			            $('body').removeClass('lyr-qna--open');
+			            $('.common__layer._qna_write').remove();
+			        }
+			    );
+
+			    // ✅ 문의 등록 (AJAX) ← 여기로 이동
+			    $('body').on('click', '.common__layer._qna_write .btn_submit', function(){
+
+			        var $form = $('#qnaWriteForm');
+
+			        if (!$form.find('[name="categoryId"]').val()) {
+			            alert('문의유형을 선택해주세요.');
+			            return;
+			        }
+			        if (!$form.find('[name="title"]').val()) {
+			            alert('제목을 입력해주세요.');
+			            return;
+			        }
+			        if (!$form.find('[name="content"]').val()) {
+			            alert('문의 내용을 입력해주세요.');
+			            return;
+			        }
+			        if (!$form.find('[name="agree"]:checked').val()) {
+			            alert('개인정보 수집에 동의해주세요.');
+			            return;
+			        }
+
+			        var formData = new FormData($form[0]);
+
+			        $.ajax({
+			            type: 'POST',
+			            url: '/mypage/qna/write_submit.ajax',
+			            data: formData,
+			            processData: false,
+			            contentType: false,
+			            success: function(){
+			                alert('문의가 접수되었습니다.');
+
+			                $('body').removeClass('lyr-qna--open');
+			                $('.common__layer._qna_write').remove();
+						
+							if (typeof loadInquiryList === 'function') {
+							    loadInquiryList();
+							}
+
+			                // 다음 단계: 목록 reload
+			            },
+			            error: function(){
+			                alert('문의 등록 중 오류가 발생했습니다.');
+			            }
+			        });
+			    });
+			} ,
+			
+			
 			chgOpt: function(){
 				var btn = ssq('.option-change__btn');
 				var popup = function(cartno) {

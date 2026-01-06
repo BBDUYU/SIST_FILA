@@ -5,10 +5,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession; // 세션 사용을 위해 추가
 import command.CommandHandler;
-import inquiry.InquiryDAO;
-import inquiry.InquiryDAOImpl;
-import inquiry.InquiryDTO;
 import member.MemberDTO; // 로그인 정보를 담은 DTO 클래스
+import mypage.qna.QnaDAO;
+import mypage.qna.QnaDAOImpl;
+import mypage.qna.QnaDTO;
 
 public class MypageHandler implements CommandHandler {
 
@@ -31,8 +31,8 @@ public class MypageHandler implements CommandHandler {
             if (auth != null) {
                 // 고정된 10001 대신 실제 로그인한 유저의 번호를 사용합니다.
                 long userNumber = auth.getUserNumber(); 
-                InquiryDAO dao = new InquiryDAOImpl();
-                List<InquiryDTO> list = dao.findByUser(userNumber);
+                QnaDAO dao = new QnaDAOImpl();
+                List<QnaDTO> list = dao.findByUser(userNumber);
                 request.setAttribute("list", list);
                 
            
