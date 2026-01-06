@@ -1441,4 +1441,41 @@
 	padding: 120px 0;
 	font-size: 18px;
 	text-align: center;
+	.tit__style4 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    text-align: center;
+    color: #00205b;
+}
+
+.qna__list {
+    border-top: 2px solid #00205b;
+    list-style: none;
+    padding: 0;
+}
+
+.qna-q:hover {
+    color: #e21836;
+}
+/* 답변 상태 디자인 */
+.status.waiting {
+    background-color: #fff;
+    color: #999;
+}
+
+.status.complete {
+    background-color: #00205b;
+    color: #fff;
+    border-color: #00205b !important;
+}
+
+/* 제목 호버 효과 */
+.qna-q:hover {
+    background-color: #f9f9f9;
+}
+
+.qna-q:hover span {
+    color: #e21836;
+}
 }
