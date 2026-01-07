@@ -1,31 +1,21 @@
-function openInquiryModal() {
-  console.log('1:1 문의 모달 열기');
+// qna.js
+$(function () {
 
-  if (document.querySelector('#qnaWriteLayer')) return;
+	// 열기
+	$(document).on('click', '.qna-write__btn', function (e) {
+		e.preventDefault();
+		$('.common__layer._qna_write').fadeIn(200);
+		$('body').addClass('no-scroll');
+	});
 
-  fetch('/mypage/qna/write.ajax')
-    .then(res => res.text())
-    .then(html => {
-      document.body.insertAdjacentHTML('beforeend', html);
-      bindQnaModalEvents();
-    })
-    .catch(err => console.error(err));
-}
+	// 닫기
+	$(document).on(
+		'click',
+		'.common__layer._qna_write .close__btn, .common__layer._qna_write .layer-bg__wrap',
+		function () {
+			$('.common__layer._qna_write').fadeOut(200);
+			$('body').removeClass('no-scroll');
+		}
+	);
 
-function bindQnaModalEvents() {
-  const layer = document.querySelector('#qnaWriteLayer');
-  if (!layer) return;
-
-  const closeBtn = layer.querySelector('.btn_close');
-  const cancelBtn = layer.querySelector('.btn_cancel');
-  const dim = layer.querySelector('.layer_dim');
-
-  closeBtn && closeBtn.addEventListener('click', closeQnaModal);
-  cancelBtn && cancelBtn.addEventListener('click', closeQnaModal);
-  dim && dim.addEventListener('click', closeQnaModal);
-}
-
-function closeQnaModal() {
-  const layer = document.querySelector('#qnaWriteLayer');
-  if (layer) layer.remove();
-}
+});

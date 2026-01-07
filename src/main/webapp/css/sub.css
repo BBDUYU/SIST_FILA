@@ -1,6 +1,6 @@
-/*서브페이지 전부 이파일에*/
-.red {color: rgb(214,0,31)!important;}
-/* title style */
+.red {color: rgb(214,0,31)!important;
+}
+
 .tit__style1 {
 	font-size: 32px;
 	font-weight: 700;
@@ -2049,21 +2049,29 @@ body.scl-up .total-box .price-box {top: 120px;}
 .addr-add-box .cn {
 	margin-top: 28px;
 }
-.addr-add-box .cn .inp-box > div:not(div:last-child) {margin-bottom: 10px;}
+.addr-add-box .cn .inp-box > div:not(div:last-child) {
+    margin-bottom: 10px;
+}
+
 .addr-add-box .cn .inp-box .addr > div:first-child {
-	display: flex;
+    display: flex;
+}  /* ← 이게 빠져 있었음 */
+
+.addr-add-box .cn .inp-box .addr {
+    margin-top: 30px;
 }
-.addr-add-box .cn .inp-box .addr {margin-top: 30px;x}
+
 .addr-add-box .cn .inp-box .addr > div:first-child input {
-	width: 400px;
-	margin-right: 10px;
+    width: 400px;
+    margin-right: 10px;
 }
-.zipcode__btn {
-	width: 100px;
-	height: 50px;
-	font-size: 16px;
-	font-weight: 400 !important;
-	border-radius: 5px;
+
+.zipcode_btn {
+    width: 100px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 400 !important;
+    border-radius: 5px;
 }
 .addr-add-box .cn .inp-box .addr > div {
 	margin-bottom: 10px;
@@ -9215,5 +9223,149 @@ input:not(:disabled)._type_line_red {border-color: rgb(255,0,0) !important;}
 .my-con {
   flex: 1;
 }
+/* =========================
+   mypage qna list (FILA-like)
+   ========================= */
+.qna-page { width: 100%; }
+
+.qna-page__head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 0 0 24px;
+}
+.qna-page__title{
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+.qna-page__writeBtn{
+  height: 44px;
+  padding: 0 26px;
+  border: 1px solid #111;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.qna-tab{
+  display:flex;
+  gap: 18px;
+  padding: 10px 0 16px;
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 18px;
+}
+.qna-tab__item{
+  position:relative;
+  font-size: 14px;
+  font-weight: 600;
+  color:#666;
+  text-decoration:none;
+}
+.qna-tab__item.is-active{ color:#111; }
+.qna-tab__item.is-active:after{
+  content:"";
+  position:absolute;
+  left:0; right:0;
+  bottom:-16px;
+  height:2px;
+  background:#111;
+}
+
+.qna-empty{
+  padding: 48px 0;
+}
+.qna-empty__title{
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+.qna-empty__desc{
+  font-size: 14px;
+  color:#666;
+  margin: 0;
+}
+
+.qna-accordion{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+.qna-item{
+  border-bottom: 1px solid #eee;
+}
+.qna-item__head{
+  width:100%;
+  display:grid;
+  grid-template-columns: 64px 140px 1fr 120px 24px;
+  align-items:center;
+  gap: 12px;
+  padding: 22px 0;
+  background:transparent;
+  border:0;
+  cursor:pointer;
+  text-align:left;
+}
+.qna-item__badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  border:1px solid #111;
+}
+.qna-item__category{
+  font-size: 14px;
+  color:#111;
+  font-weight: 600;
+}
+.qna-item__title{
+  font-size: 16px;
+  font-weight: 700;
+  color:#111;
+}
+.qna-item__date{
+  justify-self:end;
+  font-size: 14px;
+  color:#111;
+  font-weight: 600;
+}
+.qna-item__arrow{
+  justify-self:end;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #111;
+  border-bottom: 2px solid #111;
+  transform: rotate(45deg);
+  transition: transform .2s ease;
+}
+.qna-item.is-open .qna-item__arrow{
+  transform: rotate(-135deg);
+}
+
+.qna-item__body{
+  padding: 0 0 22px;
+}
+.qna-item__content,
+.qna-item__reply{
+  padding: 14px 0 0;
+}
+.qna-item__label{
+  font-size: 13px;
+  color:#666;
+  margin:0 0 8px;
+  font-weight:600;
+}
+.qna-item__text{
+  font-size: 14px;
+  line-height: 1.7;
+  color:#111;
+}
+
 
 /* //2025-11-24 대리점개설 수정 */

@@ -60,30 +60,58 @@
 <jsp:include page="/view/mypage/mypage.jsp"/>
 
 <section class="my-con" style="user-select: auto !important;">
-           			<h2 class="tit__style4" style="user-select: auto !important;">A/S 현황 조회</h2>
+           			<h2 class="tit__style4" style="user-select: auto !important;">배송지 관리</h2>
+					<a href="#" class="btn_sld__bk btn_rt add-addr__btn" style="user-select: auto !important;">신규 배송지 추가</a>
 					
-				<!-- A/S 현황 조회 -->
-				<form name="asForm" method="post" style="user-select: auto !important;">
-				<input type="hidden" name="brndNm" id="brndNm" value="" style="user-select: auto !important;">
-				<div class="as-box" style="user-select: auto !important;">
-					<p class="txt" style="user-select: auto !important;">A/S 접수증 하단에 있는 바코드 번호를 입력해 주세요.</p>
-
-					<div class="coupon-inp-box" style="user-select: auto !important;">
-						<input type="text" class="ipt" id="asnum" name="asnum" placeholder="바코드 번호" maxlength="7" onkeyup="ReturnAsVal(this,'');" style="user-select: auto !important;">
-
-						<div style="user-select: auto !important;">
-							<button type="button" onclick="asinfo2();" style="user-select: auto !important;">조회</button>
-						</div>
-					</div>
-					<div class="srh-error" id="errorTxt" style="color: red; width: 100%; text-align: right; margin-top: 15px; user-select: auto !important;"></div>
-					<!-- AS 기본 정보 -->
-					<div class="as-info-box code-info" style="display: none; user-select: auto !important;">
-					</div>
-					<!-- //AS 기본 정보 -->
-				</div>
-				</form>
-				<!-- //A/S 현황 조회 -->
 					
+					<!-- 배송지 관리 -->
+					<div class="my-address-box" style="user-select: auto !important;">
+						<ul class="addr__list" style="user-select: auto !important;">
+							
+							<!-- 2023-03-15 배송지 수정 -->
+							<li class="_default_addr" style="user-select: auto !important;">
+								<input type="radio" id="myAddr0" name="myAddrList" class="addr-chk" style="user-select: auto !important;">
+								<label for="myAddr0" style="user-select: auto !important;"></label>
+
+								<div class="addr-info" style="user-select: auto !important;">
+									<div class="name-tel" style="user-select: auto !important;">
+									
+										<p class="tag" style="user-select: auto !important;">기본</p>
+									
+										<p class="name" style="user-select: auto !important;">류지호</p>
+										<p class="tel" style="user-select: auto !important;">01044326852</p>
+									</div>
+
+									<div class="addr-detail" style="user-select: auto !important;">
+										<p style="user-select: auto !important;">
+											(06279) 서울 강남구 도곡로78길 22 (대치동, 대치삼성아파트)<br style="user-select: auto !important;">
+											106동103호
+										</p>
+									</div>
+								</div>
+
+								<div class="btn-box" style="user-select: auto !important;">
+									<button type="button" class="modify__btn" onclick="addrAddPopup('1205034');" style="user-select: auto !important;">modify</button>
+									
+									<button type="button" class="delete__btn" onclick="alert('기본 배송지는 삭제하실 수 없습니다.');" style="user-select: auto !important;">delete</button>
+									
+								</div>
+
+								<button type="button" class="default-addr__btn" onclick="addrDefault('1205034');" style="user-select: auto !important;">기본으로 설정</button>
+								<!-- 
+									기본으로 설정 클릭시 레이어 호출
+									
+									/pc/popup/pop_btn.asp
+								-->
+							</li>
+							<!-- //2023-03-15 배송지 수정 -->
+
+
+						</ul>
+
+					</div>
+					<!-- //배송지 관리 -->
+
 				</section>
 
 </div>

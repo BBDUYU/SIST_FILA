@@ -13,7 +13,8 @@
 
     <div class="layer_body">
 
-      <form action="${pageContext.request.contextPath}/mypage/qna/write_submit.ajax"
+      <form id="qnaWriteForm"
+            action="${pageContext.request.contextPath}/mypage/qna/write_submit.ajax"
             method="post">
 
         <select name="categoryId" required>
@@ -33,7 +34,7 @@
 
         <div class="layer_footer">
           <button type="button" class="btn_cancel">취소</button>
-          <button type="submit">문의 등록</button>
+          <button type="submit" class="btn_submit">문의 등록</button>
         </div>
 
       </form>

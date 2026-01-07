@@ -59,31 +59,31 @@
 <jsp:include page="/view/common/header.jsp"/>
 <jsp:include page="/view/mypage/mypage.jsp"/>
 
-<section class="my-con" style="user-select: auto !important;">
-           			<h2 class="tit__style4" style="user-select: auto !important;">A/S 현황 조회</h2>
-					
-				<!-- A/S 현황 조회 -->
-				<form name="asForm" method="post" style="user-select: auto !important;">
-				<input type="hidden" name="brndNm" id="brndNm" value="" style="user-select: auto !important;">
-				<div class="as-box" style="user-select: auto !important;">
-					<p class="txt" style="user-select: auto !important;">A/S 접수증 하단에 있는 바코드 번호를 입력해 주세요.</p>
+<section class="my-con wishlist" style="user-select: auto !important;">
+           			<h2 class="tit__style4" style="user-select: auto !important;">위시리스트</h2>
 
-					<div class="coupon-inp-box" style="user-select: auto !important;">
-						<input type="text" class="ipt" id="asnum" name="asnum" placeholder="바코드 번호" maxlength="7" onkeyup="ReturnAsVal(this,'');" style="user-select: auto !important;">
-
-						<div style="user-select: auto !important;">
-							<button type="button" onclick="asinfo2();" style="user-select: auto !important;">조회</button>
+					<div class="odr-box" style="user-select: auto !important;">
+				<form name="form7" id="form7" target="dataFrame" style="user-select: auto !important;"><input type="hidden" name="checkwish" style="user-select: auto !important;"></form>				
+				<form name="form5" style="user-select: auto !important;">						
+						<div class="odr-hd" style="user-select: auto !important;">
+							<div style="user-select: auto !important;">
+								<input type="checkbox" id="checkAll" title="상품 선택" class="cb__style1" style="user-select: auto !important;">
+								<label for="checkAll" style="user-select: auto !important;">선택</label>
+							</div> 
+							<div class="txt-btn" style="user-select: auto !important;">
+								<!--a href="javascript:Checkedwish_cart();void(0);">장바구니</a-->
+								<a href="javascript:CheckedDel3();void(0);" style="user-select: auto !important;">선택삭제</a>
+								<!--a href="javascript:soldOut_del();void(0);">품절삭제</a-->
+							</div>
+							
 						</div>
-					</div>
-					<div class="srh-error" id="errorTxt" style="color: red; width: 100%; text-align: right; margin-top: 15px; user-select: auto !important;"></div>
-					<!-- AS 기본 정보 -->
-					<div class="as-info-box code-info" style="display: none; user-select: auto !important;">
-					</div>
-					<!-- //AS 기본 정보 -->
-				</div>
+						<ul class="odr__list __my_chk" style="user-select: auto !important;">
+
+									<p class="odr-txt_none" style="user-select: auto !important;">위시리스트가 비었습니다.</p>
+
+						</ul>
 				</form>
-				<!-- //A/S 현황 조회 -->
-					
+					</div>	
 				</section>
 
 </div>
