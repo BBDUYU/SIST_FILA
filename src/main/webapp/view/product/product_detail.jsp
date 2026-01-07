@@ -2,8 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<script src="${pageContext.request.contextPath}/js/list.js"></script>
-
 <c:if test="${not empty errorMsg}">
     <script>
         alert("${errorMsg}");
@@ -12,6 +10,25 @@
 </c:if>
 
 <c:if test="${empty errorMsg and not empty product}">
+
+<%-- [cart 관련 추가 1] 로그인 후 돌아올 returnUrl 만들기 (쿼리스트링 포함) --%>
+<c:set var="pid" value="${param.product_id}" />
+<c:if test="${empty pid}">
+  <c:set var="pid" value="${product.product_id}" />
+</c:if>
+
+<c:set var="returnUrl" value="/product/product_detail.htm?product_id=${pid}" />
+
+<%-- [cart 관련 추가 2] loginUrl (returnUrl 파라미터 포함, 자동 URL 인코딩) --%>
+<c:url var="loginUrl" value="/login.htm">
+    <c:param name="returnUrl" value="${returnUrl}" />
+</c:url>
+
+<%-- [cart 관련 추가 3] 장바구니 담기 기본 URL (action/add 포함) quantity는 JS에서 현재 수량 읽어서 붙일 거라 여기선 빼둠 --%>
+<c:url var="addCartBaseUrl" value="/pay/cart.htm">
+    <c:param name="action" value="add" />
+    <c:param name="productId" value="${product.product_id}" />
+</c:url>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -36,15 +53,16 @@
                     <div class="goods-detail-box">
 
                   <!-- 상세페이지 메인 이미지 -->
-                        <div class="photo-list-box _style1"> <ul>
+                  <div class="photo-list-box _style1">
+                     <ul>
                        <c:forEach var="imgName" items="${mainImages}">
-                           <li>
+                              <li>
                                <img src="${pageContext.request.contextPath}/displayImage.do?path=C:/fila_upload/product/${product.product_id}/${imgName}" 
                                     alt="${product.name}" 
                                     onerror="$(this).parent('li').hide();">
-                           </li>
-                       </c:forEach>
-                   </ul>
+                              </li>
+                          </c:forEach>
+                      </ul>
                
                    <div class="view-slider-box">
                        <div class="inner">
@@ -205,10 +223,9 @@
                                       <ul class="swiper-wrapper">
                                           <c:forEach var="opt" items="${sizeOptions}" varStatus="st">
                                               <li class="swiper-slide">
-                                                  <input type="radio" id="rdSize${st.index}" name="ProductSize" 
-                                                         class="rd__style ${opt.stock == 0 ? 'sold' : ''}" 
-                                                         value="${opt.optionValue}" 
-                                                         ${opt.stock == 0 ? 'disabled' : ''}>
+                                                  <input type="radio" id="rdSize${st.index}" name="ProductSize" value="${opt.combinationId}" 
+                                           class="rd__style ${opt.stock == 0 ? 'sold' : ''}" 
+                                           ${opt.stock == 0 ? 'disabled' : ''}>
                                                   <label for="rdSize${st.index}">
                                                       ${opt.optionValue}
                                                   </label>
@@ -234,10 +251,10 @@
                                     </div>
                                 </div>
                                 <div class="buy-btn-box">
-                                    <button type="button" class="buy__btn" onclick="alert('구매하기')">바로 구매하기</button>
+                                    <button type="button" class="buy__btn" onclick="goBuyNow();">바로 구매하기</button>
                                     <div>
                                         <button type="button" class="wish__btn" onclick="javascript:alert('로그인 후 이용가능합니다.');" id="wishBtn">wish</button> 
-                                        <button type="button" class="cart__btn" id="cartBtn">카트담기</button>
+                                        <button type="button" class="cart__btn" id="cartBtn" onclick="goCartAdd();">카트담기</button>
                                     </div>
                                 </div>
                                 <div class="lyr-btn-box">
@@ -253,10 +270,7 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <button type="button" class="review-more__btn" onclick="openReviewModal()">
-											    상품 리뷰
-											    <span class=" crema-product-reviews-count" data-product-code="${product.product_id}"></span>
-											</button>
+                                            <button type="button" class="review-more__btn">상품 리뷰<span class=" crema-product-reviews-count" data-product-code="${product.product_id}"></span></button>
                                         </div>
                                         <div>
                                             <button type="button" class="qna-more__btn" data-no="${product.product_id}">상품 문의<span>0</span></button>
@@ -378,37 +392,108 @@ $(document).ready(function() {
             observeParents: true
         });
     }
-});
+}); // ← 아까 여기 밑에 쓸데없는 '}' 가 하나 더 붙어있었을 거예요!
 </script>
 
 <script>
-    // [리뷰 작성] 버튼 눌렀을 때 호출되는 함수
-    function openReviewModal() {
-       
-        var modal = document.getElementById("reviewModal");
-        if(modal) {
-            modal.style.display = "block"; // 보이게 설정
-            
-            // (선택사항) 모달 열릴 때 스크롤 막기
-            document.body.style.overflow = "hidden"; 
-        } else {
-            alert("모달창을 찾을 수 없습니다.");
-        }
+    // [cart 관련 추가 4] 카트담기 클릭 처리
+    // - 비로그인: 로그인 페이지로 (returnUrl 포함)
+    // - 로그인: 장바구니 add로 (현재 수량 포함)
+    
+   function goCartAdd() {
+    // 1. 사이즈 선택 체크
+    var sizeChecked = document.querySelector('input[name="ProductSize"]:checked');
+    if (!sizeChecked) {
+        alert("사이즈를 선택해 주세요");
+        return;
     }
 
-    // [X] 버튼이나 배경 눌렀을 때 호출되는 함수
-    function closeReviewModal() {
-        var modal = document.getElementById("reviewModal");
-        if(modal) {
-            modal.style.display = "none"; // 안 보이게 설정
-            
-            // 스크롤 다시 풀기
-            document.body.style.overflow = "auto";
-        }
+    // 2. 로그인 체크 (생략 가능하면 유지)
+    var isLogin = ${empty sessionScope.auth ? "false" : "true"};
+    if (!isLogin) {
+        location.href = "${loginUrl}";
+        return;
     }
+
+    // 3. 값 추출
+    var qty = document.getElementById("ProductQuantity").value;
+    var combiId = sizeChecked.value; // 이제 여기엔 숫자가 들어있음
+
+    // 4. URL 전송
+    location.href = "${addCartBaseUrl}"
+        + "&quantity=" + encodeURIComponent(qty)
+        + "&combinationId=" + encodeURIComponent(combiId); // 파라미터명 변경 추천
+}
 </script>
 
-<jsp:include page="/view/review/review_modal.jsp" />
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var minusBtn = document.getElementById("qtyMinus");
+  var plusBtn  = document.getElementById("qtyPlus");
+  var qtyInput = document.getElementById("ProductQuantity");
+  var totalEl  = document.getElementById("buytotal");
+
+  // 상품 1개 가격(숫자) - JSP에서 값 주입
+  var unitPrice = ${finalPrice}; // 할인 적용된 1개 가격
+
+  function renderTotal(qty) {
+    if (!totalEl) return;
+    var total = unitPrice * qty;
+    totalEl.textContent = total.toLocaleString() + "원";
+  }
+
+  function getQty() {
+    var v = parseInt(qtyInput.value, 10);
+    return isNaN(v) || v < 1 ? 1 : v;
+  }
+
+  function setQty(v) {
+    if (v < 1) v = 1;
+    qtyInput.value = v;
+    renderTotal(v);
+  }
+
+  if (minusBtn) {
+    minusBtn.addEventListener("click", function () {
+      setQty(getQty() - 1);
+    });
+  }
+
+  if (plusBtn) {
+    plusBtn.addEventListener("click", function () {
+      setQty(getQty() + 1);
+    });
+  }
+
+  // 첫 로드 시 주문금액 한번 맞춰주기
+  setQty(getQty());
+});
+</script>
+
+
+
+
+<script>
+   //[pay 관련 추가 1] 바로 구매하기 클릭 처리
+   function goBuyNow() {
+   
+       var sizeChecked = document.querySelector('input[name="ProductSize"]:checked');
+       if (!sizeChecked) {
+           alert("사이즈를 선택해 주세요");
+           return;
+       }
+   
+       var isLogin = ${empty sessionScope.auth ? "false" : "true"};
+       if (!isLogin) {
+           location.href = "${loginUrl}";
+           return;
+       }
+   
+       // 실제 구매 로직으로 이동
+       location.href = "/";
+   }
+</script>
+
 </body>
 </html>
 </c:if>

@@ -207,12 +207,18 @@ public class ProductsDAO {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         
-        String sql = " SELECT OVM.VALUE_NAME "
-                   + " FROM PRODUCT_OPTION_GROUPS POG "
-                   + " JOIN PRODUCT_OPTION_VALUES POV ON POG.OPTION_GROUP_ID = POV.OPTION_GROUP_ID "
+        // 쿼리 설명: 
+        // 1. POC(조합) 테이블에서 시작해서 실제 사이즈 이름(OVM)까지 조인합니다.
+        // 2. MASTER_ID가 1(성별), 2(스포츠), 3(색상)인 것은 제외하고 나머지만 가져옵니다. (4, 5, 6, 7, 8번이 모두 사이즈임)
+        String sql = " SELECT DISTINCT POC.COMBINATION_ID, OVM.VALUE_NAME, NVL(POS.STOCK, 0) AS STOCK "
+                   + " FROM PRODUCT_OPTION_COMBINATIONS POC "
+                   + " JOIN PRODUCT_OPTION_COMBI_VALUES POCV ON POC.COMBINATION_ID = POCV.COMBINATION_ID "
+                   + " JOIN PRODUCT_OPTION_VALUES POV ON POCV.VALUE_ID = POV.VALUE_ID "
                    + " JOIN OPTION_VALUE_MASTERS OVM ON POV.V_MASTER_ID = OVM.V_MASTER_ID "
-                   + " WHERE POG.PRODUCT_ID = ? AND OVM.V_MASTER_ID BETWEEN 500 AND 599 "
-                   + " ORDER BY OVM.V_MASTER_ID ASC ";
+                   + " LEFT JOIN PRODUCT_OPTION_STOCK POS ON POC.COMBINATION_ID = POS.COMBINATION_ID "
+                   + " WHERE POC.PRODUCT_ID = ? "
+                   + " AND OVM.MASTER_ID NOT IN (1, 2, 3) " // 성별, 스포츠, 색상 제외 = 사이즈만 남음
+                   + " ORDER BY OVM.VALUE_NAME ASC "; // 사이즈 순서대로 정렬
 
         try {
             pstmt = conn.prepareStatement(sql);
@@ -221,20 +227,17 @@ public class ProductsDAO {
             
             while (rs.next()) {
                 ProductsOptionDTO dto = new ProductsOptionDTO();
+                dto.setCombinationId(rs.getInt("COMBINATION_ID"));
                 dto.setOptionValue(rs.getString("VALUE_NAME"));
-                dto.setStock(99); // ★ 임시로 재고가 있는 것으로 설정 (에러 방지)
+                dto.setStock(rs.getInt("STOCK"));
                 options.add(dto);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
         } finally {
             JdbcUtil.close(rs);
             JdbcUtil.close(pstmt);
         }
         return options;
     }
-
     // -----------------------------------------------------------
     // 7. 카테고리별 상품 개수 세기
     // -----------------------------------------------------------
