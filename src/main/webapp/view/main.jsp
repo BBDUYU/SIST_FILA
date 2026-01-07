@@ -411,123 +411,41 @@ $(document).ready(function() {
 
 
 			<section class="goods-scroll-box _v2 _gs02">
-				<div class="hd">
-					<h2>추천 스타일</h2>
-					<a href="/product/style.asp" class="more-btn">더보기</a>
-				</div>
+    <div class="hd">
+        <h2>추천 스타일</h2>
+        <a href="${pageContext.request.contextPath}/style/detail.htm" class="more-btn">더보기</a>
+    </div>
 
-				<div class="slider-box">
-					<div
-						class="goods__slider swiper swiper-initialized swiper-horizontal swiper-pointer-events swiper-free-mode swiper-backface-hidden">
-						<div class="swiper-wrapper" id="swiper-wrapper-5a1f2f11410f67bea"
-							aria-live="polite"
-							style="transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;">
+    <div class="slider-box">
+        <div class="goods__slider swiper swiper-initialized swiper-horizontal">
+            <div class="swiper-wrapper" id="swiper-wrapper-style" aria-live="polite">
+                
+                <c:forEach var="s" items="${activeStyles}" varStatus="status">
+                    <div class="goods swiper-slide ${status.first ? 'swiper-slide-active' : (status.index == 1 ? 'swiper-slide-next' : '')}" 
+                         role="group" aria-label="${status.count} / ${activeStyles.size()}">
+                        <div class="photo">
+                            <div class="before">
+                                <%-- 클릭 시 스타일 상세페이지로 이동 --%>
+                                <a href="${pageContext.request.contextPath}/style/detail.htm?id=${s.style_id}"> 
+                                    <c:choose>
+                                        <c:when test="${not empty s.main_image_url}">
+                                            <img src="${pageContext.request.contextPath}/displayImage.do?path=${s.main_image_url}" alt="${s.style_name}">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img src="${pageContext.request.contextPath}/images/no_image.jpg" alt="No Image">
+                                        </c:otherwise>
+                                    </c:choose>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
 
-							<div class="goods swiper-slide swiper-slide-active" role="group"
-								aria-label="1 / 8">
-								<div class="photo">
-									<div class="before">
-										<a href="/product/style.asp?cno=101&amp;codiNo=279"> <img
-											src="//filacdn.styleship.com/filacontent2/data/codi/리사이징_0001_[보이앤드] 휠라 _ 2차 활용 이미지 원본 _ 김양희 (9)_10.jpg"
-											alt="">
-										</a>
-									</div>
-								</div>
-							</div>
-
-
-							<div class="goods swiper-slide swiper-slide-next" role="group"
-								aria-label="2 / 8">
-								<div class="photo">
-									<div class="before">
-										<a href="/product/style.asp?cno=101&amp;codiNo=276"> <img
-											src="//filacdn.styleship.com/filacontent2/data/codi/1_30.jpg"
-											alt="">
-										</a>
-									</div>
-								</div>
-							</div>
-
-
-							<div class="goods swiper-slide" role="group" aria-label="3 / 8">
-								<div class="photo">
-									<div class="before">
-										<a href="/product/style.asp?cno=101&amp;codiNo=275"> <img
-											src="//filacdn.styleship.com/filacontent2/data/codi/7_57.jpg"
-											alt="">
-										</a>
-									</div>
-								</div>
-							</div>
-
-
-							<div class="goods swiper-slide" role="group" aria-label="4 / 8">
-								<div class="photo">
-									<div class="before">
-										<a href="/product/style.asp?cno=101&amp;codiNo=274"> <img
-											src="//filacdn.styleship.com/filacontent2/data/codi/7_66.jpg"
-											alt="">
-										</a>
-									</div>
-								</div>
-							</div>
-
-
-							<div class="goods swiper-slide" role="group" aria-label="5 / 8">
-								<div class="photo">
-									<div class="before">
-										<a href="/product/style.asp?cno=101&amp;codiNo=278"> <img
-											src="//filacdn.styleship.com/filacontent2/data/codi/4_31.jpg"
-											alt="">
-										</a>
-									</div>
-								</div>
-							</div>
-
-
-							<div class="goods swiper-slide" role="group" aria-label="6 / 8">
-								<div class="photo">
-									<div class="before">
-										<a href="/product/style.asp?cno=101&amp;codiNo=277"> <img
-											src="//filacdn.styleship.com/filacontent2/data/codi/3_72.jpg"
-											alt="">
-										</a>
-									</div>
-								</div>
-							</div>
-
-
-							<div class="goods swiper-slide" role="group" aria-label="7 / 8">
-								<div class="photo">
-									<div class="before">
-										<a href="/product/style.asp?cno=101&amp;codiNo=273"> <img
-											src="//filacdn.styleship.com/filacontent2/data/codi/1_67.jpg"
-											alt="">
-										</a>
-									</div>
-								</div>
-							</div>
-
-
-							<div class="goods swiper-slide" role="group" aria-label="8 / 8">
-								<div class="photo">
-									<div class="before">
-										<a href="/product/style.asp?cno=101&amp;codiNo=272"> <img
-											src="//filacdn.styleship.com/filacontent2/data/codi/2_55_1.jpg"
-											alt="">
-										</a>
-									</div>
-								</div>
-							</div>
-
-
-
-						</div>
-						<span class="swiper-notification" aria-live="assertive"
-							aria-atomic="true"></span>
-					</div>
-				</div>
-			</section>
+            </div>
+            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+        </div>
+    </div>
+</section>
 
 			<!-- //추천 스타일 -->
 

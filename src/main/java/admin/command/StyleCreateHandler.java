@@ -3,29 +3,27 @@ package admin.command;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
-import com.oreilly.servlet.MultipartRequest;
-import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.util.ConnectionProvider;
 
 import admin.domain.ProductDTO;
 import admin.domain.StyleDTO;
 import admin.domain.StyleImageDTO;
-import admin.domain.StyleProductDTO;
 import admin.persistence.ProductDAO;
-import admin.service.StyleService; // 서비스 임포트
+import admin.service.StyleService;
 import command.CommandHandler;
 
 public class StyleCreateHandler implements CommandHandler {
 
     @Override
     public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        
+
         if (request.getMethod().equalsIgnoreCase("GET")) {
             ProductDAO pDao = ProductDAO.getInstance();
             try (Connection conn = ConnectionProvider.getConnection()) {
@@ -34,71 +32,77 @@ public class StyleCreateHandler implements CommandHandler {
             }
             return "/view/admin/style_create.jsp";
         } 
-        
-     // ... 상단 임포트 생략 ...
 
-        else { // POST 요청 (Ajax)
-            String baseDir = "C:\\fila_upload\\style";
-            String tempPath = baseDir + "\\temp";
-            File tempDir = new File(tempPath);
-            if (!tempDir.exists()) tempDir.mkdirs();
+        else { // POST 요청
+            request.setCharacterEncoding("UTF-8"); // 한글 깨짐 방지
             
-            int maxSize = 10 * 1024 * 1024;
-            MultipartRequest multi = new MultipartRequest(request, tempPath, maxSize, "UTF-8", new DefaultFileRenamePolicy());
+            String styleName = request.getParameter("style_name");
+            String description = request.getParameter("description");
+            int useYn = Integer.parseInt(request.getParameter("use_yn") != null ? request.getParameter("use_yn") : "1");
             
-            String styleName = multi.getParameter("style_name");
-            // MultipartRequest는 인자 한 개만 받습니다. null 체크로 기본값 처리
-            String useYnStr = multi.getParameter("use_yn");
-            int useYn = (useYnStr != null) ? Integer.parseInt(useYnStr) : 1;
+            // 상품 선택 안 했을 때 에러 방지
+            String[] matchProducts = request.getParameterValues("match_products");
+            if (matchProducts == null) matchProducts = new String[0];
 
             StyleDTO styleDto = StyleDTO.builder()
                     .style_name(styleName)
-                    .description(multi.getParameter("description"))
+                    .description(description)
                     .use_yn(useYn)
                     .build();
 
             StyleService service = StyleService.getInstance();
-            
-            // 아래 메서드들은 Service에서 새로 만들 것입니다.
-            int styleId = service.registerStyleMaster(styleDto); 
+            int styleId = service.registerStyleMaster(styleDto);
 
             if (styleId > 0) {
-                File targetDir = new File(baseDir + "\\" + styleId);
-                if (!targetDir.exists()) targetDir.mkdirs();
+                // 1. 물리적 저장 경로는 윈도우 형식을 따름
+                String uploadPath = "C:\\fila_upload\\style\\" + styleId;
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) uploadDir.mkdirs();
 
                 List<StyleImageDTO> imageList = new ArrayList<>();
-                Enumeration files = multi.getFileNames();
                 int order = 1;
 
-                while (files.hasMoreElements()) {
-                    String fieldName = (String) files.nextElement();
-                    String filesystemName = multi.getFilesystemName(fieldName);
-                    
-                    if (filesystemName != null) {
-                        File oldFile = new File(tempPath + "\\" + filesystemName);
-                        File newFile = new File(targetDir + "\\" + filesystemName);
-                        oldFile.renameTo(newFile); 
+                Collection<Part> parts = request.getParts();
+                for (Part part : parts) {
+                    if (part.getName().equals("style_images") && part.getSize() > 0) {
+                        String fileName = getFileName(part); 
+                        if (fileName != null && !fileName.isEmpty()) {
+                            // 실제 파일 쓰기
+                            part.write(uploadPath + File.separator + fileName);
 
-                        StyleImageDTO imgDto = new StyleImageDTO();
-                        imgDto.setStyle_id(styleId);
-                        // DB 저장 경로 조절 (C:를 제외한 상대경로)
-                        imgDto.setImage_url("/upload/style/" + styleId + "/" + filesystemName);
-                        imgDto.setIs_main(order == 1 ? 1 : 0);
-                        imgDto.setSort_order(order++);
-                        imgDto.setAlt_text(styleName + " 이미지");
-                        imageList.add(imgDto);
+                            StyleImageDTO imgDto = new StyleImageDTO();
+                            imgDto.setStyle_id(styleId);
+                            
+                            // [핵심수정] DB에는 슬래시(/)로 저장해야 톰캣 에러(RFC 7230)가 발생하지 않습니다.
+                            // 윈도우 OS도 C:/fila_upload/... 경로를 문제없이 인식합니다.
+                            String dbPath = "C:/fila_upload/style/" + styleId + "/" + fileName;
+                            imgDto.setImage_url(dbPath);
+                            
+                            imgDto.setIs_main(order == 1 ? 1 : 0);
+                            imgDto.setSort_order(order++);
+                            imgDto.setAlt_text(styleName);
+                            imageList.add(imgDto);
+                        }
                     }
                 }
-                
-                // 상세 정보(이미지, 상품) 한 번에 처리하는 메서드로 통합 호출
-                String[] matchProducts = multi.getParameterValues("match_products");
-                service.registerStyleDetails(styleId, imageList, matchProducts);
 
+                service.registerStyleDetails(styleId, imageList, matchProducts);
+                
+                response.setContentType("text/plain; charset=UTF-8");
                 response.getWriter().print("success");
-            } else {
-                response.sendError(500);
             }
             return null;
+        }    
+    }
+
+    private String getFileName(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        String[] tokens = contentDisp.split(";");
+        for (String token : tokens) {
+            if (token.trim().startsWith("filename")) {
+                return token.substring(token.indexOf("=") + 2, token.length() - 1);
+            }
         }
+        return null;
     }
 }

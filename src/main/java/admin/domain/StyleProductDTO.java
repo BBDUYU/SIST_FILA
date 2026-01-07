@@ -1,5 +1,7 @@
 package admin.domain;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -11,4 +13,9 @@ public class StyleProductDTO {
     private String product_name; 
     private String product_image;
     private int price;
+    public String getProduct_image() {
+        if (this.product_image == null) return "";
+        return this.product_image.replace("\\", "/");
+    }
+    private List<String> sizeOptions;
 }
