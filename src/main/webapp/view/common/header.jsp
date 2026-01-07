@@ -257,6 +257,7 @@
                                 <ul>
                                     <li><a href="${pageContext.request.contextPath}/login.htm">로그인</a></li>
                                     <li><a href="${pageContext.request.contextPath}/member/join.htm">회원가입</a></li>
+
                                     
                                     <%-- <li><a href="${pageContext.request.contextPath}/mypage.htm">마이페이지</a></li>
                                     <li><a href="${pageContext.request.contextPath}/mypageOrder.htm">주문/배송</a></li>

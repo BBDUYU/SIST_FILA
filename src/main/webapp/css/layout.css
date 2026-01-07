@@ -786,11 +786,14 @@ body.search--open .search-bg__wrap {
 	bottom: 0;
 	z-index: 100;
 }
-.bot-fix-box > .inner {
-	position: absolute;
-	bottom: 40px;
-	right: 40px;
+.bot-fix-box {
+  position: fixed;
+  right: 40px;
+  bottom: 40px;
+  z-index: 1000;
 }
+
+
 .bot-fix-box button {
 	display: block;
 	width: 50px;
@@ -1411,3 +1414,17 @@ body._style_main:not(._bg_on) #header._v2  .gnb > ul > li > a:before {background
 	color: #cf0d2e !important;
 }
 /* //2025-12-08 홀리데이 컬러 추가 */ 
+/* 하단 고정 버튼 – 레이아웃에서 완전히 분리 */
+.bot-fix-box {
+    position: fixed !important;
+    bottom: 40px;
+    left: 40px;
+    right: auto;
+    width: auto;
+    height: auto;
+    z-index: 1000;
+}
+body.mypage #contents {
+    padding-top: 100px !important;
+}
+
