@@ -576,7 +576,7 @@ function mainGroup(tagId, element) {
 								</div>
 
 								<button type="button" class="cart__btn btn_sld__gr"
-									onclick="wish_Cart_action('61381');void(0);">장바구니 담기</button>
+									onclick="location.href='${pageContext.request.contextPath}/pay/cart.htm'">장바구니 담기</button>
 
 							</div>
 
@@ -618,7 +618,7 @@ function mainGroup(tagId, element) {
 								</div>
 
 								<button type="button" class="cart__btn btn_sld__gr"
-									onclick="wish_Cart_action('61382');void(0);">장바구니 담기</button>
+									onclick="location.href='${pageContext.request.contextPath}/pay/cart.htm'">장바구니 담기</button>
 
 							</div>
 
@@ -660,7 +660,7 @@ function mainGroup(tagId, element) {
 								</div>
 
 								<button type="button" class="cart__btn btn_sld__gr"
-									onclick="wish_Cart_action('61369');void(0);">장바구니 담기</button>
+									onclick="location.href='${pageContext.request.contextPath}/pay/cart.htm'">장바구니 담기</button>
 
 							</div>
 
@@ -702,7 +702,7 @@ function mainGroup(tagId, element) {
 								</div>
 
 								<button type="button" class="cart__btn btn_sld__gr"
-									onclick="wish_Cart_action('60825');void(0);">장바구니 담기</button>
+									onclick="location.href='${pageContext.request.contextPath}/pay/cart.htm'">장바구니 담기</button>
 
 							</div>
 
@@ -744,7 +744,7 @@ function mainGroup(tagId, element) {
 								</div>
 
 								<button type="button" class="cart__btn btn_sld__gr"
-									onclick="wish_Cart_action('61371');void(0);">장바구니 담기</button>
+									onclick="location.href='${pageContext.request.contextPath}/pay/cart.htm'">장바구니 담기</button>
 
 							</div>
 
