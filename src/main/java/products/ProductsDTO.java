@@ -1,6 +1,8 @@
 package products;
 
 import java.util.Date;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +12,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
+@Data
 public class ProductsDTO {
     
     // 1. PRODUCTS 테이블 컬럼

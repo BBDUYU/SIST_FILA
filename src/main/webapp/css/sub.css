@@ -2061,6 +2061,9 @@ body.scl-up .total-box .price-box {top: 120px;}
     margin-top: 30px;
 }
 
+
+.addr-add-box .cn .inp-box .addr {margin-top: 30px;}
+
 .addr-add-box .cn .inp-box .addr > div:first-child input {
     width: 400px;
     margin-right: 10px;

@@ -8,20 +8,17 @@ import javax.servlet.http.HttpServletResponse;
 import com.util.ConnectionProvider;
 import command.CommandHandler;
 import admin.persistence.StyleDAO;
+import admin.service.StyleService;
 import admin.domain.StyleDTO;
 
 public class StyleListHandler implements CommandHandler {
 
     @Override
     public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        StyleDAO styleDAO = StyleDAO.getInstance();
-
-        List<StyleDTO> styleList = null;
-        try (Connection conn = ConnectionProvider.getConnection()) {
-            styleList = styleDAO.selectStyleList(conn);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        StyleService service = StyleService.getInstance();
+        
+        List<StyleDTO> styleList = service.getActiveStyleList();
+        
 
         request.setAttribute("styleList", styleList);
         
