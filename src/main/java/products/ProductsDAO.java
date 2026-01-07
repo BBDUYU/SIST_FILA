@@ -77,7 +77,6 @@ public class ProductsDAO {
         
         String sql = 
                 "SELECT P.*, I.IMAGE_URL, " +
-                "       (SELECT NAME FROM CATEGORIES WHERE CATEGORY_ID = P.CATEGORY_ID) as CATE_NAME, " +
                 "       (SELECT NAME FROM CATEGORIES WHERE CATEGORY_ID = (SELECT PARENT_ID FROM CATEGORIES WHERE CATEGORY_ID = P.CATEGORY_ID)) as DEPTH1_NAME, " +
                 "       (SELECT M.VALUE_NAME FROM OPTION_VALUE_MASTERS M " +
                 "        JOIN PRODUCT_OPTION_VALUES V ON M.V_MASTER_ID = V.V_MASTER_ID " +
