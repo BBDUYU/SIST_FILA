@@ -257,10 +257,12 @@
                                 <ul>
                                     <li><a href="${pageContext.request.contextPath}/login.htm">로그인</a></li>
                                     <li><a href="${pageContext.request.contextPath}/member/join.htm">회원가입</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/mypage.htm">마이페이지</a></li>
+                                    
+                                    <%-- <li><a href="${pageContext.request.contextPath}/mypage.htm">마이페이지</a></li>
                                     <li><a href="${pageContext.request.contextPath}/mypageOrder.htm">주문/배송</a></li>
                                     <li><a href="${pageContext.request.contextPath}/inquiry/list.htm">1:1 문의</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/mypageWishlist.htm">위시리스트</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/mypageWishlist.htm">위시리스트</a></li> --%>
+                                    
                                     <li><a href="${pageContext.request.contextPath}/member/find_id_pw.htm">아이디/비번찾기</a></li>
                                     <li><a href="${pageContext.request.contextPath}/event.htm">이벤트</a></li>
                                 </ul>
