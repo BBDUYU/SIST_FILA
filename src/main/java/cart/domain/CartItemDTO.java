@@ -11,6 +11,7 @@ public class CartItemDTO {
   private int discountRate;
   private int saleUnitPrice;
 
+  private String size;
   private int quantity;
   private int lineAmount;
 
@@ -36,6 +37,9 @@ public class CartItemDTO {
 
   public int getSaleUnitPrice() { return saleUnitPrice; }
   public void setSaleUnitPrice(int saleUnitPrice) { this.saleUnitPrice = saleUnitPrice; }
+
+  public String getSize() { return size; }
+  public void setSize(String size) { this.size = size; }
 
   public int getQuantity() { return quantity; }
   public void setQuantity(int quantity) { this.quantity = quantity; }

@@ -34,6 +34,8 @@
 
 				<input type="hidden" name="rtnUrl" value="index.htm">
 				<input type="hidden" name="lgc" id="lgc" value="0">
+				
+				<input type="hidden" name="returnUrl" value="${param.returnUrl}">
 
 				<div class="inp-box">
 					<div>
