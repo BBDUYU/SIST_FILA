@@ -11,9 +11,22 @@ public class CartDAO {
 
     // [1] 전체 조회
     public List<CartItemDTO> selectAll() throws Exception {
-        String sql = "SELECT ci.cart_item_id, ci.user_number, ci.product_id, p.name AS product_name, p.price AS origin_unit_price, NVL(p.discount_rate, 0) AS discount_rate, ROUND(p.price * (100 - NVL(p.discount_rate,0)) / 100) AS sale_unit_price, ci.quantity, (ROUND(p.price * (100 - NVL(p.discount_rate,0)) / 100) * ci.quantity) AS line_amount, mpi.image_url AS main_image_url FROM cart_items ci JOIN products p ON p.product_id = ci.product_id LEFT JOIN (SELECT product_id, image_url FROM (SELECT pi.product_id, pi.image_url, ROW_NUMBER() OVER (PARTITION BY pi.product_id ORDER BY NVL(pi.sort_order, 999) ASC, pi.product_image_id ASC) AS rn FROM product_image pi WHERE pi.is_main = 1) WHERE rn = 1) mpi ON mpi.product_id = p.product_id ORDER BY ci.added_at DESC";
-        List<CartItemDTO> list = new ArrayList<>();
-        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+        
+    	String sql =
+    			  "SELECT ci.cart_item_id, ci.user_number, ci.product_id, " +
+    			  "       p.name AS product_name, p.price AS origin_unit_price, " +
+    			  "       NVL(p.discount_rate, 0) AS discount_rate, " +
+    			  "       ROUND(p.price * (100 - NVL(p.discount_rate,0)) / 100) AS sale_unit_price, " +
+    			  "       ci.quantity, " +
+    			  "       (ROUND(p.price * (100 - NVL(p.discount_rate,0)) / 100) * ci.quantity) AS line_amount, " +
+    			  "       mpi.image_url AS main_image_url, " +
+    			  "       CAST(NULL AS VARCHAR2(50)) AS size " +   // ✅ size 없으면 일단 NULL로
+    			  "FROM cart_items ci ...";
+
+    	
+    	List<CartItemDTO> list = new ArrayList<>();
+        
+    	try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 CartItemDTO dto = new CartItemDTO();
@@ -24,6 +37,7 @@ public class CartDAO {
                 dto.setOriginUnitPrice(rs.getInt("origin_unit_price"));
                 dto.setDiscountRate(rs.getInt("discount_rate"));
                 dto.setSaleUnitPrice(rs.getInt("sale_unit_price"));
+                dto.setSize(rs.getString("size"));
                 dto.setQuantity(rs.getInt("quantity"));
                 dto.setLineAmount(rs.getInt("line_amount"));
                 dto.setMainImageUrl(rs.getString("main_image_url"));
@@ -35,11 +49,15 @@ public class CartDAO {
 
     // [2] 담기 (이름을 insertCart로 맞춤)
     public void insertCart(String productId, int quantity, int userNumber) throws Exception {
-        String sql = "INSERT INTO CART_ITEMS (CART_ITEM_ID, USER_NUMBER, PRODUCT_ID, QUANTITY, ADDED_AT) VALUES ((SELECT nvl(max(CART_ITEM_ID), 0) + 1 FROM CART_ITEMS), ?, ?, ?, SYSDATE)";
+        String sql =
+            "INSERT INTO CART_ITEMS (CART_ITEM_ID, USER_NUMBER, PRODUCT_ID, COMBINATION_ID, QUANTITY, ADDED_AT) " +
+            "VALUES ((SELECT NVL(MAX(CART_ITEM_ID), 0) + 1 FROM CART_ITEMS), ?, ?, ?, ?, SYSDATE)";
+
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userNumber);
             pstmt.setString(2, productId);
-            pstmt.setInt(3, quantity);
+            pstmt.setNull(3, Types.NUMERIC);
+            pstmt.setInt(4, quantity);
             pstmt.executeUpdate();
         }
     }
@@ -56,6 +74,16 @@ public class CartDAO {
     public int deleteSoldOutItems() throws Exception {
         String sql = "DELETE FROM cart_items WHERE product_id IN (SELECT product_id FROM products WHERE stock <= 0)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            return pstmt.executeUpdate();
+        }
+    }
+    
+    // [5] 수량 변경
+    public int updateQuantity(int cartItemId, int quantity) throws Exception {
+        String sql = "UPDATE cart_items SET quantity = ? WHERE cart_item_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, quantity);
+            pstmt.setInt(2, cartItemId);
             return pstmt.executeUpdate();
         }
     }

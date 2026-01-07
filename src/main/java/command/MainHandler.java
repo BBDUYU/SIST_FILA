@@ -20,10 +20,13 @@ public class MainHandler implements CommandHandler {
         MainService service = MainService.getInstance();
         Map<String, Object> mainData = service.getMainData(searchItem);
         request.setAttribute("activeTags", mainData.get("activeTags"));
+        
+        
+        request.setAttribute("activeStyles", mainData.get("activeStyles"));
         // 3. View(JSP)에 전달할 데이터 세팅
         // 카테고리는 헤더에서 공통으로 쓰므로 세션에 저장 (기존 서블릿 로직 유지)
         request.getSession().setAttribute("list", mainData.get("categoryList"));
-        
+        request.setAttribute("activeTags", mainData.get("activeTags"));
         // 나머지 데이터는 request에 저장
         request.getSession().setAttribute("popularKeywords", mainData.get("popularKeywords"));
         request.getSession().setAttribute("recommendKeywords", mainData.get("recommendKeywords"));
