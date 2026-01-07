@@ -357,23 +357,49 @@
 
 <script>
 $(document).ready(function() {
-    // 모델컷 슬라이더 설정
-    if ($('.mc__slider').length > 0) {
-        new Swiper('.mc__slider', {
-            slidesPerView: 1,
-            spaceBetween: 0,
-            loop: ($('.mc__slider .swiper-slide').length > 1), // 슬라이드가 2장 이상일 때만 루프 실행
-            pagination: {
-                el: '.mc-swiper-pagination',
-                clickable: true,
+    const urlParams = new URLSearchParams(window.location.search);
+    const styleId = urlParams.get('id');
+
+    // 1. 슬라이더 초기화 함수 정의
+    function initStyleSlider() {
+        if ($('.mc__slider').length > 0) {
+            new Swiper('.mc__slider', {
+                slidesPerView: 1,
+                spaceBetween: 0,
+                loop: ($('.mc__slider .swiper-slide').length > 1),
+                pagination: {
+                    el: '.mc-swiper-pagination',
+                    clickable: true,
+                },
+                autoHeight: true,
+                observer: true,
+                observeParents: true
+            });
+        }
+    }
+
+    // 2. URL에 id가 있으면 Ajax로 모달 로드
+    if (styleId) {
+        $.ajax({
+            url: "${pageContext.request.contextPath}/style/detail.htm",
+            data: { id: styleId },
+            success: function(res) {
+                // 데이터를 먼저 넣고
+                $("#styleModalContent").html(res);
+                // 모달을 보여준 뒤
+                $(".style-modal-overlay").show();
+                // [중요] HTML이 다 그려진 후 슬라이더 초기화 실행
+                initStyleSlider();
+                
+                // 스크롤 방지 추가 (필요시)
+                $("body").css("overflow", "hidden");
             },
-            autoHeight: true,
-            // 슬라이더가 처음엔 안 보였다가 나타날 때 크기를 다시 계산하게 해줌
-            observer: true,
-            observeParents: true
+            error: function() {
+                console.error("모달 데이터 로딩 실패");
+            }
         });
     }
-}); // ← 아까 여기 밑에 쓸데없는 '}' 가 하나 더 붙어있었을 거예요!
+});
 </script>
 
 </body>
