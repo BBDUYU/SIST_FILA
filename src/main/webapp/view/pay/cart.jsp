@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -7,11 +6,21 @@
 <!DOCTYPE html>
 <html lang="ko-KR">
 <head>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/sub.css">
 
 <meta charset="UTF-8">
 <title>장바구니 | FILA</title>
 
+<link rel="icon" type="image/x-icon" href="//filacdn.styleship.com/filacontent2/favicon.ico" />
+<link href="${pageContext.request.contextPath}/css/SpoqaHanSansNeo.css" rel="stylesheet">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/normalize.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/opt-default.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/swiper-bundle.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/product.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/sub.css">
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/TweenMax.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
 <script src="${pageContext.request.contextPath}/js/mighty.base.1.5.7.js"></script>
@@ -19,16 +28,12 @@
 <script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
 <script src="${pageContext.request.contextPath}/js/default.js?v=202504161631"></script>
 <script src="${pageContext.request.contextPath}/js/main.js"></script>
-<script src="${pageContext.request.contextPath}/js/list.js"></script>
+<script src="${pageContext.request.contextPath}/js/order.js"></script>
 
-<meta name="viewport"
-	content="width=device-width, initial-scale=1.0, maximum-scale=1.1, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1.0, maximum-scale=1.1, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
 
 </head>
 
-<body class="tit__style1" style="overflow-x: hidden;">
+<body class>
 
 	<jsp:include page="../common/header.jsp" />
 
@@ -221,13 +226,13 @@
 							</dl>
 							<dl>
 								<dt>상품 할인금액</dt>
-								<dd>- <span id="miPrice">0</span>원</dd>
+								<dd class="_type_red">- <span id="miPrice" >0</span>원</dd>
 							</dl>
 							<dl>
 								<dt>배송비</dt>
 								<dd><span id="dvPrice">0</span>원</dd>
 							</dl>
-							<dl class="total">
+							<dl class="total-pirce">
 								<dt>총 결제 예상 금액</dt>
 								<dd><span id="pPrice">0</span>원</dd>
 							</dl>
@@ -303,27 +308,38 @@ function submitOption() {
 }
 
 function updateTotal() {
-    let totalOrigin = 0;
-    let totalSale = 0;
-    let deliPrice = 0;
+    let totalOrigin = 0;  // 총 상품금액 (할인 전)
+    let totalSalePrice = 0; // 실제 판매가 합계
+    let totalDiscount = 0; // 총 할인금액
+    let deliPrice = 0;    // 배송비
 
-    $(".cart-item").each(function() {
-        if ($(this).find(".item-chk").is(":checked")) {
-            let origin = parseInt($(this).data("origin")) || 0;
-            let sale = parseInt($(this).data("sale")) || 0;
-            let qty = parseInt($(this).data("qty")) || 0;
-            totalOrigin += (origin * qty);
-            totalSale += (sale * qty);
-        }
+    // 체크된 상품들만 순회
+    $(".item-chk:checked").each(function() {
+        // data 속성에서 값을 가져옴 (정수 변환)
+        let priceOri = parseInt($(this).data("priceori")) || 0;  // 개당 정가
+        let priceSale = parseInt($(this).data("pricesale")) || 0; // 개당 할인가
+        let qty = parseInt($(this).data("pq")) || 0;              // 수량
+
+        totalOrigin += (priceOri * qty);
+        totalSalePrice += (priceSale * qty);
     });
 
-    // 배송비 계산 (예: 3만원 미만 시 3,000원)
-    deliPrice = (totalSale > 0 && totalSale < 30000) ? 3000 : 0;
+    // 총 할인금액 계산
+    totalDiscount = totalOrigin - totalSalePrice;
 
-    $("#ctPice").text(totalOrigin.toLocaleString());
-    $("#miPrice").text((totalOrigin - totalSale).toLocaleString());
-    $("#deliPrice").text(deliPrice.toLocaleString());
-    $("#pPrice").text((totalSale + deliPrice).toLocaleString());
+    // 배송비 계산: 총 판매가(실제 결제금액 기준)가 30,000원 이상이면 0원, 아니면 3,000원
+    // 단, 상품이 하나도 체크 안 되어 있으면 0원
+    if (totalSalePrice === 0) {
+        deliPrice = 0;
+    } else {
+        deliPrice = (totalSalePrice >= 30000) ? 0 : 3000;
+    }
+
+    // 화면에 반영 (id 매칭 확인: ctPice, miPrice, dvPrice, pPrice)
+    $("#ctPice").text(totalOrigin.toLocaleString());   // 총 상품금액
+    $("#miPrice").text(totalDiscount.toLocaleString()); // 상품 할인금액
+    $("#dvPrice").text(deliPrice.toLocaleString());    // 배송비
+    $("#pPrice").text((totalSalePrice + deliPrice).toLocaleString()); // 총 결제 예상 금액
 }
 
 function deleteItem(id) {

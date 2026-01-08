@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <link rel="icon" type="image/x-icon" href="//filacdn.styleship.com/filacontent2/favicon.ico" />
-<link href="http://localhost/SIST_FILA/css/SpoqaHanSansNeo.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/SpoqaHanSansNeo.css" rel="stylesheet">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/normalize.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/opt-default.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/swiper-bundle.css">
