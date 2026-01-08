@@ -6,52 +6,33 @@
 <head>
     <title>1:1 문의 | FILA</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/normalize.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/opt-default.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/product.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sub.css">
+<link rel="icon" type="image/x-icon" href="//filacdn.styleship.com/filacontent2/favicon.ico" />
+<link href="http://localhost/SIST_FILA/css/SpoqaHanSansNeo.css" rel="stylesheet">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/normalize.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/opt-default.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/swiper-bundle.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/product.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/sub.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/TweenMax.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+<script src="${pageContext.request.contextPath}/js/mighty.base.1.5.7.js"></script>
+<script src="${pageContext.request.contextPath}/js/matiz.js"></script>
+<script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
+<script src="${pageContext.request.contextPath}/js/default.js?v=202504161631"></script>
+<script src="${pageContext.request.contextPath}/js/main.js"></script>
+    
+    <!-- QnA JS -->
+    <script src="${pageContext.request.contextPath}/js/inquiry.js"></script>
+    <script src="${pageContext.request.contextPath}/js/mypage.js"></script>
 
     <!-- jQuery -->
     <script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
-    
 
-    <style>
-        .common__layer {
-            position: fixed !important;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999 !important;
-            display: none;
-        }
-        .common__layer .layer_dim {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,.6);
-        }
-        .common__layer .inner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            width: 90%;
-            max-width: 420px;
-            border-radius: 8px;
-            padding: 20px;
-        }
-        .common__layer .head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-    </style>
+
 </head>
 
 <body>
@@ -65,8 +46,8 @@
 
 					<!-- 1:1문의 -->
 					<ul class="qna__list" style="user-select: auto !important;">
-
-						<li style="user-select: auto !important;">
+					<!-- 복제예정 -->
+						<li style="user-select: auto !important;" class>
 							<!-- Q -->
 							<div class="qna-q" style="user-select: auto !important;">
 								<div class="info" style="user-select: auto !important;">
@@ -83,8 +64,6 @@
 								</div>
 							</div>
 							<!-- //Q -->
-
-							<!-- A -->
 							<div class="qna-a" style="user-select: auto !important;">
 								<div class="q-txt-box" style="user-select: auto !important;">
 									<div style="user-select: auto !important;">
@@ -139,62 +118,76 @@
 								<!-- //만족도 -->
 
 							</div>
-							<!-- //A -->
+							
 						</li>
-
-<form name="QnaStar" method="post" style="user-select: auto !important;">
-<input type="hidden" name="qnaNo" id="qnaNo" value="" style="user-select: auto !important;">
-<input type="hidden" name="qnaStarPoint" id="qnaStarPoint" value="5" style="user-select: auto !important;">
-</form>
-<iframe name="qnaImgFrame" id="qnaImgFrame" style="display: none; user-select: auto !important;"></iframe>
-
+						<!-- 복제예정 -->
 					</ul>
 					<!-- //1:1문의 -->
-					
+					<div id="qnaModalOverlay" style="display:none;">
+						    <div id="qnaModalContent"></div>
+						</div>
 				</section>
 
 </div>
 </div>
+
+
+
 <script>
-$(function () {
+var contextPath = '${pageContext.request.contextPath}';
 
-    // 모달 열기
-    $('.qna-write__btn').on('click', function (e) {
-        e.preventDefault();
-        $('.common__layer._qna_write').show();
-    });
+(function ($) {
 
-    // 모달 닫기
-    $('.common__layer').on('click', '.close__btn, .layer_dim', function () {
-        $('.common__layer._qna_write').hide();
-    });
+	  // 1:1 문의 모달 열기
+	  $(document).on('click', '.qna-write__btn', function (e) {
+	    e.preventDefault();
+	    openQnaModal();
+	  });
 
-});
+	  function openQnaModal() {
+		    $.ajax({
+		        url: contextPath + '/view/mypage/qna_modal.jsp',
+		        type: 'GET',
+		        success: function (res) {
+		            // 1. 데이터를 먼저 넣는다
+		            $('#qnaModalContent').html(res);
+		            
+		            // 2. 부모 div를 단순히 보이게 한다
+		            $('#qnaModalOverlay').show(); 
+
+		            // 3. (핵심) AJAX로 들어온 태그들이 CSS 스타일을 먹도록 강제 노출
+		            // 만약 CSS 파일에 display: none이 걸려있을 수 있으므로 강제 block 처리
+		            $('.common__layer').css({
+		                'display': 'block',
+		                'z-index': '9999' 
+		            });
+		            
+		            $('.common__layer .inner').css({
+		                'display': 'block',
+		                'z-index': '10000'
+		            });
+
+		            $('body').css('overflow', 'hidden'); // 뒷배경 스크롤 방지
+		        }
+		    });
+		}
+
+	  // 닫기
+	  window.closeQnaModal = function () {
+	    $('#qnaModalOverlay').hide();
+	    $('#qnaModalContent').empty();
+	    $('body').css('overflow', 'auto');
+	  };
+
+	  // 내부 닫기 버튼
+	  $(document).on('click', '#btnCloseQna, .close__btn', function () {
+	    closeQnaModal();
+	  });
+
+	})(jQuery);
+
 </script>
 
 <jsp:include page="/view/common/footer.jsp"/>
-
-<!-- ===================== -->
-<!-- 🔥 JS : 이것만 있으면 무조건 뜸 -->
-<!-- ===================== -->
-<script>
-$(function () {
-
-    $('#btnOpenQna').on('click', function () {
-        alert('버튼 눌림');   // ← 이거 뜨면 100% 정상
-        $('#qnaWriteLayer').show();
-    });
-
-    $('#btnCloseQna, .layer_dim').on('click', function () {
-        $('#qnaWriteLayer').hide();
-    });
-
-});
-</script>
-<jsp:include page="/view/mypage/qna_modal_form.jsp"/>
-
-
-
-
 </body>
 </html>

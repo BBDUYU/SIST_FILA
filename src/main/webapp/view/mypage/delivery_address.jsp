@@ -6,52 +6,40 @@
 <head>
     <title>1:1 문의 | FILA</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/normalize.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/opt-default.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/product.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sub.css">
+<link rel="icon" type="image/x-icon" href="//filacdn.styleship.com/filacontent2/favicon.ico" />
+<link href="http://localhost/SIST_FILA/css/SpoqaHanSansNeo.css" rel="stylesheet">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/normalize.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/opt-default.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/swiper-bundle.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/product.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/sub.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+
+<script src="${pageContext.request.contextPath}/js/mypage.js"></script>
+<script src="${pageContext.request.contextPath}/js/searchZip.js"></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/TweenMax.js"></script>
+
+<script src="${pageContext.request.contextPath}/js/mighty.base.1.5.7.js"></script>
+<script src="${pageContext.request.contextPath}/js/matiz.js"></script>
+<script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
+<script src="${pageContext.request.contextPath}/js/default.js?v=202504161631"></script>
+<script src="${pageContext.request.contextPath}/js/main.js"></script>
+
+
+
+    
+    <!-- QnA JS -->
+    <script src="${pageContext.request.contextPath}/js/qna.js"></script>
+    <script src="${pageContext.request.contextPath}/js/inquiry.js"></script>
+    <script src="${pageContext.request.contextPath}/js/mypage.js"></script>
 
     <!-- jQuery -->
-    <script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
 
-    <!-- 🔥 모달 강제 표시용 보정 CSS -->
-    <style>
-        .common__layer {
-            position: fixed !important;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999 !important;
-            display: none;
-        }
-        .common__layer .layer_dim {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,.6);
-        }
-        .common__layer .inner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            width: 90%;
-            max-width: 420px;
-            border-radius: 8px;
-            padding: 20px;
-        }
-        .common__layer .head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-    </style>
+
 </head>
 
 <body>
@@ -59,45 +47,46 @@
 <jsp:include page="/view/common/header.jsp"/>
 <jsp:include page="/view/mypage/mypage.jsp"/>
 
-<section class="my-con" style="user-select: auto !important;">
-           			<h2 class="tit__style4" style="user-select: auto !important;">배송지 관리</h2>
-					<a href="#" class="btn_sld__bk btn_rt add-addr__btn" style="user-select: auto !important;">신규 배송지 추가</a>
+<section class="my-con">
+           			<h2 class="tit__style4">배송지 관리</h2>
+					<a href="#" class="btn_sld__bk btn_rt add-addr__btn">신규 배송지 추가</a>
 					
 					
 					<!-- 배송지 관리 -->
-					<div class="my-address-box" style="user-select: auto !important;">
-						<ul class="addr__list" style="user-select: auto !important;">
-							
+					<div class="my-address-box">
+					
+						<ul class="addr__list">
+							<!-- 반복 -->
 							<!-- 2023-03-15 배송지 수정 -->
-							<li class="_default_addr" style="user-select: auto !important;">
-								<input type="radio" id="myAddr0" name="myAddrList" class="addr-chk" style="user-select: auto !important;">
-								<label for="myAddr0" style="user-select: auto !important;"></label>
+							<li class="_default_addr">
+								<input type="radio" id="myAddr0" name="myAddrList" class="addr-chk">
+								<label for="myAddr0"></label>
 
-								<div class="addr-info" style="user-select: auto !important;">
-									<div class="name-tel" style="user-select: auto !important;">
+								<div class="addr-info">
+									<div class="name-tel">
 									
-										<p class="tag" style="user-select: auto !important;">기본</p>
+										<p class="tag">기본</p>
 									
-										<p class="name" style="user-select: auto !important;">류지호</p>
-										<p class="tel" style="user-select: auto !important;">01044326852</p>
+										<p class="name">지영주</p>
+										<p class="tel">01012345678</p>
 									</div>
 
-									<div class="addr-detail" style="user-select: auto !important;">
-										<p style="user-select: auto !important;">
-											(06279) 서울 강남구 도곡로78길 22 (대치동, 대치삼성아파트)<br style="user-select: auto !important;">
-											106동103호
+									<div class="addr-detail">
+										<p>
+											(06193) 서울 강남구 테헤란로70길 12 (대치동)<br>
+											9층, 쌍용교육센터
 										</p>
 									</div>
 								</div>
 
-								<div class="btn-box" style="user-select: auto !important;">
-									<button type="button" class="modify__btn" onclick="addrAddPopup('1205034');" style="user-select: auto !important;">modify</button>
+								<div class="btn-box">
+									<button type="button" class="modify__btn" onclick="addrAddPopup('1203475');">modify</button>
 									
-									<button type="button" class="delete__btn" onclick="alert('기본 배송지는 삭제하실 수 없습니다.');" style="user-select: auto !important;">delete</button>
+									<button type="button" class="delete__btn" onclick="alert('기본 배송지는 삭제하실 수 없습니다.');">delete</button>
 									
 								</div>
 
-								<button type="button" class="default-addr__btn" onclick="addrDefault('1205034');" style="user-select: auto !important;">기본으로 설정</button>
+								<button type="button" class="default-addr__btn" onclick="addrDefault('1203475');">기본으로 설정</button>
 								<!-- 
 									기본으로 설정 클릭시 레이어 호출
 									
@@ -105,36 +94,120 @@
 								-->
 							</li>
 							<!-- //2023-03-15 배송지 수정 -->
-
+							<!-- 반복 -->
 
 						</ul>
+						
 
 					</div>
-					<!-- //배송지 관리 -->
-
+					<!-- //배송지 추가 -->
+							<div id="AddaddressModalOverlay"
+						     class="style-modal-overlay"
+						     onclick="if(event.target === this) closeQnaModal();"
+						     style="display:none;">
+						
+						    <div id="AddaddModalContent" class="style-modal-wrapper">
+						        <!-- AJAX로 qna_modal.jsp 들어올 자리 -->
+						    </div>
+						</div>
+						<!-- //배송지 수정 -->
+						<div id="EditaddressModalOverlay"
+						     class="style-modal-overlay"
+						     onclick="if(event.target === this) closeQnaModal();"
+						     style="display:none;">
+						
+						    <div id="EditaddModalContent" class="style-modal-wrapper">
+						        <!-- AJAX로 qna_modal.jsp 들어올 자리 -->
+						    </div>
+						</div>
+						<!-- 주소 -->
+						
 				</section>
 
 </div>
 </div>
-<jsp:include page="/view/common/footer.jsp"/>
 
-<!-- ===================== -->
-<!-- 🔥 JS : 이것만 있으면 무조건 뜸 -->
-<!-- ===================== -->
+
+
 <script>
-$(function () {
+var contextPath = '${pageContext.request.contextPath}';
 
-    $('#btnOpenQna').on('click', function () {
-        alert('버튼 눌림');   // ← 이거 뜨면 100% 정상
-        $('#qnaWriteLayer').show();
-    });
+(function ($) {
 
-    $('#btnCloseQna, .layer_dim').on('click', function () {
-        $('#qnaWriteLayer').hide();
-    });
+  /* =========================
+     공통 모달 노출 함수 (CSS 강제 보정 포함)
+     ========================= */
+  function showModalForce(overlayId, contentClass) {
+      $(overlayId).css('display', 'flex').show();
+      
+      // AJAX로 로드된 .common__layer가 height 0이 되지 않도록 강제 설정
+      $(contentClass).css({
+          'display': 'block',
+          'visibility': 'visible',
+          'opacity': '1',
+          'z-index': '9999'
+      });
+      
+      $(contentClass + ' .inner').css({
+          'display': 'block',
+          'visibility': 'visible',
+          'z-index': '10000'
+      });
 
-});
+      $('body').css('overflow', 'hidden');
+  }
+
+  /* =========================
+     배송지 수정 (edit_address.jsp)
+     ========================= */
+  $(document).on('click', '.modify__btn', function (e) {
+    e.preventDefault();
+
+    // addrNo 추출 로직
+    var addrNo = $(this).attr('onclick').match(/'([^']+)'/)[1];
+
+    $('#EditaddModalContent').load(
+      contextPath + '/view/mypage/edit_address.jsp?addrNo=' + addrNo,
+      function () {
+        showModalForce('#EditaddressModalOverlay', '.common__layer');
+      }
+    );
+  });
+
+  /* =========================
+     배송지 추가 (add_address.jsp)
+     ========================= */
+  $(document).on('click', '.add-addr__btn', function (e) {
+    e.preventDefault();
+
+    $('#AddaddModalContent').load(
+      contextPath + '/view/mypage/add_address.jsp',
+      function () {
+        showModalForce('#AddaddressModalOverlay', '.common__layer');
+      }
+    );
+  });
+
+  /* =========================
+     공통 닫기
+     ========================= */
+  window.closeQnaModal = function () {
+    $('#AddaddressModalOverlay').hide();
+    $('#EditaddressModalOverlay').hide();
+    $('#AddaddModalContent').empty();
+    $('#EditaddModalContent').empty();
+    $('body').css('overflow', 'auto');
+  };
+
+  $(document).on('click', '.close__btn, .btnCancel', function () {
+    closeQnaModal();
+  });
+
+})(jQuery);
 </script>
 
+
+
+<jsp:include page="/view/common/footer.jsp"/>
 </body>
 </html>
