@@ -172,6 +172,7 @@ public class ProductService {
             conn = DBConn.getConnection();
             ProductsDAO pDao = ProductsDAO.getInstance();
             CategoriesDAO cDao = CategoriesDAO.getInstance();
+            review.ReviewDAO reviewDao = new review.ReviewDAOImpl(conn);
             
             String productId = request.getParameter("product_id");
             if(productId == null || productId.isEmpty()) return;
@@ -233,6 +234,14 @@ public class ProductService {
                 String styleTag = pDao.getProductTag(conn, productId, 2);
                 if (styleTag == null) styleTag = "라이프스타일";
 
+                // -----------------------------------------------------------
+                // [G] 추가: 리뷰 목록 조회 (review_modal.jsp 출력용)
+                // -----------------------------------------------------------
+                List<review.ReviewDTO> reviewList = reviewDao.selectListByFilter(productId, null);
+                
+                // -----------------------------------------------------------
+                // 4. JSP 전송 (Attribute 설정)
+                // -----------------------------------------------------------
                 request.setAttribute("product", dto);
                 request.setAttribute("mainImages", mainImages);
                 request.setAttribute("modelImages", modelImages);
@@ -242,6 +251,7 @@ public class ProductService {
                 request.setAttribute("finalPrice", finalPrice);
                 request.setAttribute("styleTag", styleTag);
                 request.setAttribute("genderTag", genderTag);
+                request.setAttribute("reviewList", reviewList);		  // 리뷰 리스트 전달
                 
                 if(sizeOptions != null && !sizeOptions.isEmpty()) {
                     request.setAttribute("sizeOption", "Y");

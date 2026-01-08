@@ -1,84 +1,113 @@
 package review;
 
+import java.io.File;
 import java.sql.Connection;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.util.DBConn;
-import command.CommandHandler; // 인터페이스 import
+
+import command.CommandHandler;
 import member.MemberDTO;
 
-public class ReviewWrite implements CommandHandler { // 1. 인터페이스 구현으로 변경
+public class ReviewWrite implements CommandHandler {
 
-    @Override // 2. process 메서드로 로직 통합
+    @Override
     public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        // 1. 파일 업로드 설정
+        // 실제 서버 경로 찾기 (images/review 폴더에 저장한다고 가정)
+        String saveDirectory = request.getServletContext().getRealPath("/images/review");
         
-        // POST 방식일 때만 처리를 원하신다면 (선택 사항)
-        if (request.getMethod().equalsIgnoreCase("GET")) {
-            return "/view/review/review_form.jsp"; // 혹은 적절한 폼 페이지
-        }
+        // 폴더 없으면 생성
+        File dir = new File(saveDirectory);
+        if (!dir.exists()) dir.mkdirs();
 
-        // 1. 세션에서 로그인 정보 가져오기
-        HttpSession session = request.getSession();
-        Object sessionObj = session.getAttribute("member"); 
+        int maxPostSize = 10 * 1024 * 1024; // 10MB 제한
+        String encoding = "UTF-8";
+
+        MultipartRequest multi = new MultipartRequest(request, saveDirectory, maxPostSize, encoding, new DefaultFileRenamePolicy());
+
+        // 2. 파라미터 받기 (request 대신 multi 사용)
+        String productId = multi.getParameter("productNo"); // JSP input name="productNo" 확인
+        String content = multi.getParameter("reviewContent"); // JSP textarea name="reviewContent"
         
-        String writer = null;
-
-        if (sessionObj != null && sessionObj instanceof MemberDTO) {
-            MemberDTO member = (MemberDTO) sessionObj;
-            writer = member.getId();
-        }
-
-        // 로그인 안 된 상태 처리
-        if (writer == null) {
-            request.setAttribute("msg", "로그인이 필요한 서비스입니다.");
-            request.setAttribute("loc", "/login.htm");
-            return "/view/common/alert.jsp"; // 알림창을 띄워주는 공통 JSP가 있다고 가정
-        }
-
-        // 2. 파라미터 받기
-        String productId = request.getParameter("product_id");
-        String content = request.getParameter("content");
-        
-        int rating = 5; 
+        int rating = 5;
         try {
-            rating = Integer.parseInt(request.getParameter("rating"));
+            rating = Integer.parseInt(multi.getParameter("reviewScore")); // JSP hidden name="reviewScore"
         } catch (NumberFormatException e) {
-            rating = 5; 
+            rating = 5;
         }
-        
-        // 3. DTO 생성
-        ReviewDTO dto = ReviewDTO.builder()
-                .product_id(productId)
-                .writer(writer)
-                .content(content)
-                .rating(rating)
-                .review_img(null) 
-                .build();
 
-        // 4. DB 저장
-        Connection conn = DBConn.getConnection();
-        ReviewDAO dao = new ReviewDAOImpl(conn);
-        
+        // 업로드된 파일명 가져오기
+        String filesystemName = multi.getFilesystemName("reviewFile"); // JSP input type="file" name="reviewFile"
+        String reviewImgPath = null;
+        if (filesystemName != null) {
+            reviewImgPath = "/images/review/" + filesystemName; // DB에 저장할 경로
+        }
+
+
+        // 3. 세션에서 로그인 정보 확인
+        HttpSession session = request.getSession();
+        Object authObj = session.getAttribute("auth");
+
+        if (authObj == null) {
+            // 로그인 안 됨 -> 에러 페이지 또는 로그인 페이지로
+            request.setAttribute("message", "로그인이 필요한 서비스입니다.");
+            return "redirect:/login.htm";
+        }
+
+        MemberDTO member = (MemberDTO) authObj;
+        int userNumber = member.getUserNumber(); 
+
+
+        // 4. DTO 생성
+        ReviewDTO dto = new ReviewDTO();
+        dto.setProduct_id(productId);
+        dto.setUser_number(userNumber);
+        dto.setContent(content);
+        dto.setRating(rating);
+        dto.setReview_img(reviewImgPath);
+
+
+        // 5. DB 저장
+        Connection conn = null;
         int rowCount = 0;
+
         try {
+            conn = DBConn.getConnection();
+            ReviewDAO dao = new ReviewDAOImpl(conn);
             rowCount = dao.insert(dto);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            // 주의: DBConn.close()가 Connection을 닫는 로직인지 확인하세요.
-            // 보통 핸들러에서는 커넥션을 직접 관리하기보다 서비스 레이어를 거치는 게 좋습니다.
-            conn.close(); 
+
         }
+
+        // 6. 결과 페이지 이동 (수정본)
+        response.setContentType("text/html; charset=UTF-8");
+        java.io.PrintWriter out = response.getWriter();
         
-        // 5. 결과 처리
         if (rowCount == 1) {
-            // 성공 시 이동할 상세 페이지 주소 (DispatcherServlet이 처리하도록 리다이렉트 경로 리턴)
-            // 뷰 리졸버 설정에 따라 "redirect:..." 형식을 쓰거나 직접 경로를 적어줍니다.
-            return "/product/product_detail.htm?product_id=" + productId; 
+            // 성공 시: 브라우저에게 이 주소로 다시 접속하라고 직접 명령
+        	String location = request.getContextPath() + "/product/product_detail.htm?product_id=" + productId;
+            out.println("<script>");
+            out.println("alert('리뷰가 정상적으로 등록되었습니다.');");
+            out.println("location.href='" + location + "';");
+            out.println("</script>");
+            out.close();
+            return null;
         } else {
-            return "/view/review/review_error.jsp";
+            out.println("<script>");
+            out.println("alert('리뷰 등록에 실패했습니다. 다시 시도해주세요.');");
+            out.println("history.back();"); // 이전 작성 페이지로 돌려보냄
+            out.println("</script>");
+            out.close();
+            return null;
         }
     }
 }

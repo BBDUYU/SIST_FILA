@@ -2,6 +2,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
+<script src="${pageContext.request.contextPath}/js/list.js"></script>
+
 <c:if test="${not empty errorMsg}">
     <script>
         alert("${errorMsg}");
@@ -270,7 +272,10 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <button type="button" class="review-more__btn">상품 리뷰<span class=" crema-product-reviews-count" data-product-code="${product.product_id}"></span></button>
+                                            <button type="button" class="review-more__btn" onclick="openReviewModal()">
+                                             상품 리뷰
+                                             <span class=" crema-product-reviews-count" data-product-code="${product.product_id}"></span>
+                                         	</button>
                                         </div>
                                         <div>
                                             <button type="button" class="qna-more__btn" data-no="${product.product_id}">상품 문의<span>0</span></button>
@@ -392,8 +397,37 @@ $(document).ready(function() {
             observeParents: true
         });
     }
-}); // ← 아까 여기 밑에 쓸데없는 '}' 가 하나 더 붙어있었을 거예요!
+});
 </script>
+
+<script>
+    // [리뷰 작성] 버튼 눌렀을 때 호출되는 함수
+    function openReviewModal() {
+       
+        var modal = document.getElementById("reviewModal");
+        if(modal) {
+            modal.style.display = "block"; // 보이게 설정
+            
+            // (선택사항) 모달 열릴 때 스크롤 막기
+            document.body.style.overflow = "hidden"; 
+        } else {
+            alert("모달창을 찾을 수 없습니다.");
+        }
+    }
+
+    // [X] 버튼이나 배경 눌렀을 때 호출되는 함수
+    function closeReviewModal() {
+        var modal = document.getElementById("reviewModal");
+        if(modal) {
+            modal.style.display = "none"; // 안 보이게 설정
+            
+            // 스크롤 다시 풀기
+            document.body.style.overflow = "auto";
+        }
+    }
+</script>
+
+<jsp:include page="/view/review/review_modal.jsp" />
 
 <script>
     // [cart 관련 추가 4] 카트담기 클릭 처리
