@@ -1,24 +1,37 @@
 package mypage;
 
+import java.sql.Connection;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import command.CommandHandler;
 import member.MemberDTO;
 
+import com.util.ConnectionProvider;
+
 public class DeliveryAddressHandler implements CommandHandler {
 
     @Override
     public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        // 1. 로그인 체크
+        // 1) 로그인 체크
         MemberDTO loginUser = (MemberDTO) request.getSession().getAttribute("auth");
         if (loginUser == null) {
             return "redirect:/login.htm";
         }
 
-        // 2. qna.jsp 방식과 동일하게 본문 JSP를 직접 리턴
-        // 이렇게 하면 delivery_address.jsp 안의 include들이 실행되면서 전체 페이지가 구성됩니다.
-        return "/view/mypage/delivery_address.jsp"; 
+        // 2) 배송지 목록 조회해서 request에 담기
+        AddressDAO dao = new AddressDAO();
+
+        try (Connection conn = ConnectionProvider.getConnection()) {
+            // ✅ 기본배송지 먼저, 최신순 정렬된 리스트를 가져온다고 가정
+            List<AddressDTO> list = dao.selectListByUser(conn, loginUser.getUserNumber());
+            request.setAttribute("addrList", list);
+        }
+
+        // 3) 페이지 이동
+        return "/view/mypage/delivery_address.jsp";
     }
 }
