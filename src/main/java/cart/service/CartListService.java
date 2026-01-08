@@ -87,33 +87,27 @@ public class CartListService {
 
 
     
-    private Integer findCombinationIdBySize(Connection conn, String productId, String size) throws Exception {
+	private Integer findCombinationIdBySize(Connection conn, String productId, String size) throws Exception {
+	    String sql =
+	        "SELECT poc.combination_id " +
+	        "FROM product_option_combinations poc " +
+	        "JOIN product_option_combi_values pocv ON poc.combination_id = pocv.combination_id " +
+	        "JOIN product_option_values pov ON pocv.value_id = pov.value_id " +
+	        "WHERE poc.product_id = ? " +
+	        "  AND TRIM(pov.value_name) = ?"; // 공백 문제를 방지하기 위해 TRIM 사용
 
-        String sql =
-            "SELECT combination_id FROM ( " +
-            "  SELECT poc.combination_id " +
-            "  FROM product_option_combinations poc " +
-            "  JOIN product_option_combi_values pocv ON pocv.combination_id = poc.combination_id " +
-            "  JOIN product_option_values pov ON pov.value_id = pocv.value_id " +
-            "  JOIN product_option_groups pog ON pog.option_group_id = pov.option_group_id " +
-            "  JOIN option_masters om ON om.master_id = pog.master_id " +
-            "  WHERE poc.product_id = ? " +
-            "    AND om.option_name = '사이즈' " +
-            "    AND pov.value_name = ? " +
-            ") WHERE ROWNUM = 1";
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, productId);
+	        pstmt.setString(2, size.trim());
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, productId);
-            pstmt.setString(2, size);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("combination_id");
-                }
-            }
-        }
-        return null;
-    }
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt("combination_id");
+	            }
+	        }
+	    }
+	    return null;
+	}
 
 
 
@@ -154,6 +148,49 @@ public class CartListService {
         } catch (SQLException e) {
             System.err.println("수량 변경 중 에러: " + e.getMessage());
             throw e;
+        }
+    }
+ // [6] 옵션 및 수량 통합 변경
+    public void updateItemOption(int cartItemId, String size, int qty) throws Exception {
+        String getPidSql = "SELECT product_id FROM cart_items WHERE cart_item_id = ?";
+        String updateSql = "UPDATE cart_items SET combination_id = ?, quantity = ? WHERE cart_item_id = ?";
+
+        try (Connection conn = ConnectionProvider.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                String productId = null;
+                try (PreparedStatement pstmt = conn.prepareStatement(getPidSql)) {
+                    pstmt.setInt(1, cartItemId);
+                    try (ResultSet rs = pstmt.executeQuery()) {
+                        if (rs.next()) productId = rs.getString("product_id");
+                    }
+                }
+
+                System.out.println("디버깅 - cartItemId: " + cartItemId + ", productId: " + productId + ", size: [" + size + "]");
+
+                if (productId != null) {
+                    // [중요] 사이즈 앞뒤 공백 제거
+                    Integer newCombiId = findCombinationIdBySize(conn, productId, size.trim());
+                    System.out.println("디버깅 - 찾아낸 newCombiId: " + newCombiId);
+
+                    if (newCombiId != null) {
+                        try (PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
+                            pstmt.setInt(1, newCombiId);
+                            pstmt.setInt(2, qty);
+                            pstmt.setInt(3, cartItemId);
+                            int rowCount = pstmt.executeUpdate();
+                            System.out.println("디버깅 - 업데이트된 행 개수: " + rowCount);
+                        }
+                    } else {
+                        System.out.println("결과 - 해당 사이즈에 맞는 combination_id를 찾지 못함");
+                    }
+                }
+                conn.commit();
+            } catch (Exception e) {
+                conn.rollback();
+                e.printStackTrace(); // 여기서 에러가 찍힐 수 있음
+                throw e;
+            }
         }
     }
 }

@@ -353,7 +353,7 @@
         </div>
 
         <div class="util-cart">
-            <button type="button" class="cart__btn" id="cart_cnt" onclick="location.href='${pageContext.request.contextPath}/order/cart.htm';">cart</button>
+            <button type="button" class="cart__btn" id="cart_cnt" onclick="location.href='${pageContext.request.contextPath}/pay/cart.htm';">cart</button>
         </div>
     </div>
 </header>
