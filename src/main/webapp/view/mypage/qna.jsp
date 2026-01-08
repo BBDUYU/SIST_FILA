@@ -82,40 +82,7 @@
 
 									<p class="date" style="user-select: auto !important;">2026-01-05 10:51</p>
 								</div>
-								
-								<!-- 만족도 -->
-								<div class="a-point-box" style="user-select: auto !important;">
-
-									<p style="user-select: auto !important;">
-										답변내용 별점 평가
-									</p>
-									<div class="star-inp-box" style="user-select: auto !important;">
-										<input type="radio" id="reviewStar01" name="qnaStarPoint" disabled="" style="user-select: auto !important;">
-										<label for="reviewStar01" style="user-select: auto !important;"></label>
-
-										<input type="radio" id="reviewStar02" name="qnaStarPoint" disabled="" style="user-select: auto !important;">
-										<label for="reviewStar02" style="user-select: auto !important;"></label>
-
-										<input type="radio" id="reviewStar03" name="qnaStarPoint" disabled="" style="user-select: auto !important;">
-										<label for="reviewStar03" style="user-select: auto !important;"></label>
-
-										<input type="radio" id="reviewStar04" name="qnaStarPoint" disabled="" style="user-select: auto !important;">
-										<label for="reviewStar04" style="user-select: auto !important;"></label>
-
-										<input type="radio" id="reviewStar05" name="qnaStarPoint" checked="" style="user-select: auto !important;">
-										<label for="reviewStar05" style="user-select: auto !important;"></label>
-
-										<div class="bg" style="user-select: auto !important;">
-											<div style="user-select: auto !important;"></div>
-											<div style="user-select: auto !important;"></div>
-											<div style="user-select: auto !important;"></div>
-											<div style="user-select: auto !important;"></div>
-											<div style="user-select: auto !important;"></div>
-										</div>
-									</div>
-
-								</div>
-								<!-- //만족도 -->
+	
 
 							</div>
 							
@@ -189,5 +156,7 @@ var contextPath = '${pageContext.request.contextPath}';
 </script>
 
 <jsp:include page="/view/common/footer.jsp"/>
+<%-- <jsp:include page="/view/mypage//qna_write.jsp"/>
+ --%>
 </body>
 </html>
