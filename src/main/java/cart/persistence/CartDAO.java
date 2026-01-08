@@ -4,29 +4,31 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import cart.domain.CartItemDTO;
+import order.domain.OrderItemDTO;
 
 public class CartDAO {
-    private Connection conn;
-    public CartDAO(Connection conn) { this.conn = conn; }
+	private static CartDAO dao = null;
+    private CartDAO() {}
+    public static CartDAO getInstance() {
+        if (dao == null) dao = new CartDAO();
+        return dao;
+    }
 
     // [1] 전체 조회
-    public List<CartItemDTO> selectAll() throws Exception {
-        
-    	String sql =
-    			  "SELECT ci.cart_item_id, ci.user_number, ci.product_id, " +
-    			  "       p.name AS product_name, p.price AS origin_unit_price, " +
-    			  "       NVL(p.discount_rate, 0) AS discount_rate, " +
-    			  "       ROUND(p.price * (100 - NVL(p.discount_rate,0)) / 100) AS sale_unit_price, " +
-    			  "       ci.quantity, " +
-    			  "       (ROUND(p.price * (100 - NVL(p.discount_rate,0)) / 100) * ci.quantity) AS line_amount, " +
-    			  "       mpi.image_url AS main_image_url, " +
-    			  "       CAST(NULL AS VARCHAR2(50)) AS size " +   // ✅ size 없으면 일단 NULL로
-    			  "FROM cart_items ci ...";
+    public List<CartItemDTO> selectAll(Connection conn) throws Exception {
+        String sql = "SELECT ci.cart_item_id, ci.user_number, ci.product_id, " +
+                     "p.name AS product_name, p.price AS origin_unit_price, " +
+                     "NVL(p.discount_rate, 0) AS discount_rate, " +
+                     "ROUND(p.price * (100 - NVL(p.discount_rate,0)) / 100) AS sale_unit_price, " +
+                     "ci.quantity, " +
+                     "(ROUND(p.price * (100 - NVL(p.discount_rate,0)) / 100) * ci.quantity) AS line_amount, " +
+                     "NULL AS main_image_url, " + // 임시 처리
+                     "NULL AS size " +
+                     "FROM cart_items ci " +
+                     "JOIN products p ON ci.product_id = p.product_id";
 
-    	
-    	List<CartItemDTO> list = new ArrayList<>();
-        
-    	try (PreparedStatement pstmt = conn.prepareStatement(sql);
+        List<CartItemDTO> list = new ArrayList<>();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 CartItemDTO dto = new CartItemDTO();
@@ -47,44 +49,74 @@ public class CartDAO {
         return list;
     }
 
-    // [2] 담기 (이름을 insertCart로 맞춤)
-    public void insertCart(String productId, int quantity, int userNumber) throws Exception {
-        String sql =
-            "INSERT INTO CART_ITEMS (CART_ITEM_ID, USER_NUMBER, PRODUCT_ID, COMBINATION_ID, QUANTITY, ADDED_AT) " +
-            "VALUES ((SELECT NVL(MAX(CART_ITEM_ID), 0) + 1 FROM CART_ITEMS), ?, ?, ?, ?, SYSDATE)";
-
+    // [2] 주문 전환용 조회 (중요: 테이블명을 CART_ITEMS로 통일)
+    public List<OrderItemDTO> selectCartForOrder(Connection conn, int userNumber) throws SQLException {
+        // p.NAME 컬럼을 추가로 조회합니다.
+        String sql = "SELECT ci.PRODUCT_ID, p.NAME, ci.COMBINATION_ID, ci.QUANTITY, " +
+                     "ROUND(p.price * (100 - NVL(p.discount_rate,0)) / 100) AS PRICE " +
+                     "FROM CART_ITEMS ci " +
+                     "JOIN PRODUCTS p ON ci.PRODUCT_ID = p.PRODUCT_ID " +
+                     "WHERE ci.USER_NUMBER = ?"; 
+        
+        List<OrderItemDTO> list = new ArrayList<>();
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userNumber);
-            pstmt.setString(2, productId);
-            pstmt.setNull(3, Types.NUMERIC);
-            pstmt.setInt(4, quantity);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(OrderItemDTO.builder()
+                            .productId(rs.getString("PRODUCT_ID"))
+                            .productName(rs.getString("NAME")) // <-- 여기서 상품명을 담아줍니다!
+                            .combinationId(rs.getInt("COMBINATION_ID"))
+                            .quantity(rs.getInt("QUANTITY"))
+                            .price(rs.getInt("PRICE"))
+                            .build());
+                }
+            }
+        }
+        return list;
+    }
+
+    // [3] 장바구니 비우기 (Service에서 호출용)
+    public void deleteCartAfterOrder(Connection conn, int userNumber) throws SQLException {
+        String sql = "DELETE FROM CART_ITEMS WHERE USER_NUMBER = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userNumber);
             pstmt.executeUpdate();
         }
     }
 
-    // [3] 선택 삭제
-    public int deleteItems(String ids) throws Exception {
-        String sql = "DELETE FROM cart_items WHERE cart_item_id IN (" + ids + ")";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            return pstmt.executeUpdate();
-        }
-    }
-
-    // [4] 품절 삭제
-    public int deleteSoldOutItems() throws Exception {
-        String sql = "DELETE FROM cart_items WHERE product_id IN (SELECT product_id FROM products WHERE stock <= 0)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            return pstmt.executeUpdate();
-        }
-    }
-    
-    // [5] 수량 변경
-    public int updateQuantity(int cartItemId, int quantity) throws Exception {
+    // [4] 수량 변경 (Connection 추가)
+    public int updateQuantity(Connection conn, int cartItemId, int quantity) throws Exception {
         String sql = "UPDATE cart_items SET quantity = ? WHERE cart_item_id = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, quantity);
             pstmt.setInt(2, cartItemId);
             return pstmt.executeUpdate();
         }
+    }
+    public List<OrderItemDTO> selectSelectedCartItems(Connection conn, String ids) throws SQLException {
+        // p.PRICE는 정가, 계산된 값은 할인가(PRICE)로 가져옵니다.
+        String sql = "SELECT ci.PRODUCT_ID, p.NAME, ci.COMBINATION_ID, ci.QUANTITY, " +
+                     "p.PRICE AS ORIGINAL_PRICE, " + // 정가 추가
+                     "ROUND(p.PRICE * (100 - NVL(p.DISCOUNT_RATE, 0)) / 100) AS SALE_PRICE " +
+                     "FROM CART_ITEMS ci " +
+                     "JOIN PRODUCTS p ON ci.PRODUCT_ID = p.PRODUCT_ID " +
+                     "WHERE ci.CART_ITEM_ID IN (" + ids + ")";
+        
+        List<OrderItemDTO> list = new ArrayList<>();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                list.add(OrderItemDTO.builder()
+                        .productId(rs.getString("PRODUCT_ID"))
+                        .productName(rs.getString("NAME"))
+                        .combinationId(rs.getInt("COMBINATION_ID"))
+                        .quantity(rs.getInt("QUANTITY"))
+                        .originalPrice(rs.getInt("ORIGINAL_PRICE")) // 정가 세팅
+                        .price(rs.getInt("SALE_PRICE"))             // 할인가 세팅
+                        .build());
+            }
+        }
+        return list;
     }
 }

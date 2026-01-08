@@ -261,6 +261,25 @@
 	</div>
 
 	<script>
+	function CheckedBuy() {
+	    let selectedItems = $(".item-chk:checked");
+	    if (selectedItems.length === 0) {
+	        alert("주문하실 상품을 선택해주세요.");
+	        return;
+	    }
+
+
+	    let itemIds = [];
+	    selectedItems.each(function() {
+
+	        let id = $(this).closest('li').find('button.del').attr('onclick').replace(/[^0-9]/g, '');
+	        itemIds.push(id);
+	    });
+
+	    location.href = contextPath + "/order/orderForm.htm?cartItemIds=" + itemIds.join(",");
+	}
+	
+	
 var contextPath = '${pageContext.request.contextPath}';
 
 $(document).ready(function() {

@@ -508,24 +508,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 <script>
-   //[pay 관련 추가 1] 바로 구매하기 클릭 처리
-   function goBuyNow() {
-   
-       var sizeChecked = document.querySelector('input[name="ProductSize"]:checked');
-       if (!sizeChecked) {
-           alert("사이즈를 선택해 주세요");
-           return;
-       }
-   
-       var isLogin = ${empty sessionScope.auth ? "false" : "true"};
-       if (!isLogin) {
-           location.href = "${loginUrl}";
-           return;
-       }
-   
-       // 실제 구매 로직으로 이동
-       location.href = "/";
-   }
+function goBuyNow() {
+    // 1. 선택된 사이즈(Combination ID) 가져오기
+    var sizeChecked = document.querySelector('input[name="ProductSize"]:checked');
+    if (!sizeChecked) {
+        alert("사이즈를 선택해 주세요");
+        return;
+    }
+    var combinationId = sizeChecked.value; // 선택된 라디오 버튼의 value값
+
+    // 2. 현재 입력된 수량 가져오기
+    // 보통 수량 입력창의 id가 'quantity' 또는 'qty'일 것입니다.
+    var quantity = document.getElementById("quantity") ? document.getElementById("quantity").value : 1;
+
+    // 3. 로그인 체크
+    var isLogin = ${empty sessionScope.auth ? "false" : "true"};
+    if (!isLogin) {
+        alert("로그인이 필요한 서비스입니다.");
+        location.href = "${pageContext.request.contextPath}/login.htm"; // 로그인 경로 확인
+        return;
+    }
+
+    // 4. 결제 페이지로 이동 (productId는 고정값이므로 그대로 사용)
+    var productId = "${product.product_id}"; 
+    location.href = "${pageContext.request.contextPath}/order/orderForm.htm" 
+                 + "?productId=" + productId 
+                 + "&quantity=" + quantity 
+                 + "&combinationId=" + combinationId;
+}
 </script>
 
 </body>
