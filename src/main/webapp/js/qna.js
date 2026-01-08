@@ -1,21 +1,31 @@
-// qna.js
-$(function () {
+(function ($) {
 
-	// 열기
-	$(document).on('click', '.qna-write__btn', function (e) {
-		e.preventDefault();
-		$('.common__layer._qna_write').fadeIn(200);
-		$('body').addClass('no-scroll');
-	});
+    $(function () {
 
-	// 닫기
-	$(document).on(
-		'click',
-		'.common__layer._qna_write .close__btn, .common__layer._qna_write .layer-bg__wrap',
-		function () {
-			$('.common__layer._qna_write').fadeOut(200);
-			$('body').removeClass('no-scroll');
-		}
-	);
+        // 강제 초기 닫기
+        $('#qnaWriteLayer').removeClass('is_open');
+        $('body').removeClass('layer_open');
 
-});
+        // 열기
+        $(document).on('click', '#btnOpenQna', function () {
+            $('#qnaWriteLayer').addClass('is_open');
+            $('body').addClass('layer_open');
+        });
+
+        // 닫기
+        $(document).on('click', '#btnCloseQna, .layer_dim', function () {
+            $('#qnaWriteLayer').removeClass('is_open');
+            $('body').removeClass('layer_open');
+        });
+
+        // ESC
+        $(document).on('keydown', function (e) {
+            if (e.keyCode === 27) {
+                $('#qnaWriteLayer').removeClass('is_open');
+                $('body').removeClass('layer_open');
+            }
+        });
+
+    });
+
+})(jQuery);
