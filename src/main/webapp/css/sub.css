@@ -9366,6 +9366,20 @@ input:not(:disabled)._type_line_red {border-color: rgb(255,0,0) !important;}
   line-height: 1.7;
   color:#111;
 }
+/* 모달 기본 닫힘 */
+.common__layer {
+    display: none;
+}
+
+/* 모달 열림 */
+.common__layer.is_open {
+    display: block;
+}
+
+/* 모달 열렸을 때 배경 스크롤 막기 */
+body.layer_open {
+    overflow: hidden;
+}
 
 
 /* //2025-11-24 대리점개설 수정 */
