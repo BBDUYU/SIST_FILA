@@ -11,8 +11,11 @@
 
 		<div class="con">
 			<form name="addr" id="addr" action="/mypage/pop_delivery_result.asp" target="dataFrame" method="post">	
-			<input type="hidden" name="addrNo" value="1203475">
+			<input type="hidden" name="addrNo" value="${param.addrNo}">
 			<div class="addr-add-box">
+				<div>
+					<input type="text" placeholder="배송지 이름" name="addressName" value="" maxlength="25" id="addrRecipient ">
+				</div>
 				<div>
 					<input type="text" placeholder="수령인" name="addrname" value="지영주" maxlength="25" id="addrRecipient ">
 				</div>
@@ -23,13 +26,12 @@
 
 				<div class="_addr">
 					<div>
-						<input type="text" name="zipcode" readonly="" value="06193" onclick="searchZipD5();void(0);" id="addrNum1">
-						<button type="button" class="zipcode__btn" onclick="searchZipD5();void(0);">주소찾기</button>
+						<input type="text" name="zipcode" readonly value="" id="addrZip">
+						<button type="button" class="zipcode__btn">주소찾기</button>
 					</div>
 
 					<div>
 						<input type="text" name="addr3" maxlength="200" value="서울 강남구 테헤란로70길 12 (대치동)" readonly="" id="addrNum1">
-						<input type="hidden" name="addr1" value="서울 강남구 대치동 890-60" readonly="" id="addrNum2" class="input_size4">
 					</div>
 
 					<div>
@@ -59,7 +61,7 @@
 
 		<div class="foot">
 			<button type="button" onclick="$('.close__btn').click();">취소</button>
-			<button type="button" class="on" onclick="javascript:addrSubmit();">저장하기</button>
+			<button type="button" class="on" id="btnSaveEdit">저장하기</button>
 		</div>
 	</div>
 </div>
@@ -109,29 +111,37 @@ var contextPath = '${pageContext.request.contextPath}';
 </script>
 
 <script>
-function addrSubmit(){
-  var $f = jQuery('#addr');
+(function($){
+	  $(document).off('click.addrEdit', '#btnSaveEdit')
+	             .on('click.addrEdit', '#btnSaveEdit', function(e){
+	    e.preventDefault();
+	    e.stopPropagation();
 
-  jQuery.ajax({
-	  url: contextPath + '/mypage/address/edit.htm',
-    type: 'POST',
-    data: $f.serialize(),
-    dataType: 'json',
-    success: function(res){
-      if(res && res.ok){
-        if (window.closeQnaModal) closeQnaModal();
-        location.reload();
-      } else {
-        alert('수정 실패');
-      }
-    },
-    error: function(xhr){
-      alert('수정 실패 (' + xhr.status + ')');
-    }
-  });
-}
-</script>
+	    var $form = $(this).closest('.common__layer').find('form#addr');
 
-<script>
-	if (!window.jQuery) document.write('<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"><\/script>');
+	    var addrNo = $form.find('input[name=addrNo]').val();
+	    if(!addrNo){
+	      alert('addrNo가 없습니다. (수정 대상 주소번호)');
+	      return;
+	    }
+
+	    $.ajax({
+	      url: contextPath + '/mypage/address/edit.htm',
+	      type: 'POST',
+	      data: $form.serialize(),
+	      dataType: 'json',
+	      success: function(res){
+	        if(res && res.ok){
+	          if (window.closeQnaModal) closeQnaModal();
+	          location.reload();
+	        }else{
+	          alert('수정 실패');
+	        }
+	      },
+	      error: function(xhr){
+	        alert('수정 실패 (' + xhr.status + ')');
+	      }
+	    });
+	  });
+	})(jQuery);
 </script>

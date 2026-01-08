@@ -49,14 +49,19 @@ public class AddressAddHandler implements CommandHandler {
     AddressDAO dao = new AddressDAO();
 
     try (Connection conn = ConnectionProvider.getConnection()) {
+    	  conn.setAutoCommit(false);
 
-      // 기본배송지로 저장이면 기존 기본 해제
-      if (dto.getIsDefault() == 1) {
-        dao.clearDefault(conn, dto.getUserNumber());
-      }
+    	  if (dto.getIsDefault() == 1) {
+    	    dao.clearDefault(conn, dto.getUserNumber());
+    	  }
 
-      dao.insert(conn, dto);
-    }
+    	  dao.insert(conn, dto);
+    	  conn.commit();
+    	} catch (Exception e) {
+    	  // try-with-resources라 conn 참조가 없으면 아래처럼 구조 바꾸거나,
+    	  // Connection을 try 밖에 선언해서 rollback 처리하세요.
+    	  throw e;
+    	}
 
     // ✅ 모달 요청이면 JSON으로 응답(프론트에서 닫고 새로고침)
     response.setContentType("application/json; charset=UTF-8");
