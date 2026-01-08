@@ -20,15 +20,7 @@ public class InquiryHandler implements CommandHandler {
             return "redirect:/login.htm";
         }
 
-        QnaDAO dao = new QnaDAOImpl();
-
-        // 1️⃣ QnA 목록
-        List<QnaDTO> qnaList = dao.findByUser(loginUser.getUserNumber());
-        request.setAttribute("qnaList", qnaList);
-
-        // 2️⃣ 카테고리 (모달에서도 사용)
-        request.setAttribute("categoryList", dao.findCategoryList());
-
+      
         // 🔥 핵심: mypage.jsp가 이걸 include 하게 만든다
         request.setAttribute("contentPage", "/view/mypage/inquiry.jsp");
 

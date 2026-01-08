@@ -2,37 +2,40 @@ package mypage.qna;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import command.CommandHandler;
 import member.MemberDTO;
+import mypage.QnaService;
 
 public class QnaWriteHandler implements CommandHandler {
 
-    @Override
-    public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@Override
+	public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        HttpSession session = request.getSession(false);
-        MemberDTO loginUser = (session != null) ? (MemberDTO) session.getAttribute("auth") : null;
+	    System.out.println("🔥🔥 QnaWriteHandler 진입");
 
-        if (loginUser == null) {
-            return "redirect:/login.htm";
-        }
+	    MemberDTO loginUser = (MemberDTO) request.getSession().getAttribute("auth");
+	    if (loginUser == null) {
+	        response.sendRedirect(request.getContextPath() + "/login.htm");
+	        return null;
+	    }
 
-        // 파라미터
-        int categoryId = Integer.parseInt(request.getParameter("categoryId"));
-        String title = request.getParameter("title");
-        String content = request.getParameter("content");
+	    int categoryId = Integer.parseInt(request.getParameter("category_id"));
+	    String title = request.getParameter("title");
+	    String content = request.getParameter("content");
 
-        QnaDTO dto = new QnaDTO();
-        dto.setUserNumber(loginUser.getUserNumber());
-        dto.setCategoryId(categoryId);
-        dto.setTitle(title);
-        dto.setContent(content);
+	    QnaDTO dto = QnaDTO.builder()
+	            .category_id(categoryId)
+	            .title(title)
+	            .content(content)
+	            .build();
 
-        QnaDAO dao = new QnaDAOImpl();
-        dao.insert(dto);
+	    QnaService service = QnaService.getInstance();
+	    service.writeQna(loginUser, dto);
 
-        return "redirect:/mypage/qna.htm";
-    }
+	    // 🔥 핵심 수정
+	    response.sendRedirect(request.getContextPath() + "/mypage/qna.htm");
+	    return null;
+	}
+
 }
