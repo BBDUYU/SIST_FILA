@@ -135,19 +135,41 @@ var contextPath = '${pageContext.request.contextPath}';
 (function ($) {
 
   /* =========================
+     공통 모달 노출 함수 (CSS 강제 보정 포함)
+     ========================= */
+  function showModalForce(overlayId, contentClass) {
+      $(overlayId).css('display', 'flex').show();
+      
+      // AJAX로 로드된 .common__layer가 height 0이 되지 않도록 강제 설정
+      $(contentClass).css({
+          'display': 'block',
+          'visibility': 'visible',
+          'opacity': '1',
+          'z-index': '9999'
+      });
+      
+      $(contentClass + ' .inner').css({
+          'display': 'block',
+          'visibility': 'visible',
+          'z-index': '10000'
+      });
+
+      $('body').css('overflow', 'hidden');
+  }
+
+  /* =========================
      배송지 수정 (edit_address.jsp)
      ========================= */
   $(document).on('click', '.modify__btn', function (e) {
     e.preventDefault();
 
-    // onclick="addrAddPopup('1203475')" 에서 addrNo 추출
+    // addrNo 추출 로직
     var addrNo = $(this).attr('onclick').match(/'([^']+)'/)[1];
 
     $('#EditaddModalContent').load(
       contextPath + '/view/mypage/edit_address.jsp?addrNo=' + addrNo,
       function () {
-        $('#EditaddressModalOverlay').css('display', 'flex').show();
-        $('body').css('overflow', 'hidden');
+        showModalForce('#EditaddressModalOverlay', '.common__layer');
       }
     );
   });
@@ -161,8 +183,7 @@ var contextPath = '${pageContext.request.contextPath}';
     $('#AddaddModalContent').load(
       contextPath + '/view/mypage/add_address.jsp',
       function () {
-        $('#AddaddressModalOverlay').css('display', 'flex').show();
-        $('body').css('overflow', 'hidden');
+        showModalForce('#AddaddressModalOverlay', '.common__layer');
       }
     );
   });
@@ -173,15 +194,12 @@ var contextPath = '${pageContext.request.contextPath}';
   window.closeQnaModal = function () {
     $('#AddaddressModalOverlay').hide();
     $('#EditaddressModalOverlay').hide();
-
     $('#AddaddModalContent').empty();
     $('#EditaddModalContent').empty();
-
     $('body').css('overflow', 'auto');
   };
 
-  // 닫기 버튼
-  $(document).on('click', '.close__btn', function () {
+  $(document).on('click', '.close__btn, .btnCancel', function () {
     closeQnaModal();
   });
 

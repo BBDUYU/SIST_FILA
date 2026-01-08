@@ -26,7 +26,6 @@
 <script src="${pageContext.request.contextPath}/js/main.js"></script>
     
     <!-- QnA JS -->
-    <script src="${pageContext.request.contextPath}/js/qna.js"></script>
     <script src="${pageContext.request.contextPath}/js/inquiry.js"></script>
     <script src="${pageContext.request.contextPath}/js/mypage.js"></script>
 
@@ -119,23 +118,13 @@
 								<!-- //만족도 -->
 
 							</div>
-							<!-- A -->
-							<!-- QnA 모달 오버레이 -->
-						
 							
-							<!-- //A -->
 						</li>
 						<!-- 복제예정 -->
 					</ul>
 					<!-- //1:1문의 -->
-					<div id="qnaModalOverlay"
-						     class="style-modal-overlay"
-						     onclick="if(event.target === this) closeQnaModal();"
-						     style="display:none;">
-						
-						    <div id="qnaModalContent" class="style-modal-wrapper">
-						        <!-- AJAX로 qna_modal.jsp 들어올 자리 -->
-						    </div>
+					<div id="qnaModalOverlay" style="display:none;">
+						    <div id="qnaModalContent"></div>
 						</div>
 				</section>
 
@@ -156,23 +145,32 @@ var contextPath = '${pageContext.request.contextPath}';
 	  });
 
 	  function openQnaModal() {
-	    $.ajax({
-	      url: contextPath + '/view/mypage/qna_modal.jsp', // 또는 handler 경로
-	      type: 'GET',
-	      dataType: 'html',
-	      beforeSend: function (xhr) {
-	        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-	      },
-	      success: function (res) {
-	        $('#qnaModalContent').html(res);
-	        $('#qnaModalOverlay').css('display', 'flex').show();
-	        $('body').css('overflow', 'hidden');
-	      },
-	      error: function () {
-	        alert('문의 작성 화면을 불러오지 못했습니다.');
-	      }
-	    });
-	  }
+		    $.ajax({
+		        url: contextPath + '/view/mypage/qna_modal.jsp',
+		        type: 'GET',
+		        success: function (res) {
+		            // 1. 데이터를 먼저 넣는다
+		            $('#qnaModalContent').html(res);
+		            
+		            // 2. 부모 div를 단순히 보이게 한다
+		            $('#qnaModalOverlay').show(); 
+
+		            // 3. (핵심) AJAX로 들어온 태그들이 CSS 스타일을 먹도록 강제 노출
+		            // 만약 CSS 파일에 display: none이 걸려있을 수 있으므로 강제 block 처리
+		            $('.common__layer').css({
+		                'display': 'block',
+		                'z-index': '9999' 
+		            });
+		            
+		            $('.common__layer .inner').css({
+		                'display': 'block',
+		                'z-index': '10000'
+		            });
+
+		            $('body').css('overflow', 'hidden'); // 뒷배경 스크롤 방지
+		        }
+		    });
+		}
 
 	  // 닫기
 	  window.closeQnaModal = function () {

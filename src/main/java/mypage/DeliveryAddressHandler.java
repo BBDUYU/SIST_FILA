@@ -11,14 +11,14 @@ public class DeliveryAddressHandler implements CommandHandler {
     @Override
     public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        // 로그인 체크 (너희 세션 auth 기준)
+        // 1. 로그인 체크
         MemberDTO loginUser = (MemberDTO) request.getSession().getAttribute("auth");
-        if (loginUser == null) return "redirect:/login.htm";
+        if (loginUser == null) {
+            return "redirect:/login.htm";
+        }
 
-        // ✅ 마이페이지 레이아웃에 배송지 페이지를 꽂기
-        request.setAttribute("contentPage", "/view/mypage/delivery_address.jsp");
-
-        // ✅ 레이아웃으로 보내기 (중요)
-        return "/view/mypage/mypage.jsp";
+        // 2. qna.jsp 방식과 동일하게 본문 JSP를 직접 리턴
+        // 이렇게 하면 delivery_address.jsp 안의 include들이 실행되면서 전체 페이지가 구성됩니다.
+        return "/view/mypage/delivery_address.jsp"; 
     }
 }
