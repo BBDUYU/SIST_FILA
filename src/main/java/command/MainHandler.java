@@ -15,7 +15,9 @@ public class MainHandler implements CommandHandler {
         
         // 1. 검색 파라미터 받기
         String searchItem = request.getParameter("searchItem");
-        
+        if (searchItem != null && !searchItem.trim().isEmpty()) {
+            search.SearchService.getInstance().recordSearchKeyword(searchItem);
+        }
         // 2. 서비스를 통해 데이터 뭉치 가져오기
         MainService service = MainService.getInstance();
         Map<String, Object> mainData = service.getMainData(searchItem);

@@ -42,6 +42,7 @@ public class MainService {
             // 1. 검색어 저장 (검색창 입력 시)
             if (searchItem != null && !searchItem.trim().isEmpty()) {
                 sDao.upsertKeyword(conn, searchItem.trim());
+                conn.commit();
             }
 
             // 2. 카테고리 리스트 조회
