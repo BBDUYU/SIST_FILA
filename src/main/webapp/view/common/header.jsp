@@ -50,11 +50,56 @@
         });
     });
 
+ // 쿠키 저장 함수 추가
+    function setRecentSearchCookie(keyword) {
+        let name = "recentSearch";
+        let expires = "";
+        let date = new Date();
+        date.setTime(date.getTime() + (24 * 60 * 60 * 1000 * 7)); // 7일 유지
+        expires = "; expires=" + date.toUTCString();
+
+        // 기존 쿠키 가져오기
+        let cookieValue = "";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for(let i = 0; i < ca.length; i++) {
+            let c = ca[i].trim();
+            if (c.indexOf(name + "=") == 0) cookieValue = c.substring((name + "=").length, c.length);
+        }
+
+        let searchList = cookieValue ? cookieValue.split(',') : [];
+        
+        // 중복 제거 및 최신 검색어 맨 앞으로
+        searchList = searchList.filter(item => item !== keyword);
+        searchList.unshift(keyword);
+        
+        // 최대 5개까지만 유지
+        if (searchList.length > 5) searchList.pop();
+
+        // 쿠키 저장 (콤마로 구분)
+        document.cookie = name + "=" + encodeURIComponent(searchList.join(',')) + expires + "; path=/";
+    }
+
     function searchRun2() {
         const searchItem = $("#searchItem2").val().trim();
         if (!searchItem) { alert("검색어를 입력해주세요."); return false; }
+
+        // 1. 최근 검색어 쿠키 저장 (추가된 부분)
+        setRecentSearchCookie(searchItem);
+
+        // 2. DB 저장 AJAX (기존 로직)
+        $.get("${pageContext.request.contextPath}/search/record.htm", { keyword: searchItem });
+
+        // 3. 페이지 이동
         location.href = "${pageContext.request.contextPath}/product/list.htm?searchItem=" + encodeURIComponent(searchItem);
         return false;
+    }
+    function wordRemoveAll() {
+        if(confirm("최근 검색어를 모두 삭제하시겠습니까?")) {
+            // 쿠키 만료 날짜를 과거로 설정하여 삭제
+            document.cookie = "recentSearch=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            $("#sWordHistory").html('<li class="no_search_list">최근 검색어가 없습니다.</li>');
+        }
     }
 </script>
 

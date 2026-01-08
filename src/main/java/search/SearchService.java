@@ -1,6 +1,8 @@
 package search;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+
 import com.util.ConnectionProvider;
 import com.util.JdbcUtil;
 
@@ -27,6 +29,17 @@ public class SearchService {
             throw new RuntimeException("검색어 기록 중 오류 발생", e);
         } finally {
             // 커넥션 반환
+            JdbcUtil.close(conn);
+        }
+    }
+    public ArrayList<SearchDTO> getPopularKeywords(int limit) {
+        Connection conn = null;
+        try {
+            conn = ConnectionProvider.getConnection();
+            return SearchDAO.getInstance().selectTopKeywords(conn, limit);
+        } catch (Exception e) {
+            throw new RuntimeException("인기 검색어 조회 중 오류 발생", e);
+        } finally {
             JdbcUtil.close(conn);
         }
     }

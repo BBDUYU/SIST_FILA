@@ -342,5 +342,37 @@ public class ProductsDAO {
     * } catch (Exception e) { e.printStackTrace(); } finally { JdbcUtil.close(rs);
     * JdbcUtil.close(pstmt); } // 제공된 JdbcUtil 사용 return list; }
     */
-    
+ // ProductsDAO.java 에 추가
+    public List<ProductsDTO> selectProductsBySearch(Connection conn, String searchItem) throws SQLException {
+        List<ProductsDTO> list = new ArrayList<>();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        // 카테고리 계층형 쿼리를 제거하고 상품명(NAME)으로 검색하는 단순 쿼리
+        String sql = 
+                "SELECT P.*, I.IMAGE_URL, " +
+                "       NVL(R.REVIEW_COUNT, 0) as REVIEW_COUNT, " +
+                "       NVL(R.AVG_RATING, 0.0) as AVG_RATING " +
+                "FROM PRODUCTS P " +
+                "LEFT JOIN PRODUCT_IMAGE I ON P.PRODUCT_ID = I.PRODUCT_ID AND I.IS_MAIN = 1 " +
+                "LEFT JOIN ( " +
+                "    SELECT PRODUCT_ID, COUNT(*) as REVIEW_COUNT, ROUND(AVG(RATING), 1) as AVG_RATING " +
+                "    FROM REVIEW GROUP BY PRODUCT_ID " +
+                ") R ON P.PRODUCT_ID = R.PRODUCT_ID " +
+                "WHERE P.NAME LIKE ? " + // 검색어 필터링
+                "ORDER BY P.CREATED_AT DESC";
+
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, "%" + searchItem + "%"); // 포함된 단어 찾기
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                list.add(makeDTO(rs));
+            }
+        } finally {
+            JdbcUtil.close(rs);
+            JdbcUtil.close(pstmt);
+        }
+        return list;
+    }
 }
