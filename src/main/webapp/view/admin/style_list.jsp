@@ -5,6 +5,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 <meta charset="UTF-8">
 <title>FILA Admin - 스타일 관리</title>
 <style>
@@ -184,13 +186,16 @@ body {
 							</c:choose>
 						</td>
 						<td>
-							<button class="small-btn"
-								onclick="location.href='${pageContext.request.contextPath}/admin/editStyle.htm?id=${s.style_id}'">수정</button>
-							<button class="small-btn"
-							    style="background-color: #e31837; color: white; border: none; margin-left:5px;"
-							    onclick="if(confirm('이 스타일과 관련된 모든 이미지 및 상품 매칭 정보가 삭제됩니다.\n정말 삭제하시겠습니까?')) { location.href='${pageContext.request.contextPath}/admin/toggleStyle.htm?id=${s.style_id}'; }">
-							    삭제
-							</button>
+						    <button class="small-btn"
+						        onclick="location.href='${pageContext.request.contextPath}/admin/editStyle.htm?id=${s.style_id}'">수정</button>
+						    
+						    <%-- 삭제 대신 상태 변경 토글 버튼 --%>
+						    <button type="button" 
+						            class="small-btn ${s.use_yn == 1 ? 'btn-stop' : 'btn-live'}" 
+						            style="background-color: ${s.use_yn == 1 ? '#e31837' : '#2ecc71'}; color: white; border: none; margin-left:5px; width: 100px;"
+						            onclick="toggleStatus('${s.style_id}', ${s.use_yn})">
+						        ${s.use_yn == 1 ? '비활성화' : '활성화'}
+						    </button>
 						</td>
 					</tr>
 				</c:forEach>
@@ -202,5 +207,33 @@ body {
 			</tbody>
 		</table>
 	</div>
+<script>
+function toggleStatus(id, currentStatus) {
+    const nextStatus = (currentStatus === 1) ? 0 : 1;
+    const msg = nextStatus === 1 ? "해당 스타일을 활성화하시겠습니까?" : "해당 스타일을 비활성화하시겠습니까?";
+
+    if (confirm(msg)) {
+        $.ajax({
+            // 매핑한 .htm 주소와 일치해야 합니다.
+            url: "${pageContext.request.contextPath}/admin/toggleStyle.htm",
+            type: "GET",
+            data: { 
+                id: id, 
+                status: nextStatus 
+            },
+            success: function(res) {
+                if (res.trim() === "success") {
+                    location.reload(); // 상태 반영을 위해 페이지 새로고침
+                } else {
+                    alert("상태 변경 처리에 실패했습니다.");
+                }
+            },
+            error: function() {
+                alert("서버 통신 오류가 발생했습니다.");
+            }
+        });
+    }
+}
+</script>
 </body>
 </html>

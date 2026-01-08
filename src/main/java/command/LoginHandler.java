@@ -37,8 +37,14 @@ public class LoginHandler implements CommandHandler {
             session.setAttribute("auth", member);
             session.setMaxInactiveInterval(60 * 30); // 30분 유지
 
-            response.sendRedirect(request.getContextPath() + "/index.htm");
-            
+            String returnUrl = request.getParameter("returnUrl");
+            if (returnUrl != null && !returnUrl.trim().isEmpty()
+                    && returnUrl.startsWith("/")
+                    && !returnUrl.startsWith("//")) {
+                response.sendRedirect(request.getContextPath() + returnUrl);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/index.htm");
+            }
             return null;
         }
         return null;

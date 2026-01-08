@@ -11,8 +11,9 @@ import javax.servlet.http.HttpSession;
 	    urlPatterns = {
 	        "/mypage/*",
 	        "/admin/*",
-	        "/board/*",
-	        "/test/*"
+	        "/mypage.htm",      // 추가
+	        "/inquiry/*",       // 추가
+	        "/pay/cart.htm"		// 로그인을 안 했을 때 product_detail에서 cart로 바로 이동하지 않게 하기 위해서 추가
 	    }
 	)
 	public class LoginCheckFilter implements Filter {
