@@ -24,6 +24,7 @@
 <!-- // end of :: header -->
 
 <form name="form6" id="form6"  target="dataFrame">
+
 	<input type="hidden" name="checkwish"><input type="hidden" name="ProductQuantity"></form>
 <iframe name="dataFrame" id="dataFrame" style="display:none;"></iframe>
 
@@ -31,6 +32,17 @@
 		<div id="contents" class="odr__contents">
            	<h2 class="tit__style1">주문 및 결제</h2>
 		<form name="user" method="post" > 
+		
+		<c:if test="${not empty cartItemIds}">
+	        <input type="hidden" name="cartItemIds" value="${cartItemIds}" />
+	    </c:if>
+	
+	    <c:if test="${isDirect}">
+	        <input type="hidden" name="productId" value="${orderItems[0].productId}" />
+	        <input type="hidden" name="quantity" value="${orderItems[0].quantity}" />
+	        <input type="hidden" name="combinationId" value="${orderItems[0].combinationId}" />
+	    </c:if>
+    
 			<section class="odr-wrap">
 				<!-- order -->
 				<div class="odr-box">
@@ -254,62 +266,33 @@ $('#OrderOTel21').keyup(function (e) {
 						
 						<div class="cn">
 							<ul class="odr__list __pay">
+    <c:forEach var="item" items="${orderItems}">
+        <li>
+            <div class="goods-thumb">
+			    <img src="${pageContext.request.contextPath}/displayImage.do?path=C:/fila_upload/product/${item.productId}/${item.productId}_main_1.jpg" 
+			         alt="${item.productName}" 
+			         onerror="this.src='${pageContext.request.contextPath}/resources/images/no_image.jpg';">
+			</div>
+            <div class="goods-info">
+                <p class="sex">FILA</p>
+                <p class="tit">${item.productName}</p>
 
+                <div class="info">
+                    <div><p>상품코드&nbsp;:&nbsp;${item.productId}</p></div>
+                    <div><p>옵션(ID)&nbsp;:&nbsp;${item.combinationId}</p></div>
+                    <div><p>수량&nbsp;:&nbsp;${item.quantity}</p></div>
+                </div>
 
-								<li>
-									<div class="goods-thumb"><img src="//filacdn.styleship.com/filaproduct2/data/productimages/a/2/FS254DJ01F001_234.jpg" alt="<한소희 착용> 여성 플로우다운 초코" /></div>
-									<div class="goods-info">
-										<p class="sex">FILA</p>
-										<p class="tit"><한소희 착용> 여성 플로우다운 초코</p>
-
-										<div class="info">
-											<div>
-												<p>색상&nbsp;:&nbsp;234</p>
-											</div>
-
-											<div>
-												<p>사이즈&nbsp;:&nbsp;W80(WXS)</p>
-											</div>
-
-											<div>
-												<p>수량&nbsp;:&nbsp;1</p>
-
-												<!-- 2023-09-07 품절임박 추가 (전체 재고 5개 이하일 경우 노출) -->
-												<!--<p class="oos_tag">품절임박</p>
-												<!-- // 2023-09-07 품절임박 추가 (전체 재고 5개 이하일 경우 노출) -->
-											</div>
-										</div>
-										
-
-										<div class="pp-box">
-
-											<div class="price">
-												<p class="sale">259,000원</p>
-												
-											</div>
-											
-											<!--
-											
-											
-											<p class="point">5,180P</p>
-											
-											
-											-->
-										</div>	
-										
-										<!-- 2023-02-01 오늘 도착 태그 추가 -->
-										
-										<p class="today_tag">오늘도착 가능</p><!-- 오늘도착 불가인 경우 클래스 _v2 추가 -->
-										
-									</div>
-								</li>
-<input type="hidden" name="cart1_coupon1val" id="cart1_coupon1val" value />
-<input type="hidden" name="cart1_coupon2val" id="cart1_coupon2val" value />
-<input type="hidden" name="cart1_coupon3val" id="cart1_coupon3val" value />
-<input type="hidden" name="cart1_coupon4val" id="cart1_coupon4val" value />
-<input type="hidden" name="cart1_coupontval" id="cart1_coupontval" value />
-
-							</ul>
+                <div class="pp-box">
+                    <div class="price">
+                        <p class="sale"><fmt:formatNumber value="${item.price}" pattern="#,###"/>원</p>
+                    </div>
+                </div>
+                <p class="today_tag">배송준비중</p>
+            </div>
+        </li>
+    </c:forEach>
+</ul>
 						</div>
 
 
@@ -344,35 +327,9 @@ $('#OrderOTel21').keyup(function (e) {
 	jQuery(".gift-present").hide();
 </script>
 
-					<!-- //2023-02-01 사은품 증정 추가 -->
 
 
-<input type="hidden" name="pay_type" value />
-<input type="hidden" name="OrderTotalPrice" value="259000" />
-<input type="hidden" name="TotalPrice_Cart" value="259000" />
-<!-- Delivery_price가 기본 / transpay가 변형 -->
-<input type="hidden" name="Delivery_price" value="0" />
-<input type="hidden" name="transpay" value="0" />
-<input type="hidden" name="Delivery_coupon" value="" />
 
-<input type="hidden" name="minPoint" value="0" />
-<input type="hidden" name="coup1sale" value="0" />
-<input type="hidden" name="coup2sale" value="0" />
-<input type="hidden" name="coup3sale" value="0" />
-<input type="hidden" name="promoTotal" value="0" />
-
-<input type="hidden" name="OrderUseCoupon" value="" />
-<input type="hidden" name="OrderUseCouponPrice" value="0" />
-<input type="hidden" name="OrderSaleCategory" value="" />
-<input type="hidden" name="OrderSalePrice" value="" />
-
-<input type="hidden" name="OrderIsisland" value="0" />
-<input type="hidden" name="addpay" value="0" />
-<input type="hidden" name="giftEventValue" value="" />
-<!-- 오늘도착 여부 -->
-<input type="hidden" name="OrderIsDangil" value="0" />
-
-<input type="hidden" name="IsTest" value="" />
 
 
 
@@ -416,7 +373,10 @@ $('#OrderOTel21').keyup(function (e) {
 					
 				</div>	
 				<!-- // order -->
-	
+					<c:set var="totalGoodsPrice" value="0" />
+				<c:forEach var="item" items="${orderItems}">
+				    <c:set var="totalGoodsPrice" value="${totalGoodsPrice + (item.price * item.quantity)}" />
+				</c:forEach>
 				<!-- total price -->
 				<div class="total-box">
 					
@@ -425,12 +385,16 @@ $('#OrderOTel21').keyup(function (e) {
 						<div class="price-inner">
 
 							<dl>
-								<dt>총 상품금액</dt>
-								<dd>259,000원</dd>
+							    <dt>총 상품금액</dt>
+							    <dd><fmt:formatNumber value="${totalOriginalPrice}" pattern="#,###"/>원</dd>
 							</dl>
 							<dl>
-								<dt>상품 할인금액</dt>
-								<dd class="_type_red">-<em id="sale_total3">0</em>원</dd>
+							    <dt>상품 할인금액</dt>
+							    <dd class="_type_red">-
+							        <em id="sale_total3">
+							            <fmt:formatNumber value="${totalOriginalPrice - totalSalePrice}" pattern="#,###"/>
+							        </em>원
+							    </dd>
 							</dl>
 
 							
@@ -480,9 +444,11 @@ $('#OrderOTel21').keyup(function (e) {
 							</dl>
 							
 							<dl class="total-pirce">
-								<dt>총 주문금액</dt>
-								<dd><span id="div_price22">259,000</span>원<span class="sale_txt" id="salerate2"></span></dd>
+							    <dt>최종 결제금액</dt>
+							    <dd><span id="display_total_price"><fmt:formatNumber value="${totalSalePrice}" pattern="#,###"/></span>원</dd>
 							</dl>
+							<input type="hidden" name="OrderTotalPrice" id="OrderTotalPrice" value="${totalGoodsPrice}" />
+							<input type="hidden" name="address_id" value="1" /> 
 							
 							<dl class="_type_agree">
 								<dt>주문 내용을 확인했으며, 약관에 동의합니다.</dt>
@@ -509,152 +475,45 @@ $('#OrderOTel21').keyup(function (e) {
 		</div>
 
 		<!-- // end of :: contents -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+function pay_checkout() {
+    // 1. 필수 선택값 체크
+    const paymentMethod = $("input[name='gopaymethod']:checked").val();
+    if (!paymentMethod) {
+        alert("결제 수단을 선택해 주세요.");
+        return;
+    }
 
-	var productData = new Array()
+    if (!confirm("정말로 결제하시겠습니까?")) return;
 
-	/*
-	gtag("event", "begin_checkout", {
-		"items": productData
-	});
-	*/
-</script>
+    // 2. 서버로 보낼 데이터 수집
+    // Serialize를 사용하면 form 내의 모든 input 값을 한 번에 가져옵니다.
+    const formData = $("form[name='user']").serialize();
 
-<!-- DHIVE - GTM datalayer (purchase) 2019-08-29 S -->
-<script>
-    dataLayer.push({
-        'event': 'checkout',
-        'ecommerce': {
-            'checkout': {
-                'actionField':{'step':1},
-                'products': [
-									
-                ]
+    $.ajax({
+        url: "${pageContext.request.contextPath}/order/processOrder.htm", // 아까 properties에 등록한 주소
+        type: "POST",
+        data: formData,
+        dataType: "json",
+        success: function(res) {
+            if (res.status === "success") {
+                alert("주문이 완료되었습니다!");
+                location.href = res.redirect; // 완료 페이지로 이동
+            } else {
+                alert("오류 발생: " + res.message);
             }
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+            alert("결제 처리 중 통신 오류가 발생했습니다.");
         }
     });
-</script>	
-
-<!-- 2023-04-03 #HJ GA4 S -->
-<script>
-window.dataLayer = window.dataLayer || [];
-window.dataLayer.push({
-  event: 'begin_checkout',
-  ecommerce: {
-    items: [{ item_name: '<한소희 착용> 여성 플로우다운 초코', item_id: '1100FS254DJ01F001234', item_no: '61123', price: 259000,item_brand: 'FILA' , item_category: 'WOMEN', item_category2: '의류', item_category3: '패딩/다운점퍼', item_variant: '234', item_variant2: 'W80(WXS)', quantity: 1 }]
-  }
-});
-</script>
-<!-- 2023-04-03 #HJ GA4 E -->
-
-<script>
-	// #HJ 2025-06-05 추가 
-	/*
-  window.InsiderQueue = window.InsiderQueue || [];
-  window.InsiderQueue.push({
-    type : 'custom_event',
-    value : [{
-      event_name : 'checkout_custom',
-      event_parameters : {
-        "currency" : "KRW",
-        "session_id" : "2025122310381610514",
-        "source" : "Web",
-        "device_type" : "PC",
-        "products" : []
-      }
-    }]
-  });
-  */
-
-  function waitForInsider(callback) {
-    if (typeof Insider !== 'undefined') {
-      callback();
-    } else {
-      setTimeout(function () {
-        waitForInsider(callback);
-      }, 500);
-    }
-  }
-
-  waitForInsider(function () {
-		Insider.track('events', [
-			
-		]);
-  });
-</script>
-
-		<!-- 하단 고정 버튼 (top, sns) -->
-<div class="bot-fix-box">
-	<div class="inner">
-
-		<!-- 2023-12-13 오늘 본 상품 있는 경우 (상품 썸네일 변경) -->
-		<button type="button" class="today-goods__thumb today-goods__btn">
-			<img src="//filacdn.styleship.com/filaproduct2/data/productimages/a/1/FS254DJ01F001_234.jpg" alt="">
-		</button>
-		<!-- // 2023-12-13 오늘 본 상품 있는 경우 (상품 썸네일 변경) -->
-
-
-		<button type="button" class="kakaotalk__btn" onclick="doBizmsg();void(0);">
-			<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
-				<g id="btn_kakao" transform="translate(-330)">
-					<circle id="타원_73" data-name="타원 73" cx="25" cy="25" r="25" transform="translate(330)" fill="#fedc00"/>
-					<g id="그룹_18" data-name="그룹 18" transform="translate(345 15)">
-						<path id="패스_8" data-name="패스 8" d="M192.79,193.223c-5.868,0-10.625,3.782-10.625,8.447a8.127,8.127,0,0,0,4.614,6.966l-.768,4.118a.236.236,0,0,0,.362.241l4.564-3.006s1.221.128,1.853.128c5.868,0,10.625-3.782,10.625-8.447s-4.757-8.447-10.625-8.447" transform="translate(-182.165 -193.223)" fill="#3c1e1e"/>
-					</g>
-				</g>
-			</svg>
-		</button>
-
-
-		<script src="https://bizmessage.kakao.com/chat/includeScript"></script>
-<script type="text/javascript">
-function doBizmsg() {
-var kakaoPop = window.open("about:blank","kakaoPop","width=350,height=550")
-var frm = document.formbiz;
-frm.submit();
-//document.getElementById("form-biz").submit();
-
 }
 </script>
-<form id="form-biz" name="formbiz" action="https://bizmessage.kakao.com/chat/open" method="post" target="kakaoPop">
-<!--
-<input type="hidden" name="uuid" value="@FILA" />
-<input type="hidden" name="extra" value="FILA_M"/>
--->
-
-<input type="hidden" name="uuid" value="@fila" />
-<input type="hidden" name="extra" value="TCK_M"/>
-
-<input type="hidden" name="bot" value="true" />
-<input type="hidden" name="event" value="시작" />
-</form>
-
-
-
-		<button type="button" class="top__btn">top</button>		
-	</div>
-</div>
-<!-- //하단 고정 버튼 (top, sns) -->
-
 <!-- start of :: footer -->
 <jsp:include page="../common/footer.jsp" />
-<!-- // end of :: footer -->
- 
-<script>
-        $(document).ready(function(){
-            if(typeof Swiper !== 'undefined') {
-                new Swiper('.goods__slider', {
-                    slidesPerView: 4,
-                    spaceBetween: 10,
-                    freeMode: true,
-                    scrollbar: {
-                        el: '.goods-slider-scrollbar',
-                        draggable: true,
-                    },
-                });
-            }
-        });
-</script>    
+  
 
 </body>
 </html>
