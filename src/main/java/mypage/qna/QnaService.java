@@ -1,4 +1,4 @@
-package mypage;
+package mypage.qna;
 
 import java.sql.Connection;
 import java.util.List;
@@ -8,9 +8,6 @@ import com.util.JdbcUtil;
 
 import categories.CategoriesDTO;
 import member.MemberDTO;
-import mypage.qna.QnaDTO;
-import mypage.qna.QnaDAO;
-import mypage.qna.QnaDAOImpl;
 
 public class QnaService {
 

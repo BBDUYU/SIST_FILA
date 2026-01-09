@@ -112,8 +112,6 @@
                     <p class="tit">상품정보</p>
                     <ul>
                         <li><a href="${pageContext.request.contextPath}/mypage/wishlist.htm">위시리스트</a></li>
-                        <li><a href="#">오늘 본 상품</a></li>
-                        <li><a href="#">커스텀 스튜디오</a></li>
                         <li><a href="#">재입고 알림</a></li>
                     </ul>
                 </div>
@@ -133,9 +131,7 @@
                     <p class="tit">고객센터</p>
                     <ul>
                         <li>
-                            <a href="${pageContext.request.contextPath}/mypage/qna.htm">1:1 문의</a></li>
-                        <li><a href="${pageContext.request.contextPath}/mypage/as.htm">A/S 현황 조회</a></li>
-                       
+                            <a href="${pageContext.request.contextPath}/mypage/qna.htm">1:1 문의</a></li>                       
                     </ul>
                 </div>
             </div>

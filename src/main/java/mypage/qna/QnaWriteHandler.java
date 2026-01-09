@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import command.CommandHandler;
 import member.MemberDTO;
-import mypage.QnaService;
 
 public class QnaWriteHandler implements CommandHandler {
 

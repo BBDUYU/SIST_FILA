@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import command.CommandHandler;
 import member.MemberDTO;
 import mypage.qna.QnaDTO;
-import mypage.QnaService;
 import categories.CategoriesDTO;
 
 public class QnaListHandler implements CommandHandler {
