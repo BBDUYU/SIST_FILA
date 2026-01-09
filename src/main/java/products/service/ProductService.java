@@ -280,5 +280,29 @@ public class ProductService {
             DBConn.close();
         }
     }
-    
+
+    public void getCartOptionInfo(HttpServletRequest request) {
+        Connection conn = null;
+        try {
+            conn = DBConn.getConnection();
+            String productId = request.getParameter("productId");
+            
+            // 1. 상품 상세 정보 가져오기
+            ProductsDTO product = ProductsDAO.getInstance().getProduct(conn, productId);
+            // 2. 해당 상품의 모든 옵션(사이즈) 가져오기
+            List<ProductsOptionDTO> sizeOptions = ProductsDAO.getInstance().getProductOptions(conn, productId);
+
+            // 3. JSP에서 쓸 수 있게 request에 세팅
+            request.setAttribute("product", product);
+            request.setAttribute("sizeOptions", sizeOptions);
+            request.setAttribute("currentSize", request.getParameter("size"));
+            request.setAttribute("currentQty", request.getParameter("qty"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBConn.close();
+        }
+    }
+
 }

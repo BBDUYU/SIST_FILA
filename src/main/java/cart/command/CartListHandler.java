@@ -90,16 +90,18 @@ public class CartListHandler implements CommandHandler {
 	    }
 
 
-        // 4) [수량 변경] (이건 조회 전에 처리하는 게 맞음)
-        if ("update".equals(action)) {
-            int cartItemId = Integer.parseInt(request.getParameter("cartItemId"));
-            int qty = Integer.parseInt(request.getParameter("quantity"));
+	 // 4) [옵션 및 수량 변경]
+	    if ("update".equals(action)) {
+	        int cartItemId = Integer.parseInt(request.getParameter("cartItemId"));
+	        int qty = Integer.parseInt(request.getParameter("qty")); 
+	        String size = request.getParameter("size"); 
 
-            cartService.updateItem(cartItemId, qty);
+	        // 새로 만든 통합 변경 메서드 호출
+	        cartService.updateItemOption(cartItemId, size, qty);
 
-            response.sendRedirect(request.getContextPath() + "/pay/cart.htm");
-            return null;
-        }
+	        response.sendRedirect(request.getContextPath() + "/pay/cart.htm");
+	        return null;
+	    }
 
         // 5) [기본 조회]
         HttpSession session = request.getSession(false);

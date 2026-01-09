@@ -6,131 +6,115 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.util.DBConn;
 import categories.CategoriesDTO;
+import mypage.qna.QnaDTO;
 
 public class QnaDAOImpl implements QnaDAO {
 
-    // 공통 close
-    private void close(ResultSet rs, PreparedStatement pstmt) {
-        try { if (rs != null) rs.close(); } catch (Exception ignored) {}
-        try { if (pstmt != null) pstmt.close(); } catch (Exception ignored) {}
+    private static QnaDAOImpl dao = null;
+    private QnaDAOImpl() {}
+    public static QnaDAOImpl getInstance() {
+        if (dao == null) dao = new QnaDAOImpl();
+        return dao;
     }
 
     /* ===============================
-     * 1) 내 문의 목록 조회
+     * 1. 내 문의 목록
      * =============================== */
     @Override
-    public List<QnaDTO> findByUser(long userNumber) {
+    public List<QnaDTO> selectByUser(Connection conn, long userNumber) {
 
         List<QnaDTO> list = new ArrayList<>();
 
         String sql =
             "SELECT i.INQUIRY_ID, i.USER_NUMBER, i.CATEGORY_ID, c.CATEGORY_NAME, " +
-            "       i.TITLE, i.CONTENT, i.STATUS, i.REPLY_CONTENT, i.CREATED_AT " +
+            "       i.TITLE, i.CONTENT, i.STATUS, i.REPLY_CONTENT, i.REPLY_AT, i.CREATED_AT " +
             "FROM INQUIRY i " +
             "JOIN INQUIRY_CATEGORY c ON i.CATEGORY_ID = c.CATEGORY_ID " +
             "WHERE i.USER_NUMBER = ? " +
             "ORDER BY i.CREATED_AT DESC";
 
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-        try {
-            conn = DBConn.getConnection();      // ✅ conn은 DBConn이 관리(싱글톤이면 닫으면 안됨)
-            pstmt = conn.prepareStatement(sql);
             pstmt.setLong(1, userNumber);
 
-            rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                QnaDTO dto = new QnaDTO();
-                dto.setInquiryId(rs.getLong("INQUIRY_ID"));
-                dto.setUserNumber(rs.getLong("USER_NUMBER"));
-                dto.setCategoryId(rs.getInt("CATEGORY_ID"));
-                dto.setCategoryName(rs.getString("CATEGORY_NAME"));
-                dto.setTitle(rs.getString("TITLE"));
-                dto.setContent(rs.getString("CONTENT"));
-                dto.setStatus(rs.getString("STATUS"));
-                dto.setReplyContent(rs.getString("REPLY_CONTENT"));
-                dto.setCreatedAt(rs.getTimestamp("CREATED_AT"));
-
-                list.add(dto);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(QnaDTO.builder()
+                        .inquiry_id(rs.getLong("INQUIRY_ID"))
+                        .user_number(rs.getLong("USER_NUMBER"))
+                        .category_id(rs.getInt("CATEGORY_ID"))
+                        .category_name(rs.getString("CATEGORY_NAME"))
+                        .title(rs.getString("TITLE"))
+                        .content(rs.getString("CONTENT"))
+                        .status(rs.getString("STATUS"))
+                        .reply_content(rs.getString("REPLY_CONTENT"))
+                        .reply_at(rs.getTimestamp("REPLY_AT"))
+                        .created_at(rs.getTimestamp("CREATED_AT"))
+                        .build());
+                }
             }
-
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            close(rs, pstmt);
+            throw new RuntimeException("QNA 목록 조회 에러", e);
         }
 
         return list;
     }
 
     /* ===============================
-     * 2) 상태별 문의 조회 (DONE / WAIT)
+     * 2. 상태별 문의 목록
      * =============================== */
     @Override
-    public List<QnaDTO> findByUserAndStatus(long userNumber, String status) {
+    public List<QnaDTO> selectByUserAndStatus(Connection conn, long userNumber, String status) {
 
-        // status가 ALL/빈값이면 전체로
         if (status == null || status.isBlank() || "ALL".equalsIgnoreCase(status)) {
-            return findByUser(userNumber);
+            return selectByUser(conn, userNumber);
         }
 
         List<QnaDTO> list = new ArrayList<>();
 
         String sql =
             "SELECT i.INQUIRY_ID, i.USER_NUMBER, i.CATEGORY_ID, c.CATEGORY_NAME, " +
-            "       i.TITLE, i.CONTENT, i.STATUS, i.REPLY_CONTENT, i.CREATED_AT " +
+            "       i.TITLE, i.CONTENT, i.STATUS, i.REPLY_CONTENT, i.REPLY_AT, i.CREATED_AT " +
             "FROM INQUIRY i " +
             "JOIN INQUIRY_CATEGORY c ON i.CATEGORY_ID = c.CATEGORY_ID " +
-            "WHERE i.USER_NUMBER = ? " +
-            "  AND i.STATUS = ? " +
+            "WHERE i.USER_NUMBER = ? AND i.STATUS = ? " +
             "ORDER BY i.CREATED_AT DESC";
 
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-        try {
-            conn = DBConn.getConnection();
-            pstmt = conn.prepareStatement(sql);
             pstmt.setLong(1, userNumber);
             pstmt.setString(2, status);
 
-            rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                QnaDTO dto = new QnaDTO();
-                dto.setInquiryId(rs.getLong("INQUIRY_ID"));
-                dto.setUserNumber(rs.getLong("USER_NUMBER"));
-                dto.setCategoryId(rs.getInt("CATEGORY_ID"));
-                dto.setCategoryName(rs.getString("CATEGORY_NAME"));
-                dto.setTitle(rs.getString("TITLE"));
-                dto.setContent(rs.getString("CONTENT"));
-                dto.setStatus(rs.getString("STATUS"));
-                dto.setReplyContent(rs.getString("REPLY_CONTENT"));
-                dto.setCreatedAt(rs.getTimestamp("CREATED_AT"));
-
-                list.add(dto);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(QnaDTO.builder()
+                        .inquiry_id(rs.getLong("INQUIRY_ID"))
+                        .user_number(rs.getLong("USER_NUMBER"))
+                        .category_id(rs.getInt("CATEGORY_ID"))
+                        .category_name(rs.getString("CATEGORY_NAME"))
+                        .title(rs.getString("TITLE"))
+                        .content(rs.getString("CONTENT"))
+                        .status(rs.getString("STATUS"))
+                        .reply_content(rs.getString("REPLY_CONTENT"))
+                        .reply_at(rs.getTimestamp("REPLY_AT"))
+                        .created_at(rs.getTimestamp("CREATED_AT"))
+                        .build());
+                }
             }
-
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            close(rs, pstmt);
+            throw new RuntimeException("QNA 상태별 조회 에러", e);
         }
 
         return list;
     }
 
     /* ===============================
-     * 3) 문의 카테고리 목록 (INQUIRY_CATEGORY)
+     * 3. 문의 카테고리 목록
      * =============================== */
     @Override
-    public List<CategoriesDTO> findCategoryList() {
+    public List<CategoriesDTO> selectCategoryList(Connection conn) {
+
         List<CategoriesDTO> list = new ArrayList<>();
 
         String sql =
@@ -138,53 +122,46 @@ public class QnaDAOImpl implements QnaDAO {
             "FROM INQUIRY_CATEGORY " +
             "ORDER BY CATEGORY_ID";
 
-        try (
-            Connection conn = DBConn.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery()
-        ) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
             while (rs.next()) {
-                CategoriesDTO dto = new CategoriesDTO();
-                dto.setCategory_id(rs.getInt("CATEGORY_ID"));
-                dto.setName(rs.getString("CATEGORY_NAME"));
-                list.add(dto);
+                list.add(CategoriesDTO.builder()
+                    .category_id(rs.getInt("CATEGORY_ID"))
+                    .name(rs.getString("CATEGORY_NAME"))
+                    .build());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("문의 카테고리 조회 에러", e);
         }
 
         return list;
     }
 
+    /* ===============================
+     * 4. 문의 등록
+     * =============================== */
     @Override
-    public int insert(QnaDTO dto) {
+    public int insertInquiry(Connection conn, QnaDTO dto) {
 
         String sql =
             "INSERT INTO INQUIRY ( " +
-            "  INQUIRY_ID, USER_NUMBER, CATEGORY_ID, TITLE, CONTENT, STATUS, CREATED_AT " +
+            " INQUIRY_ID, USER_NUMBER, CATEGORY_ID, TITLE, CONTENT, STATUS, CREATED_AT " +
             ") VALUES ( " +
-            "  SEQ_INQUIRY.NEXTVAL, ?, ?, ?, ?, 'WAIT', SYSDATE " +
+            " SEQ_INQUIRY.NEXTVAL, ?, ?, ?, ?, 'WAIT', SYSDATE " +
             ")";
 
-        Connection conn = null;
-        PreparedStatement pstmt = null;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-        try {
-            conn = DBConn.getConnection();
-            pstmt = conn.prepareStatement(sql);
-
-            pstmt.setLong(1, dto.getUserNumber());
-            pstmt.setInt(2, dto.getCategoryId());
+            pstmt.setLong(1, dto.getUser_number());
+            pstmt.setInt(2, dto.getCategory_id());
             pstmt.setString(3, dto.getTitle());
             pstmt.setString(4, dto.getContent());
 
             return pstmt.executeUpdate();
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        } finally {
-            close(null, pstmt);
+            throw new RuntimeException("문의 등록 에러", e);
         }
     }
 }

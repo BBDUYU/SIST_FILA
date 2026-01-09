@@ -49,18 +49,23 @@ public class AddressEditHandler implements CommandHandler {
     AddressDAO dao = new AddressDAO();
 
     try (Connection conn = ConnectionProvider.getConnection()) {
+    	  conn.setAutoCommit(false);
 
-      if (dto.getIsDefault() == 1) {
-        dao.clearDefault(conn, dto.getUserNumber());
-      }
+    	  if (dto.getIsDefault() == 1) {
+    	    dao.clearDefault(conn, dto.getUserNumber());
+    	  }
 
-      int updated = dao.update(conn, dto);
-      if (updated == 0) {
-        response.setStatus(404);
-        response.getWriter().write("{\"ok\":false,\"error\":\"NOT_FOUND\"}");
-        return null;
-      }
-    }
+    	  int updated = dao.update(conn, dto);
+    	  if (updated == 0) {
+    	    conn.rollback();
+    	    response.setStatus(404);
+    	    response.setContentType("application/json; charset=UTF-8");
+    	    response.getWriter().write("{\"ok\":false,\"error\":\"NOT_FOUND\"}");
+    	    return null;
+    	  }
+
+    	  conn.commit();
+    	}
 
     response.setContentType("application/json; charset=UTF-8");
     response.getWriter().write("{\"ok\":true}");

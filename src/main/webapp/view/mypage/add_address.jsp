@@ -11,8 +11,11 @@
 
 		<div class="con">
 			<form name="addr" id="addr" action="/mypage/pop_delivery_result.asp" target="dataFrame" method="post">	
-			<input type="hidden" name="addrNo" value="">
+			<input type="hidden" name="addrNo" value="${param.addrNo}">
 			<div class="addr-add-box">
+				<div>
+					<input type="text" placeholder="배송지 이름" name="addressName" value="" maxlength="25" id="addrRecipient ">
+				</div>
 				<div>
 					<input type="text" placeholder="수령인" name="addrname" value="" maxlength="25" id="addrRecipient ">
 				</div>
@@ -23,13 +26,12 @@
 
 				<div class="_addr">
 					<div>
-						<input type="text" name="zipcode" readonly="" value="" onclick="searchZipD5();void(0);" id="addrNum1">
-						<button type="button" class="zipcode__btn" onclick="searchZipD5();void(0);">주소찾기</button>
+						<input type="text" name="zipcode" readonly value="" id="addrZip">
+						<button type="button" class="zipcode__btn">주소찾기</button>
 					</div>
 
 					<div>
 						<input type="text" name="addr3" maxlength="200" value="" readonly="" id="addrNum1">
-						<input type="hidden" name="addr1" value="" readonly="" id="addrNum2" class="input_size4">
 					</div>
 
 					<div>
@@ -58,10 +60,11 @@
 
 		<div class="foot">
 			<button type="button" onclick="$('.close__btn').click();">취소</button>
-			<button type="button" class="on" onclick="javascript:addrSubmit();">저장하기</button>
+			<button type="button" class="on" id="btnSaveAdd">저장하기</button>
 		</div>
 	</div>
 </div>
+
 <script>
 var contextPath = '${pageContext.request.contextPath}';
 
@@ -108,30 +111,30 @@ var contextPath = '${pageContext.request.contextPath}';
 </script>
 
 <script>
-function addrSubmit(){
-  var $f = jQuery('#addr');
+(function($){
+  $(document).off('click.addrAdd', '#btnSaveAdd')
+             .on('click.addrAdd', '#btnSaveAdd', function(e){
+    e.preventDefault();
+    e.stopPropagation();
 
-  jQuery.ajax({
-	  url: contextPath + '/mypage/address/add.htm',
-    type: 'POST',
-    data: $f.serialize(),
-    dataType: 'json',
-    success: function(res){
-      if(res && res.ok){
-        // 모달 닫고 목록 새로고침
-        if (window.closeQnaModal) closeQnaModal();
-        location.reload();
-      } else {
-        alert('저장 실패');
+    var $form = $(this).closest('.common__layer').find('form#addr'); // ✅ 현재 모달 안의 form만
+    $.ajax({
+      url: contextPath + '/mypage/address/add.htm',
+      type: 'POST',
+      data: $form.serialize(),
+      dataType: 'json',
+      success: function(res){
+        if(res && res.ok){
+          if (window.closeQnaModal) closeQnaModal();
+          location.reload();
+        }else{
+          alert('저장 실패');
+        }
+      },
+      error: function(xhr){
+        alert('저장 실패 (' + xhr.status + ')');
       }
-    },
-    error: function(xhr){
-      alert('저장 실패 (' + xhr.status + ')');
-    }
+    });
   });
-}
-</script>
-
-<script>
-	if (!window.jQuery) document.write('<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"><\/script>');
+})(jQuery);
 </script>
