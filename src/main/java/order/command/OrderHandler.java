@@ -18,6 +18,8 @@ import admin.domain.UserInfoDTO;
 import cart.persistence.CartDAO;
 import command.CommandHandler;
 import member.MemberDTO;
+import mypage.AddressDAO; // 배송지 DAO 추가
+import mypage.AddressDTO; // 배송지 DTO 추가
 import net.sf.json.JSONObject;
 import order.domain.OrderDTO;
 import order.domain.OrderItemDTO;
@@ -29,15 +31,14 @@ public class OrderHandler implements CommandHandler {
 
     @Override
     public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // 1. 세션에서 로그인한 유저 정보 가져오기
+        
         HttpSession session = request.getSession(); 
         MemberDTO authUser = (MemberDTO) session.getAttribute("auth"); 
         
         if (authUser == null) {
             if (request.getMethod().equalsIgnoreCase("GET")) {
-                // "redirect:..." 문자열을 반환하지 말고 직접 sendRedirect를 사용하세요.
                 response.sendRedirect(request.getContextPath() + "/member/login.htm");
-                return null; // DispatcherServlet이 포워딩 시도를 하지 않도록 null 반환
+                return null; 
             } else {
                 response.setContentType("application/json; charset=UTF-8");
                 response.getWriter().print("{\"status\":\"error\", \"message\":\"로그인이 필요합니다.\"}");
@@ -45,9 +46,7 @@ public class OrderHandler implements CommandHandler {
             }
         }
 
-        // 3. 로그인 성공 시 변수 할당
         int userNumber = authUser.getUserNumber();
-        System.out.println(">>> OrderHandler 진입 성공! 유저번호: " + userNumber);
 
         if (request.getMethod().equalsIgnoreCase("GET")) {
             String productId = request.getParameter("productId");
@@ -58,9 +57,19 @@ public class OrderHandler implements CommandHandler {
             Connection conn = null;
             try {
                 conn = ConnectionProvider.getConnection();
-                List<OrderItemDTO> orderItems = new ArrayList<>();
                 
-                // 상품 정보 조회 로직 (기존 유지)
+                // 1. 배송지 목록 조회 추가
+                AddressDAO addressDao = new AddressDAO();
+                List<AddressDTO> addressList = addressDao.selectListByUser(conn, userNumber);
+                request.setAttribute("addressList", addressList);
+                
+                // 기본 배송지 설정 (목록의 첫 번째가 IS_DEFAULT DESC로 인해 기본 배송지임)
+                if (addressList != null && !addressList.isEmpty()) {
+                    request.setAttribute("defaultAddr", addressList.get(0));
+                }
+
+                // 2. 상품 정보 조회 (기존 로직)
+                List<OrderItemDTO> orderItems = new ArrayList<>();
                 if (productId != null && !productId.isEmpty()) {
                     ProductsDAO productsDao = ProductsDAO.getInstance();
                     ProductsDTO product = productsDao.getProduct(conn, productId);
@@ -81,11 +90,10 @@ public class OrderHandler implements CommandHandler {
 
                 if (orderItems.isEmpty()) return "/pay/cart.htm";
 
+                // 3. 포인트/쿠폰 정보 조회 (기존 로직)
                 UserInfoDTO userDetail = new UserInfoDTO();
-                
-                // 포인트 조회 (이제 userNumber 변수를 인식합니다)
                 int myPoint = 0;
-                String pointSql = "SELECT NVL(SUM(CASE WHEN POINT_TYPE = '적립' THEN AMOUNT ELSE -AMOUNT END), 0) FROM USERPOINTS WHERE USER_NUMBER = ?";
+                String pointSql = "SELECT NVL(SUM(AMOUNT), 0) FROM USERPOINTS WHERE USER_NUMBER = ?";
                 try (PreparedStatement pstmt = conn.prepareStatement(pointSql)) {
                     pstmt.setInt(1, userNumber);
                     try (ResultSet rs = pstmt.executeQuery()) {
@@ -94,7 +102,6 @@ public class OrderHandler implements CommandHandler {
                 }
                 userDetail.setBalance(myPoint);
 
-                // 쿠폰 조회 (이제 userNumber 변수를 인식합니다)
                 List<UserInfoDTO> couponList = new ArrayList<>();
                 String couponSql = "SELECT uc.USER_COUPON_ID, c.NAME, c.DISCOUNT_TYPE, c.DISCOUNT_VALUE " +
                                    "FROM USER_COUPON uc JOIN COUPON c ON uc.COUPON_ID = c.COUPON_ID " +
@@ -140,20 +147,25 @@ public class OrderHandler implements CommandHandler {
             JSONObject jsonResponse = new JSONObject();
 
             try (Connection conn = ConnectionProvider.getConnection()) {
-                // 파라미터 체크 및 파싱
-                String addrIdStr = request.getParameter("address_id");
-                int addressId = (addrIdStr != null) ? Integer.parseInt(addrIdStr) : 0;
+                // 1. 파라미터 수집
+                int addressId = Integer.parseInt(request.getParameter("address_id"));
                 int totalAmount = Integer.parseInt(request.getParameter("OrderTotalPrice"));
                 String deliveryMethod = request.getParameter("deliveryOption");
                 String deliveryRequest = request.getParameter("OrderContents");
                 String paymentMethod = request.getParameter("gopaymethod");
                 String cartItemIds = request.getParameter("cartItemIds");
                 
+                // [추가] 쿠폰(ISSUE_ID) 파라미터 받기 (나중에 JSP에서 name="issueId"로 넘겨주세요)
+                String issueIdStr = request.getParameter("issueId");
+                int issueId = (issueIdStr != null && !issueIdStr.isEmpty()) ? Integer.parseInt(issueIdStr) : 0;
+                
                 int usedPoint = 0;
                 String usemileStr = request.getParameter("usemile");
                 if(usemileStr != null && !usemileStr.isEmpty()) usedPoint = Integer.parseInt(usemileStr);
 
-                // [수정] userNumber가 변수로 선언되어 에러가 나지 않습니다.
+
+                // 2. OrderDTO 객체 생성
+                // (OrderDTO 빌더에 issueId와 trackingNumber 필드가 있다고 가정합니다)
                 OrderDTO order = OrderDTO.builder()
                         .userNumber(userNumber) 
                         .addressId(addressId)
@@ -162,20 +174,22 @@ public class OrderHandler implements CommandHandler {
                         .deliveryRequest(deliveryRequest)
                         .paymentMethod(paymentMethod)
                         .usedPoint(usedPoint)
+                        .issueId(issueId) // 미리 추가 (필드 없으면 DTO에 추가 필요)
+                        .orderStatus("결제완료") // 기본 상태값 설정
                         .build();
 
+                // 3. 상품 정보 가져오기 (기존 유지)
                 CartDAO cartDao = CartDAO.getInstance();
                 List<OrderItemDTO> items = new ArrayList<>();
                 
                 if (cartItemIds != null && !cartItemIds.isEmpty()) {
                     items = cartDao.selectSelectedCartItems(conn, cartItemIds);
                 } else {
-                    // 바로구매 시 POST 파라미터 읽기
                     String pId = request.getParameter("productId");
                     String qtyStr = request.getParameter("quantity");
                     String cIdStr = request.getParameter("combinationId");
                     
-                    if (pId != null && qtyStr != null) {
+                    if (pId != null) {
                         items.add(OrderItemDTO.builder()
                                 .productId(pId)
                                 .quantity(Integer.parseInt(qtyStr))
@@ -184,9 +198,11 @@ public class OrderHandler implements CommandHandler {
                     }
                 }
 
+                // 4. 서비스 호출하여 주문 처리 (DB INSERT)
                 OrderService orderService = OrderService.getInstance();
-                String orderId = orderService.processOrder(order, items);
+                String orderId = orderService.processOrder(order, items,cartItemIds);
 
+                // 5. 성공 응답
                 jsonResponse.put("status", "success");
                 jsonResponse.put("redirect", request.getContextPath() + "/order/complete.htm?orderId=" + orderId);
                 out.print(jsonResponse.toString());
@@ -194,7 +210,7 @@ public class OrderHandler implements CommandHandler {
             } catch (Exception e) {
                 e.printStackTrace();
                 jsonResponse.put("status", "error");
-                jsonResponse.put("message", e.getMessage());
+                jsonResponse.put("message", "주문 처리 중 오류 발생: " + e.getMessage());
                 out.print(jsonResponse.toString());
             }
             return null;

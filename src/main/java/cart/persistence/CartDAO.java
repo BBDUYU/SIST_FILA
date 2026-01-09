@@ -119,4 +119,18 @@ public class CartDAO {
         }
         return list;
     }
+    public void deleteCartItems(Connection conn, String cartItemIds, int userNumber) throws Exception {
+        // 1. 테이블명: CART -> CART_ITEMS
+        // 2. 컬럼명: CART_ID -> CART_ITEM_ID
+        String sql = "DELETE FROM CART_ITEMS WHERE USER_NUMBER = ? AND CART_ITEM_ID IN (" + cartItemIds + ")";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userNumber);
+            pstmt.executeUpdate();
+            System.out.println("장바구니 삭제 완료: " + cartItemIds);
+        } catch (SQLException e) {
+            System.out.println("장바구니 삭제 중 DB 에러: " + e.getMessage());
+            throw e;
+        }
+    }
 }

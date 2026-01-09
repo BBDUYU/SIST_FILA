@@ -26,7 +26,7 @@ public class OrderService {
      * @param items 주문할 상품 리스트
      * @return 생성된 주문번호
      */
-    public String processOrder(OrderDTO order, List<OrderItemDTO> items) {
+    public String processOrder(OrderDTO order, List<OrderItemDTO> items, String cartItemIds) {
         Connection conn = null;
         String generatedOrderId = null;
 
@@ -46,23 +46,39 @@ public class OrderService {
                 item.setOrderId(generatedOrderId); // 생성된 주문번호 매핑
             }
             orderDao.insertOrderItems(conn, items);
-
+            for (OrderItemDTO item : items) {
+                int stockResult = orderDao.updateDecreaseStock(conn, item.getCombinationId(), item.getQuantity());
+                if (stockResult == 0) {
+                    // 재고가 부족하거나 없으면 예외를 던져 Catch문으로 이동(롤백)시킴
+                    throw new RuntimeException("상품[" + item.getCombinationId() + "]의 재고가 부족합니다.");
+                }
+            }
             // 4. PAYMENT 테이블 저장
             orderDao.insertPayment(conn, generatedOrderId, order.getTotalAmount(), order.getPaymentMethod());
 
-            // 5. 포인트 사용 처리 (사용한 포인트가 있을 경우만)
-            if (order.getUsedPoint() > 0) {
-                orderDao.insertPointHistory(conn, order.getUserNumber(), generatedOrderId, order.getUsedPoint());
-            }
+         // 5. 포인트 사용 처리 (사용한 포인트가 0보다 크면)
+         // OrderService.java 일부
 
+            if (order.getUsedPoint() > 0) {
+                // [CASE 1] 포인트 사용 시: 차감만 하고 '적립 로직'은 아예 실행 안 함
+                orderDao.insertPointHistory(conn, order.getUserNumber(), generatedOrderId, order.getUsedPoint());
+            } else {
+                // [CASE 2] 포인트 미사용 시: 5% 적립 수행
+                int rewardPoint = (int)(order.getTotalAmount() * 0.05);
+                if (rewardPoint > 0) {
+                    orderDao.insertOrderPoint(conn, order.getUserNumber(), rewardPoint, generatedOrderId);
+                }
+            }
             // 6. 쿠폰 사용 처리 (쿠폰을 선택했을 경우만)
             if (order.getUserCouponId() > 0) {
                 orderDao.updateCouponUsed(conn, order.getUserCouponId());
             }
-
+            
             // 7. 장바구니 비우기 (주문 완료된 상품들)
-            // cartDao.deleteOrderedItems(conn, order.getUserNumber()); 
-
+            if (cartItemIds != null && !cartItemIds.isEmpty()) {
+                cart.persistence.CartDAO cartDao = cart.persistence.CartDAO.getInstance();
+                cartDao.deleteCartItems(conn, cartItemIds, order.getUserNumber());
+            }
             conn.commit(); // ✅ 모든 작업 성공 시 최종 확정
             System.out.println("✅ 주문 완료: " + generatedOrderId);
 

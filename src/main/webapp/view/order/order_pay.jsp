@@ -2,7 +2,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
+<%@ page import="java.util.Calendar" %>
+<%
+    Calendar cal = Calendar.getInstance();
+    int hour = cal.get(Calendar.HOUR_OF_DAY); // 24시간 형식
+    request.setAttribute("currentHour", hour);
+%>
 <!DOCTYPE html>
 
 <html class="no-js" lang="ko-KR"> <!--<![endif]-->
@@ -14,10 +19,92 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.1, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.1, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
+<!-- ✅ jQuery는 무조건 가장 먼저 -->
+<script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
+
+<!-- 그 다음 플러그인/라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/TweenMax.js"></script>
+<script src="${pageContext.request.contextPath}/js/mighty.base.1.5.7.js"></script>
+<script src="${pageContext.request.contextPath}/js/matiz.js"></script>
+<script src="${pageContext.request.contextPath}/js/order.js"></script>
+<script src="${pageContext.request.contextPath}/js/searchZip.js"></script>
+<script
+	src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
 
 </head>
+<style>
+/* 1. 흰색 모달 박스 설정 */
+/* 1. 모달 전체 박스 크기 조절 */
+#AddaddModalContent {
+    width: 480px !important;       /* 가로 폭을 적절하게 줄임 */
+    height: 600px !important;      /* 세로 높이를 적당하게 고정 */
+    background: #fff;
+    position: relative;
+    border-radius: 12px;           /* 모서리를 조금 더 부드럽게 */
+    overflow: hidden;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* 그림자로 입체감 부여 */
+}
 
-<body class="tit__style1" style="overflow-x: hidden;">
+/* 2. FILA 기본 레이어의 위치 및 변형 초기화 (잘림 방지 핵심) */
+#AddaddModalContent .common__layer {
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;    /* 위로 50% 올라가는 속성 제거 */
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* 3. 내부 inner 영역 최적화 */
+#AddaddModalContent .inner {
+    height: 100% !important;
+    max-width: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* 4. 헤더/푸터는 고정, 주소 목록만 스크롤 */
+#AddaddModalContent .head { 
+    flex: 0 0 auto !important; 
+    padding: 20px !important;
+    border-bottom: 1px solid #f4f4f4;
+}
+
+#AddaddModalContent .foot { 
+    flex: 0 0 auto !important; 
+}
+
+#AddaddModalContent .con {
+    flex: 1 1 auto !important;     /* 남는 중간 공간을 모두 차지 */
+    overflow-y: auto !important;   /* 주소가 많아지면 여기서만 스크롤 */
+    padding: 15px 20px !important;
+}
+
+/* 5. 중복 배경 가림막 제거 */
+#AddaddModalContent .layer-bg__wrap {
+    display: none !important;
+}
+.addr__list li:has(input[name="addr_select"]:checked) {
+    background-color: #f8f9fa !important;
+    border: 1px solid #000 !important;
+}
+
+/* 마우스 올리면 손가락 모양으로 변경 */
+.addr__list li {
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body class>
 
 <!-- start of :: header -->
 <jsp:include page="../common/header.jsp" />		
@@ -46,137 +133,52 @@
 			<section class="odr-wrap">
 				<!-- order -->
 				<div class="odr-box">
-
-<!-- 주문자 정보 -->
-<input type="hidden" name="sid" value="jyj030818" />  
-<input type="hidden" name="totalpaytemp" value="" />  
-<input type="hidden" name="usemile1" />
-<input type="hidden" name="usemiletemp" value="5000" />
-<input type="hidden" name="ismember" value="1" />
-<input type="hidden" name="addrate" value="" />
-<input type="hidden" name="totalprice" value="" />
-
-<input type="hidden" name="totalpay" value="" />
-<input type="hidden" name="usermile" value="5000" />
-<input type="hidden" name="temptotal" value="" />
-
-<input type="hidden" name="aOrderOName" value="지영주" />  
-<input type="hidden" name="aOrderOZip" value="06193" />  
-
-<input type="hidden" name="aOrderOAddress1" value="서울 강남구 대치동 890-60" />
-<input type="hidden" name="aOrderOAddress2" value="9층, 쌍용교육센터" />
-<input type="hidden" name="aOrderORoadAddress" value="서울 강남구 테헤란로70길 12 (대치동)" />
-<input type="hidden" name="aOrderOEmail" value="" />
-<input type="hidden" name="aOrderOTel11" value="" />
-<input type="hidden" name="aOrderOTel12" value="" />
-<input type="hidden" name="aOrderOTel13" value="" />
-<input type="hidden" name="aOrderOTel21" value="010" />
-<input type="hidden" name="aOrderOTel22" value="1234" />
-<input type="hidden" name="aOrderOTel23" value="5678" />
-
-
-<input type="hidden" id="orderNum"  class="input size4" title="전화번호 앞자리" name="OrderOTel11" value="" maxlength="3" />
-<input type="hidden" class="input size4" title="전화번호 중간자리" name="OrderOTel12" value="" maxlength="4" />
-<input type="hidden"  class="input size4" title="전화번호 뒷자리" name="OrderOTel13" value="" maxlength="4"  />
-
-<input type="hidden" name="OrderOZip" value="06193" />
-<input type="hidden" name="OrderOAddress1" value="서울 강남구 테헤란로70길 12 (대치동)" />
-<input type="hidden" name="OrderOAddress2" value="9층, 쌍용교육센터" />
-<input type="hidden" name="OrderORoadAddress" value="서울 강남구 테헤란로70길 12 (대치동)" />
-<input type="hidden" name="BonusGift" id="BonusGift" class=" BonusGift" value="" />
-
-
-					<!-- 2023-02-01 주문자 정보 (비회원) 추가 -->
-
-
-					<div class="odr-toggle-box ordInfo open" style="display:none;">
-						<div class="hd">
-							<h3>주문자 정보</h3>
-
-							<div>
-								<button type="button" class="toggle__btn">button</button>
-							</div>
-						</div>
-
-						<div class="cn">
-							<div class="addr-info-box">
-								<div class="inp-box">
-									<div class="nm_pn">
-										<div class="name">
-											<input type="text" placeholder ="이름" maxlength="10" name="OrderOName" id="orderName2" value="지영주" readonly>
-										</div>
-										<div class="phn">
-											<input type="number" placeholder ="휴대폰 번호를 '-' 제외하고 숫자만 입력해주세요" name="OrderOTel21" id="OrderOTel21" maxlength="11" value="01021246441"  onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" onKeyDown="this.value=this.value.replace(/[^0-9]/g,'');" onBlur="this.value=this.value.replace(/[^0-9]/g,'');" readonly>
-										</div>
-									</div>
-									<div class="addr">	
-										<div style="display:none;">
-											<input type="text" >
-										</div>
-										<div>
-											<input type="text" class="" maxlength="50" name="OrderOEmail" id="email" placeholder="이메일" value="jyj030818@naver.com">
-										</div>
-									</div>
-								</div>							
-							</div>						
-						</div>
-<script>
-$('#OrderOTel21').keyup(function (e) {
-	let content = $(this).val();        
-    // 글자수 제한
-    if (content.length > 11) {
-        $(this).val($(this).val().substring(0, 11));
-    };
-});
-</script>
-					</div>
-
-
-
-					<!-- // 2023-02-01 배송지 정보 (비회원) 추가 -->
-
-
-
-
-
 					<!-- 배송지 정보 -->
-					<div class="odr-toggle-box _type_addr open"> <!-- 2023-02-21 클래스 추가 _type_addr -->
-						<div class="hd">
-							<h3>배송지 정보</h3>
-							<div>
-								<button type="button" class="delivery-change__btn addrBtn">변경</button>
-							</div>
-	
-						</div>
+					<div class="odr-toggle-box _type_addr open">
+    <div class="hd">
+        <h3>배송지 정보</h3>
+        <div>
+            <button type="button" class="delivery-change__btn addrBtn" onclick="openAddressPopup();">변경</button>
+        </div>
+    </div>
 
-						<div class="cn">
-							<div class="addr-info-box">
-								<div class="txt-box">
-									<p class="name delivery-change__btn" id="dName">지영주</p>
-									<p class="tel delivery-change__btn" id="dTel">010-1234-5678</p>
-								</div>
+    <div class="cn">
+        <div class="addr-info-box">
+            <c:choose>
+                <c:when test="${not empty defaultAddr}">
+                    <div class="txt-box">
+                        <p class="name delivery-change__btn" id="dName">${defaultAddr.recipientName}</p>
+                        <p class="tel delivery-change__btn" id="dTel">${defaultAddr.recipientPhone}</p>
+                    </div>
 
-								<div class="txt-box">
-									<p class="addr delivery-change__btn" id="dAddr">
-										(06193)&nbsp;서울 강남구 테헤란로70길 12 (대치동)&nbsp;9층, 쌍용교육센터
-									</p>
-									<!--span class="fc09" id="addDelivery"></span-->
-								</div>
-								
-								<!-- 배송 메시지 -->
-								<div class="msg-box">
-									<select onchange="$('#orderMemo').val(this.value);">
-										<option value="">배송요청사항 선택</option>
-										<option value="부재시 문앞에 부탁드려요.">부재시 문앞에 부탁드려요.</option>
-										<option value="경비실에 맡겨주세요.">경비실에 맡겨주세요.</option>
-										<option value="">직접 입력</option>
-									</select>
-									<input type="text" placeholder="내용을 입력해주세요." name="OrderContents" id="orderMemo">
-								</div>
-								<!-- //배송 메시지 -->
-							</div>						
-						</div>
-					</div>
+                    <div class="txt-box">
+                        <p class="addr delivery-change__btn" id="dAddr">
+                            (${defaultAddr.zipcode})&nbsp;${defaultAddr.mainAddr}&nbsp;${defaultAddr.detailAddr}
+                        </p>
+                    </div>
+                    
+                    <input type="hidden" name="address_id" id="address_id" value="${defaultAddr.addressId}" />
+                </c:when>
+                <c:otherwise>
+                    <div class="txt-box">
+                        <p class="addr">등록된 배송지가 없습니다. 배송지를 등록해 주세요.</p>
+                        <input type="hidden" name="address_id" id="address_id" value="0" />
+                    </div>
+                </c:otherwise>
+            </c:choose>
+            
+            <div class="msg-box">
+                <select onchange="$('#orderMemo').val(this.value);">
+                    <option value="">배송요청사항 선택</option>
+                    <option value="부재시 문앞에 부탁드려요.">부재시 문앞에 부탁드려요.</option>
+                    <option value="경비실에 맡겨주세요.">경비실에 맡겨주세요.</option>
+                    <option value="">직접 입력</option>
+                </select>
+                <input type="text" placeholder="내용을 입력해주세요." name="OrderContents" id="orderMemo">
+            </div>
+        </div>						
+    </div>
+</div>
 					<!-- //배송지 정보 -->
 
 					
@@ -199,8 +201,12 @@ $('#OrderOTel21').keyup(function (e) {
 								<input type="radio" name="deliveryOption" id="delivery_method1" value="0" onclick="todayDeliveryCheck();" data-gtm-form-interact-field-id="0" class="_val">
 								<label for="delivery_method1">일반배송</label>
 
-								<input type="radio" name="deliveryOption" id="delivery_method2" value="1" onclick="todayDeliveryCheck();" data-gtm-form-interact-field-id="1">  
-								<label for="delivery_method2">오늘도착</label><br>
+								<input type="radio" name="deliveryOption" id="delivery_method2" value="1" 
+								       onclick="todayDeliveryCheck();" 
+								       ${currentHour >= 11 ? 'disabled' : ''}>  
+								<label for="delivery_method2">
+								    오늘도착${currentHour >= 11 ? '(불가)' : ''}
+								</label>
 
 											<!--<a href="javascript:popAddDelivery()" class="btn_style6 addDeli"><span class="gr">+</span> 같이 배송</a>-->
 
@@ -414,33 +420,25 @@ $('#OrderOTel21').keyup(function (e) {
 							
 
 							<dl id="pointArea">
-								<dt>
-									포인트 사용
-									
-									<button type="button" class="point__btn" data-txt1="모두 사용" data-txt2="사용 취소" onclick="is_check0_ALL();">모두사용</button>
-								</dt>
-								<dd class="_type_red">-<input type="text" name="usemile" value="0" style="ime-mode:disabled;" onblur="pay_change0();" onfocus="if (this.value==0) this.value='';void(0);" maxlength="7"  onkeyup="ReturnNumberVal(this,0);pointNumberVal(this);if (event.keyCode==13) pay_change0();void(0);">P</dd>
-								<input type="text" style="display:none;">
-
-								<!-- 쿠폰 선택시 노출 -->
-								<dd class="my-point">보유 포인트 : <ee id="usePoint">5,000</ee>P</dd>
-								<!-- //쿠폰 선택시 노출 -->
+							    <dt>
+							        포인트 사용
+							        <button type="button" class="point__btn" onclick="is_check0_ALL();">모두사용</button>
+							    </dt>
+							    <dd class="_type_red">
+							        -<input type="text" name="usemile" value="0" 
+							                onkeyup="pointNumberVal(this);" 
+							                onblur="pay_change0();"
+							                style="ime-mode:disabled;" maxlength="7">P
+							    </dd> <dd class="my-point">보유 포인트 : 
+							        <ee id="usePoint"><fmt:formatNumber value="${user.balance}" pattern="#,###" /></ee>P
+							    </dd>
 							</dl>
-
-
-
-							<!--dl>
-								<dt>포인트</dt>
-								<dd>-<em id="sale_total3">0</em>원</dd>
-							</dl-->
 							<dl>
-								<dt>배송비</dt>
-								<dd>
-									<em id="transprice2">0</em>원
-									<em class="pcolor1" id="islandPay2"></em>
-									<em class="pcolor1" id="dangilPay2"></em>
-								</dd>
-									
+							    <dt>배송비</dt>
+							    <dd>
+							        <em id="transprice2">0</em>원 <em class="pcolor1" id="islandPay2"></em>
+							        <em class="pcolor1" id="dangilPay2"></em>
+							    </dd>
 							</dl>
 							
 							<dl class="total-pirce">
@@ -473,12 +471,21 @@ $('#OrderOTel21').keyup(function (e) {
 			</form>
 			
 		</div>
-
+<div id="AddaddressModalOverlay" class="style-modal-overlay" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
+    <div id="AddaddModalContent" style="width: 100%; max-width: 500px; background: #fff; min-height: 300px; position: relative; z-index: 10000;">
+        </div>
+</div>
 		<!-- // end of :: contents -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 function pay_checkout() {
-    // 1. 필수 선택값 체크
+    // 배송지 체크
+    const addrId = $("#address_id").val();
+    if (addrId == "0" || addrId == "") {
+        alert("배송지 정보를 등록하거나 선택해 주세요.");
+        return;
+    }
+
     const paymentMethod = $("input[name='gopaymethod']:checked").val();
     if (!paymentMethod) {
         alert("결제 수단을 선택해 주세요.");
@@ -487,29 +494,159 @@ function pay_checkout() {
 
     if (!confirm("정말로 결제하시겠습니까?")) return;
 
-    // 2. 서버로 보낼 데이터 수집
-    // Serialize를 사용하면 form 내의 모든 input 값을 한 번에 가져옵니다.
     const formData = $("form[name='user']").serialize();
 
     $.ajax({
-        url: "${pageContext.request.contextPath}/order/processOrder.htm", // 아까 properties에 등록한 주소
+        url: "${pageContext.request.contextPath}/order/processOrder.htm",
         type: "POST",
         data: formData,
         dataType: "json",
         success: function(res) {
             if (res.status === "success") {
                 alert("주문이 완료되었습니다!");
-                location.href = res.redirect; // 완료 페이지로 이동
+                location.href = res.redirect;
             } else {
                 alert("오류 발생: " + res.message);
             }
         },
-        error: function(xhr, status, error) {
-            console.error(error);
+        error: function() {
             alert("결제 처리 중 통신 오류가 발생했습니다.");
         }
     });
 }
+
+var contextPath = '${pageContext.request.contextPath}';
+
+//1. 배송지 목록 모달 열기
+function openAddressPopup() {
+    $("#AddaddModalContent").load(contextPath + "/order/address_list.htm", function(response, status, xhr) {
+        if (status == "error") {
+            alert("배송지 목록을 불러오는데 실패했습니다: " + xhr.status);
+        } else {
+            $("#AddaddressModalOverlay").css('display', 'flex').show();
+        }
+    });
+}
+
+// 2. 신규 배송지 추가 모달 열기 (기존 코드 수정)
+$(document).on('click', '.addr-add__btn', function() {
+    console.log("신규 추가 버튼 클릭됨"); // 작동 여부 확인용
+    var targetUrl = contextPath + "/view/mypage/add_address.jsp"; 
+    
+    $("#AddaddModalContent").load(targetUrl, function(response, status, xhr) {
+        if (status == "error") {
+            console.log("에러 발생: " + xhr.status + " " + xhr.statusText);
+            alert("신규 배송지 페이지를 불러올 수 없습니다.");
+        }
+    });
+});
+
+//3. 모달 닫기 공통
+$(document).on('click', '.close__btn, .cbt', function() {
+ $("#AddaddressModalOverlay").hide();
+ $("#AddaddModalContent").empty();
+});
+$(document).on('click', '.addr__list li', function() {
+    $(this).find('input[name="addr_select"]').prop('checked', true);
+});
+//4. 배송지 선택하기 (목록에서 라디오 버튼 등으로 선택했을 때)
+function addr_choice() {
+ var $selected = $("input[name='addr_select']:checked");
+ if($selected.length == 0) {
+     alert("배송지를 선택해주세요.");
+     return;
+ }
+ 
+ // 데이터 추출
+ var id = $selected.val();
+ var name = $selected.data('name');
+ var tel = $selected.data('tel');
+ var zip = $selected.data('zip');
+ var addr1 = $selected.data('addr1');
+ var addr2 = $selected.data('addr2');
+
+ // 부모창(order_pay.jsp) 화면 업데이트
+ $("#address_id").val(id);
+ $("#dName").text(name);
+ $("#dTel").text(tel);
+ $("#dAddr").text("(" + zip + ") " + addr1 + " " + addr2);
+
+ $("#AddaddressModalOverlay").hide();
+}
+</script>
+<script>
+// 1. 초기 설정 변수 (서버 데이터 매핑)
+const GOODS_TOTAL_PRICE = parseInt("${totalSalePrice}") || 0; // 할인 적용된 상품 총합
+const MY_MAX_POINT = parseInt("${user.balance}") || 0;
+// 2. 포인트 모두사용 버튼
+function is_check0_ALL() {
+    const $input = $("input[name='usemile']");
+    const $btn = $(".point__btn");
+    
+    if ($btn.text() === "모두사용") {
+        $input.val(MY_MAX_POINT);
+        $btn.text("사용 취소");
+    } else {
+        $input.val(0);
+        $btn.text("모두사용");
+    }
+    pay_change0(); // 금액 재계산
+}
+
+// 3. 포인트 입력 시 실시간 검증
+function pointNumberVal(obj) {
+    let inputVal = parseInt(obj.value.replace(/[^0-9]/g, '')) || 0;
+    
+    if (inputVal > MY_MAX_POINT) {
+        alert("보유하신 포인트(" + MY_MAX_POINT.toLocaleString() + "P)까지만 사용 가능합니다.");
+        obj.value = 0;
+    } else if (inputVal > GOODS_TOTAL_PRICE) {
+        alert("결제 금액을 초과하여 포인트를 사용할 수 없습니다.");
+        obj.value = 0;
+    }
+    pay_change0();
+}
+
+// 4. 핵심: 결제 금액 및 배송비 재계산
+function pay_change0() {
+    // 1. 상품 총액 가져오기 (콤마 제거 후 숫자로 변환)
+    let goodsPrice = parseInt("${totalSalePrice}") || 0;
+    // 2. 사용 포인트 가져오기
+    let usePoint = parseInt($("input[name='usemile']").val()) || 0;
+    
+    let deliveryFee = 0;
+
+    // 3. 배송비 계산 로직 (30,000원 기준)
+    if (goodsPrice > 0 && goodsPrice < 30000) {
+        deliveryFee = 3000;
+        $("#transprice2").text("3,000"); // 배송비 요약 영역
+        $("#transprice2").parent().find(".pcolor1").text(""); // 추가 문구 초기화
+    } else {
+        deliveryFee = 0;
+        $("#transprice2").text("0");
+        $(".basic-box .txt").text("3만원 이상 무료 배송");
+    }
+
+    // 4. 최종 결제 금액 계산
+    let finalPayPrice = goodsPrice - usePoint + deliveryFee;
+    
+    // 5. 화면 업데이트
+    $("#display_total_price").text(finalPayPrice.toLocaleString());
+    
+    console.log("상품금액:", goodsPrice, "배송비:", deliveryFee, "포인트:", usePoint, "최종:", finalPayPrice);
+}
+
+// 기존에 섞여있던 todayDeliveryCheck 함수가 배송비를 0으로 만들지 않게 주의해야 합니다.
+function todayDeliveryCheck() {
+    // 배송 방법 라디오 버튼 클릭 시에도 금액 재계산 호출
+    pay_change0();
+}
+
+// 페이지 로드 시 초기 계산 실행
+$(document).ready(function() {
+    pay_change0();
+    $("#usePoint").text(MY_MAX_POINT.toLocaleString()); // 보유 포인트 표시 업데이트
+});
 </script>
 <!-- start of :: footer -->
 <jsp:include page="../common/footer.jsp" />

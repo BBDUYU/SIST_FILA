@@ -102,22 +102,51 @@ public class OrderDAO {
         }
     }
 
-    /**
-     * 6. 포인트 사용 기록 추가 (USERPOINTS)
-     */
     public void insertPointHistory(Connection conn, int userNumber, String orderId, int usedAmount) throws SQLException {
-        // 현재 잔액 조회 후 차감 로직 필요 (여기선 단순 INSERT 예시)
-        String sql = "INSERT INTO USERPOINTS (POINT_ID, USER_NUMBER, ORDER_ID, POINT_TYPE, "
-                   + "AMOUNT, BALANCE, DESCRIPTION, CREATED_AT) "
+        String sql = "INSERT INTO USERPOINTS (POINT_ID, USER_NUMBER, ORDER_ID, POINT_TYPE, AMOUNT, BALANCE, DESCRIPTION, CREATED_AT) "
                    + "VALUES (SEQ_POINT.NEXTVAL, ?, ?, 'USED', ?, "
-                   + "(SELECT NVL(MAX(BALANCE),0) - ? FROM USERPOINTS WHERE USER_NUMBER = ?), '상품 구매 사용', SYSDATE)";
+                   + "(SELECT NVL((SELECT BALANCE FROM (SELECT BALANCE FROM USERPOINTS WHERE USER_NUMBER = ? ORDER BY POINT_ID DESC) WHERE ROWNUM = 1), 0) - ? FROM DUAL), "
+                   + "'상품 구매 사용', SYSDATE)";
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userNumber);
             pstmt.setString(2, orderId);
             pstmt.setInt(3, usedAmount);
-            pstmt.setInt(4, usedAmount);
-            pstmt.setInt(5, userNumber);
+            pstmt.setInt(4, userNumber); // 서브쿼리용
+            pstmt.setInt(5, usedAmount); // 차감액
+            pstmt.executeUpdate();
+        }
+    }
+    /* 재고 관련 DAO 메서드 */
+    public int updateDecreaseStock(Connection conn, int combinationId, int quantity) throws SQLException {
+        // 재고를 차감하고, 수량이 0이 되면 IS_SOLDOUT을 1로 업데이트
+        String sql = "UPDATE PRODUCT_OPTION_STOCK " +
+                     "SET STOCK = STOCK - ?, " +
+                     "    IS_SOLDOUT = CASE WHEN (STOCK - ?) <= 0 THEN 1 ELSE 0 END " +
+                     "WHERE COMBINATION_ID = ? AND STOCK >= ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, quantity);
+            pstmt.setInt(2, quantity);
+            pstmt.setInt(3, combinationId);
+            pstmt.setInt(4, quantity); // 재고가 주문수량보다 많을 때만 실행
+            return pstmt.executeUpdate();
+        }
+    }
+
+    public void insertOrderPoint(Connection conn, int userNumber, int amount, String orderId) throws SQLException {
+        String sql = "INSERT INTO USERPOINTS (POINT_ID, USER_NUMBER, ORDER_ID, AMOUNT, POINT_TYPE, BALANCE, DESCRIPTION, CREATED_AT) "
+                   + "VALUES (SEQ_POINT.NEXTVAL, ?, ?, ?, 'EARN', "
+                   + "(SELECT NVL((SELECT BALANCE FROM (SELECT BALANCE FROM USERPOINTS WHERE USER_NUMBER = ? ORDER BY POINT_ID DESC) WHERE ROWNUM = 1), 0) + ? FROM DUAL), "
+                   + "?, SYSDATE)";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userNumber);
+            pstmt.setString(2, orderId);
+            pstmt.setInt(3, amount);
+            pstmt.setInt(4, userNumber); // 서브쿼리용
+            pstmt.setInt(5, amount);    // 적립액
+            pstmt.setString(6, "주문 번호[" + orderId + "] 결제 적립(5%)");
             pstmt.executeUpdate();
         }
     }
