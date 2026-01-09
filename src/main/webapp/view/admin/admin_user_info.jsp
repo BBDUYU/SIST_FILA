@@ -275,7 +275,6 @@ body {
 							            </c:choose>
 							        </td>
 							        <td style="font-weight: bold;">
-							            <c:if test="${p.type eq 'USED'}">-</c:if>
 							            <%-- DAO에서 .amout으로 담았으므로 그대로 사용 --%>
 							            <fmt:formatNumber value="${p.amout}" pattern="#,###" /> P
 							        </td>
