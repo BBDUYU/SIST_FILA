@@ -7,6 +7,94 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/review/review_style.css">
 <script src="${pageContext.request.contextPath}/resources/review/review_script.js"></script>
 
+<%-- [스타일 강제 적용] JSP 안에 넣으면 캐시 문제 없이 바로 보입니다 --%>
+<style>
+    /* 1. [기본 상태] 연한 회색 */
+    #photoFilterBtn {
+        font-size: 14px;
+        color: #999 !important;      /* 기본 글씨: 연회색 */
+        font-weight: 400 !important; /* 얇게 */
+        background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px;
+        transition: all 0.2s;
+    }
+    #photoFilterBtn svg {
+        stroke: #bbb !important;     /* 기본 아이콘: 연회색 */
+        stroke-width: 1.5px;
+        fill: none;
+        transition: all 0.2s;
+    }
+
+    /* 2. [호버 상태] 마우스 올렸을 때 -> 진한 회색(검정) #111 */
+    #photoFilterBtn:hover {
+        color: #111 !important;      /* 글씨: 진한 회색 */
+        font-weight: 700 !important; /* 굵게 */
+    }
+    #photoFilterBtn:hover svg {
+        stroke: #111 !important;     /* 아이콘: 진한 회색 */
+        stroke-width: 2px;
+    }
+
+    /* 3. [활성화 상태] 클릭됨 (class="active") -> 진한 회색(검정) #111 */
+    #photoFilterBtn.active {
+        color: #111 !important;      /* 글씨: 진한 회색 (남색 아님!) */
+        font-weight: 700 !important;
+    }
+
+    /* [핵심] 클릭 시 아이콘 모양 변경 */
+    /* 동그라미: 배경을 진한 회색(#111)으로 꽉 채움 */
+    #photoFilterBtn.active svg circle {
+        fill: #111 !important;       /* 여기가 핵심! 배경 채우기 */
+        stroke: none !important;     /* 테두리 선 삭제 */
+        transition: all 0.2s;
+    }
+    /* 체크표시: 선 색깔을 하얀색(#fff)으로 */
+    #photoFilterBtn.active svg polyline {
+        stroke: #fff !important;     /* 체크는 하얀색 */
+        stroke-width: 2.5px;
+        transition: all 0.2s;
+    }
+    
+/* [리뷰 더보기/접기 스타일 - 높이 기준] */
+.review-text-body {
+    font-size: 14px; 
+    line-height: 1.6; /* 줄간격 */
+    color: #1a1a1a; 
+    white-space: pre-wrap;
+    
+    /* [핵심] 높이 제한 설정 */
+    max-height: 110px; /* 대략 5줄 정도 높이 (14px * 1.6 * 5줄 ≈ 112px) */
+    overflow: hidden;  /* 넘치는 내용 숨김 */
+    
+    transition: max-height 0.3s ease; /* 부드럽게 열리기 */
+}
+
+/* 펼쳐졌을 때 클래스 */
+.review-text-body.full {
+    max-height: none !important; /* 높이 제한 해제 */
+}
+
+/* 더보기 버튼 (기본적으로 숨겨둠 -> JS가 필요하면 보여줌) */
+.more-btn-wrap {
+    display: none; /* 일단 숨김 */
+    text-align: right; 
+    margin-top: 5px;
+}
+
+.more-btn {
+    display: inline-block;
+    font-size: 13px;
+    color: #999;
+    text-decoration: underline;
+    background: none; 
+    border: none; 
+    cursor: pointer;
+    padding: 0;
+}
+.more-btn:hover {
+    color: #000;
+}
+</style>
+
 <div class="common__layer _review" id="reviewModal" style="display:none;">
     
     <div class="layer-bg__wrap" onclick="closeReviewModal()"></div>
@@ -80,220 +168,43 @@
 				    </div>
 				</div>
 
-                <div class="filter-toolbar">
+                <div class="filter-toolbar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+    
+                    <%-- [왼쪽] 정렬 옵션 --%>
                     <div class="sort-opts">
-                        <a href="javascript:void(0);" class="active">최신순</a>
-                        <a href="javascript:void(0);">별점순</a>
+                        <a href="javascript:void(0);" id="sortDateBtn" class="active" onclick="changeSort('date')" style="margin-right:10px; font-weight:bold; color:#000; text-decoration:none;">최신순</a>
+                        <a href="javascript:void(0);" id="sortRateBtn" onclick="changeSort('rate')" style="color:#999; text-decoration:none;">별점순</a>
                     </div>
-                    <div class="search-box">
-                        <input type="text" placeholder="리뷰 키워드 검색">
+                
+                    <%-- [오른쪽] 포토 버튼 + 검색창 --%>
+                    <div style="display:flex; align-items:center; gap: 15px;">
+                        
+                        <%-- 1. 포토/동영상 먼저 보기 버튼 --%>
+                        <button type="button" id="photoFilterBtn" onclick="togglePhotoFilter(this)">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="16 9 12 15 8 11"></polyline>
+                            </svg>
+                            <span style="letter-spacing:-0.5px; margin-top:2px;">포토리뷰 먼저 보기</span>
+                        </button>
+                
+                        <%-- 2. 검색창 --%>
+                        <div class="search-box" style="position:relative; width: 200px;">
+                            <svg style="position:absolute; left:10px; top:50%; transform:translateY(-50%); width:16px; height:16px; stroke:#999;" 
+                                 viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" id="searchKeyword" placeholder="리뷰 키워드 검색" onkeyup="handleSearchKey(event)" 
+                                   style="width:100%; height:34px; border:1px solid #ddd; border-radius:4px; padding-left:32px; padding-right:10px; box-sizing:border-box; font-size:13px;">
+                        </div>
                     </div>
                 </div>
 
-                <div class="review-filter-bar" style="margin-bottom:20px; display:flex; flex-wrap:wrap; gap:8px;">
-                    
-                    <div class="filter-wrapper" style="position:relative;">
-                        <button type="button" class="filter-trigger" onclick="toggleFilter('starOptionBox')" style="background:#fff; border:1px solid #ddd; padding:8px 12px; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:5px;">
-                            별점 
-                            <svg width="10" height="10" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </button>
-                        <div id="starOptionBox" class="filter-dropdown" style="display:none; position:absolute; top:100%; left:0; width:200px; background:#fff; border:1px solid #000; z-index:100; padding:15px; margin-top:-1px;">
-                            <ul class="check-list" style="list-style:none; padding:0; margin-bottom:10px;">
-                                <li><label><input type="checkbox" value="5"> 아주 좋아요</label></li>
-                                <li><label><input type="checkbox" value="4"> 좋아요</label></li>
-                                <li><label><input type="checkbox" value="3"> 보통이에요</label></li>
-                                <li><label><input type="checkbox" value="2"> 그냥 그래요</label></li>
-                                <li><label><input type="checkbox" value="1"> 별로예요</label></li>
-                            </ul>
-                            <div class="dropdown-btns" style="display:flex; gap:5px;">
-                                <button type="button" class="reset-btn" style="flex:1; border:1px solid #ddd; background:#fff; height:30px;">초기화</button>
-                                <button type="button" class="apply-btn" style="flex:1; border:1px solid #000; background:#000; color:#fff; height:30px;" onclick="closeFilter('starOptionBox')">적용</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="filter-wrapper" style="position:relative;">
-                        <button type="button" class="filter-trigger" onclick="toggleFilter('sizeOptionBox')" style="background:#fff; border:1px solid #ddd; padding:8px 12px; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:5px;">
-                            사이즈
-                            <svg width="10" height="10" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </button>
-                        <div id="sizeOptionBox" class="filter-dropdown" style="display:none; position:absolute; top:100%; left:0; width:150px; background:#fff; border:1px solid #000; z-index:100; padding:15px; margin-top:-1px;">
-                            <ul class="check-list" style="list-style:none; padding:0; margin-bottom:10px;">
-                                <li><label><input type="checkbox"> 작아요</label></li>
-                                <li><label><input type="checkbox"> 조금 작아요</label></li>
-                                <li><label><input type="checkbox"> 잘 맞아요</label></li>
-                                <li><label><input type="checkbox"> 조금 커요</label></li>
-                                <li><label><input type="checkbox"> 커요</label></li>
-                            </ul>
-                            <div class="dropdown-btns" style="display:flex; gap:5px;">
-                                <button type="button" class="reset-btn" style="flex:1; border:1px solid #ddd; background:#fff; height:30px;">초기화</button>
-                                <button type="button" class="apply-btn" style="flex:1; border:1px solid #000; background:#000; color:#fff; height:30px;" onclick="closeFilter('sizeOptionBox')">적용</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="filter-wrapper" style="position:relative;">
-                        <button type="button" class="filter-trigger" onclick="toggleFilter('heightOptionBox')" style="background:#fff; border:1px solid #ddd; padding:8px 12px; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:5px;">
-                            키
-                            <svg width="10" height="10" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </button>
-                        <div id="heightOptionBox" class="filter-dropdown" style="display:none; position:absolute; top:100%; left:0; width:150px; background:#fff; border:1px solid #000; z-index:100; padding:15px; margin-top:-1px;">
-                            <ul class="check-list" style="list-style:none; padding:0; margin-bottom:10px;">
-                                <li><label><input type="checkbox"> 150cm 이하</label></li>
-                                <li><label><input type="checkbox"> 160cm 대</label></li>
-                                <li><label><input type="checkbox"> 170cm 대</label></li>
-                                <li><label><input type="checkbox"> 180cm 이상</label></li>
-                            </ul>
-                            <div class="dropdown-btns" style="display:flex; gap:5px;">
-                                <button type="button" class="reset-btn" style="flex:1; border:1px solid #ddd; background:#fff; height:30px;">초기화</button>
-                                <button type="button" class="apply-btn" style="flex:1; border:1px solid #000; background:#000; color:#fff; height:30px;" onclick="closeFilter('heightOptionBox')">적용</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="filter-wrapper" style="position:relative;">
-                        <button type="button" class="filter-trigger" onclick="toggleFilter('weightOptionBox')" style="background:#fff; border:1px solid #ddd; padding:8px 12px; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:5px;">
-                            몸무게
-                            <svg width="10" height="10" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </button>
-                        <div id="weightOptionBox" class="filter-dropdown" style="display:none; position:absolute; top:100%; left:0; width:150px; background:#fff; border:1px solid #000; z-index:100; padding:15px; margin-top:-1px;">
-                            <ul class="check-list" style="list-style:none; padding:0; margin-bottom:10px;">
-                                <li><label><input type="checkbox"> 40kg 대</label></li>
-                                <li><label><input type="checkbox"> 50kg 대</label></li>
-                                <li><label><input type="checkbox"> 60kg 대</label></li>
-                                <li><label><input type="checkbox"> 70kg 대</label></li>
-                                <li><label><input type="checkbox"> 80kg 이상</label></li>
-                            </ul>
-                            <div class="dropdown-btns" style="display:flex; gap:5px;">
-                                <button type="button" class="reset-btn" style="flex:1; border:1px solid #ddd; background:#fff; height:30px;">초기화</button>
-                                <button type="button" class="apply-btn" style="flex:1; border:1px solid #000; background:#000; color:#fff; height:30px;" onclick="closeFilter('weightOptionBox')">적용</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="filter-wrapper" style="position:relative;">
-                        <button type="button" class="filter-trigger" onclick="toggleFilter('genderOptionBox')" style="background:#fff; border:1px solid #ddd; padding:8px 12px; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:5px;">
-                            성별
-                            <svg width="10" height="10" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </button>
-                        <div id="genderOptionBox" class="filter-dropdown" style="display:none; position:absolute; top:100%; left:0; width:120px; background:#fff; border:1px solid #000; z-index:100; padding:15px; margin-top:-1px;">
-                            <ul class="check-list" style="list-style:none; padding:0; margin-bottom:10px;">
-                                <li><label><input type="checkbox"> 남성</label></li>
-                                <li><label><input type="checkbox"> 여성</label></li>
-                            </ul>
-                            <div class="dropdown-btns" style="display:flex; gap:5px;">
-                                <button type="button" class="reset-btn" style="flex:1; border:1px solid #ddd; background:#fff; height:30px;">초기화</button>
-                                <button type="button" class="apply-btn" style="flex:1; border:1px solid #000; background:#000; color:#fff; height:30px;" onclick="closeFilter('genderOptionBox')">적용</button>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="review-content-area">
-				    <c:choose>
-				        <c:when test="${empty reviewList}">
-				            <div class="no-review-msg" style="text-align:center; padding:80px 0; color:#999;">
-				                <p>리뷰가 없습니다.</p>
-				            </div>
-				        </c:when>
-				        <c:otherwise>
-				            <%-- 리스트 반복 시작 --%>
-				            <c:forEach var="dto" items="${reviewList}">
-				                <div class="review-card" style="display: flex; border-bottom: 1px solid #f4f4f4; padding: 30px 0; min-height: 200px;">
-				                    
-				                    <%-- 1. 왼쪽 영역: 별점, 내용, 사진, 도움 버튼 --%>
-				                    <div class="review-left" style="flex: 1; padding-right: 40px;">
-				                        
-				                        <%-- 별점 (휠라 전용 남색) --%>
-				                        <div class="rating-stars" style="display: flex; gap: 2px; margin-bottom: 15px;">
-				                            <c:forEach begin="1" end="${dto.rating}">
-				                                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #003F96;">
-				                                    <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
-				                                </svg>
-				                            </c:forEach>
-				                            <c:forEach begin="1" end="${5 - dto.rating}">
-				                                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #ddd;">
-				                                    <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
-				                                </svg>
-				                            </c:forEach>
-				                        </div>
-				
-				                        <%-- 리뷰 텍스트 --%>
-				                        <div class="review-text" style="font-size: 14px; line-height: 1.6; color: #1a1a1a; margin-bottom: 20px; white-space: pre-wrap;">${dto.content}</div>
-				
-				                        <%-- 리뷰 사진 --%>
-				                        <%-- 기존 review_img 출력 부분 찾아서 교체 --%>
-										<c:if test="${not empty dto.review_img}">
-										    <div class="review-images" style="margin-bottom: 20px; display:flex; gap:5px;">
-										        
-										        <%-- 1. 콤마(,)를 기준으로 문자열을 쪼개서 배열(imgs)로 만듦 --%>
-										        <c:set var="imgs" value="${fn:split(dto.review_img, ',')}" />
-										        
-										        <%-- 2. 쪼개진 개수만큼 반복해서 이미지 출력 --%>
-										        <c:forEach var="imgUrl" items="${imgs}">
-												    <%-- 1. DB경로(/fila_upload/review/neko1.jpg)에서 파일명(neko1.jpg)만 추출 --%>
-												    <c:set var="fileName" value="${fn:substringAfter(imgUrl, '/review/')}" />
-												    
-												    <%-- 2. 핸들러 주소로 요청 (file 파라미터로 이름 넘김) --%>
-												    <img src="${pageContext.request.contextPath}/review/image.htm?file=${fileName}" 
-												         style="width: 120px; height: 120px; object-fit: cover; border-radius: 4px; border:1px solid #eee;">
-												</c:forEach>
-										        
-										    </div>
-										</c:if>
-				
-				                        <%-- 도움돼요/안돼요 버튼 섹션 --%>
-				                        <div class="like-section" style="display: flex; align-items: center; gap: 15px; margin-top: 10px;">
-   
-										    <button type="button" onclick="handleLike(this, ${dto.review_id}, 1)" 
-										            style="background: none; border: none; cursor: pointer; display: flex; align-items: center; font-size: 12px; padding: 0; ${dto.myLike == 1 ? 'color:#003F96;' : 'color:#666;'}">
-										        <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-right: 4px; fill: ${dto.myLike == 1 ? '#003F96' : '#999'};">
-										            <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
-										        </svg>
-										        도움돼요 <span style="margin-left: 4px; font-weight: bold;">${dto.like_cnt}</span>
-										    </button>
-										
-										    <%-- 도움안돼요 버튼 (myLike가 0이면 파란색) --%>
-										    <button type="button" onclick="handleLike(this, ${dto.review_id}, 0)" 
-										            style="background: none; border: none; cursor: pointer; display: flex; align-items: center; font-size: 12px; padding: 0; ${dto.myLike == 0 ? 'color:#003F96;' : 'color:#666;'}">
-										        <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-right: 4px; transform: rotate(180deg); fill: ${dto.myLike == 0 ? '#003F96' : '#999'};">
-										            <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
-										        </svg>
-										        도움안돼요 <span style="margin-left: 4px; font-weight: bold;">${dto.dislike_cnt}</span>
-										    </button>
-										
-										</div>
-				                    </div>
-				
-				                    <%-- 2. 오른쪽 영역: ID(마스킹), 날짜 (구분선 너머) --%>
-				                    <div class="review-right" style="width: 150px; border-left: 1px solid #f4f4f4; padding-left: 20px; display: flex; flex-direction: column; justify-content: flex-start;">
-				                        <%-- 마스킹된 ID (3글자 노출) --%>
-				                        <div class="user-id" style="font-size: 13px; font-weight: bold; color: #333; margin-bottom: 8px;">
-				                            <c:set var="maskId" value="${dto.user_id}" />
-				                            ${fn:substring(maskId, 0, 3)}****
-				                        </div>
-				                        <%-- 날짜 (하단 배치) --%>
-				                        <div class="created-at" style="font-size: 12px; color: #999; margin-top: auto;">
-				                            <fmt:formatDate value="${dto.regdate}" pattern="yyyy. MM. dd." />
-				                        </div>
-				                    </div>
-				
-				                </div>
-				            </c:forEach>
-				        </c:otherwise>
-				    </c:choose>
+                <div class="review-content-area" id="reviewListArea">
+				    <jsp:include page="review_list.jsp" />
 				</div>
+				
             </div>
         </div>
 
@@ -375,12 +286,116 @@
 <script>
 // [전역 변수]
 var sel_files = [];
+var isPhotoFirst = false; // 포토 리뷰 정렬 토글 변수
+var currentSort = "date"; // 정렬 기준 (date: 최신순, rate: 별점순)
+
+// 1. [정렬 변경] 최신순/별점순 탭 클릭 시
+function changeSort(type) {
+    currentSort = type; // date 또는 rate 저장
+    
+    // 스타일 변경
+    if (type === 'date') {
+        $("#sortDateBtn").css({"font-weight":"bold", "color":"#000"}).addClass("active");
+        $("#sortRateBtn").css({"font-weight":"normal", "color":"#999"}).removeClass("active");
+    } else {
+        $("#sortRateBtn").css({"font-weight":"bold", "color":"#000"}).addClass("active");
+        $("#sortDateBtn").css({"font-weight":"normal", "color":"#999"}).removeClass("active");
+    }
+    
+    // 검색 실행
+    searchReviews();
+}
+
+// 2. [검색어 입력] 엔터키 눌렀을 때 실행
+function handleSearchKey(e) {
+    if (e.keyCode === 13) { // 13번이 엔터키
+        searchReviews();
+    }
+}
+
+// 3. [통합 검색 요청] 모든 조건(포토, 정렬, 검색어)을 합쳐서 AJAX 요청
+// (이 함수 하나로 모든 검색/정렬을 처리합니다!)
+function searchReviews() {
+    var productId = "${product.product_id}";
+    var keyword = $("#searchKeyword").val(); // 검색어 가져오기
+    
+    // 정렬 로직 조합
+    var finalSort = currentSort;
+    if (isPhotoFirst) {
+        if (currentSort === 'date') finalSort = "photo"; // 기존 'photo' = 사진우선 + 최신순
+        else finalSort = "photo_rate"; // 신규 'photo_rate' = 사진우선 + 별점순
+    }
+
+    console.log("DB 요청: 정렬=" + finalSort + ", 검색어=" + keyword);
+    
+    $.ajax({
+        url: "${pageContext.request.contextPath}/review/list.htm",
+        type: "GET",
+        data: { 
+            product_id: productId,
+            sort: finalSort,
+            keyword: keyword
+        },
+        dataType: "html",
+        success: function(htmlFragment) {
+            $("#reviewListArea").html(htmlFragment);
+            
+            // 리스트 로드 후 높이 계산 (더보기 버튼용)
+            // review_modal.jsp에 있는 함수나 review_list.jsp에 있는 함수 중 하나 실행
+            if (typeof checkReviewHeight === 'function') {
+                checkReviewHeight();
+            } else if (typeof checkReviewHeightLocal === 'function') {
+                checkReviewHeightLocal();
+            }
+        },
+        error: function(err) {
+            console.log("리스트 로드 실패", err);
+        }
+    });
+}
+
+// [포토 리뷰 필터 토글]
+function togglePhotoFilter(btn) {
+    isPhotoFirst = !isPhotoFirst; // 상태 반전
+    $(btn).toggleClass("active"); // 클래스 변경
+    searchReviews(); // DB 조회 요청 (위의 똑똑한 함수 호출)
+}
+
+// [여기 있던 옛날 searchReviews() 함수는 지웠습니다! 절대 다시 넣지 마세요!]
+
+// [리뷰 더보기/접기 기능]
+function toggleReviewText(btn) {
+    var $textDiv = $(btn).parent().prev(); 
+    
+    if ($textDiv.hasClass("full")) {
+        $textDiv.removeClass("full");
+        $(btn).text("리뷰 더보기"); 
+    } else {
+        $textDiv.addClass("full");
+        $(btn).text("리뷰 접기"); 
+    }
+}
+
+// [높이 재는 함수] (모달 열 때 사용)
+function checkReviewHeight() {
+    $(".review-text-body").each(function() {
+        if (this.scrollHeight > this.clientHeight) {
+            $(this).next(".more-btn-wrap").show();
+        } else {
+            $(this).next(".more-btn-wrap").hide();
+        }
+    });
+}
 
 // [1] 모달 열기
 function openReviewModal() {
     $('#reviewModal').fadeIn(200);
     $('body').addClass('no-scroll');
-    switchToList(); 
+    switchToList();
+    
+    setTimeout(function() {
+        checkReviewHeight(); 
+    }, 50);
 }
 
 // [2] 모달 닫기
@@ -390,7 +405,7 @@ function closeReviewModal() {
     resetWriteForm();
 }
 
-// [3] 작성 화면 전환 (초기화 포함)
+// [3] 작성 화면 전환
 function switchToWrite() {
     var isLogOut = ${empty auth}; 
     if (isLogOut) {
@@ -398,7 +413,7 @@ function switchToWrite() {
         location.href = "${pageContext.request.contextPath}/login.htm";
         return; 
     }
-    resetWriteForm(); // 초기화
+    resetWriteForm(); 
     $('#reviewListView').hide(); 
     $('#reviewWriteView').css('display', 'flex'); 
 }
@@ -412,8 +427,6 @@ function resetWriteForm() {
     setRating(5);
     $("#scoreText").text("아주 좋아요");
     $(".write-star-svg").css("fill", "#003F96");
-    
-    // [NEW] 숫자 카운터 초기화
     $("#fileCount").text("(0/4)");
 }
 
@@ -423,7 +436,7 @@ function switchToList() {
     $('#reviewListView').css('display', 'flex');
 }
 
-// [5] 별점
+// [5] 별점 설정
 function setRating(rating) {
     $("#reviewScore").val(rating);
     $(".write-star-svg").each(function() {
@@ -435,31 +448,24 @@ function setRating(rating) {
     $("#scoreText").text(scoreTexts[rating]);
 }
 
-// ============================================================
-// [6] 이미지 미리보기 & 개수 카운팅 (업그레이드)
-// ============================================================
+// [6] 이미지 미리보기
 function handleImgPreview(e) {
     var files = e.files;
     var filesArr = Array.prototype.slice.call(files);
-
     var totalCnt = sel_files.length + filesArr.length;
 
-    // 1. 개수 체크
     if (totalCnt > 4) {
         alert("사진은 최대 4장까지만 등록 가능합니다.\n(현재 " + sel_files.length + "장 + 선택 " + filesArr.length + "장 = 총 " + totalCnt + "장)");
         $(e).val(""); 
         return;
     }
 
-    // 2. 파일 처리
     filesArr.forEach(function(f) {
         if (!f.type.match("image.*")) {
             alert("이미지 파일만 업로드 가능합니다.");
             return;
         }
-
         sel_files.push(f); 
-
         var reader = new FileReader();
         reader.onload = function(e) {
             var html = 
@@ -472,24 +478,16 @@ function handleImgPreview(e) {
         }
         reader.readAsDataURL(f);
     });
-    
-    // [NEW] 개수 텍스트 갱신
     updateFileCount();
-    
-    $(e).val(""); // input 초기화
+    $(e).val(""); 
 }
 
 function deleteSelImage(btn, fileName) {
-    sel_files = sel_files.filter(function(f) {
-        return f.name !== fileName;
-    });
+    sel_files = sel_files.filter(function(f) { return f.name !== fileName; });
     $(btn).parent().remove();
-    
-    // [NEW] 개수 텍스트 갱신
     updateFileCount();
 }
 
-// [NEW] 카운트 업데이트 함수
 function updateFileCount() {
     $("#fileCount").text("(" + sel_files.length + "/4)");
 }
@@ -500,16 +498,12 @@ function submitReviewAjax() {
     var rating = $("#reviewScore").val();
     var productNo = $("input[name='productNo']").val();
 
-    if (!content) {
-        alert("내용을 입력해주세요.");
-        return;
-    }
+    if (!content) { alert("내용을 입력해주세요."); return; }
 
     var formData = new FormData();
     formData.append("productNo", productNo);
     formData.append("reviewContent", content);
     formData.append("reviewScore", rating);
-
     for (var i = 0; i < sel_files.length; i++) {
         formData.append("file" + (i+1), sel_files[i]);
     }
@@ -535,9 +529,8 @@ function submitReviewAjax() {
         }
     });
 }
-// ============================================================
 
-// [7] 필터, [8] 좋아요 함수는 그대로 두시면 됩니다 (생략)
+// [필터 & 좋아요]
 function toggleFilter(id) { var $el = $('#' + id); var isOpen = $el.is(':visible'); $('.filter-dropdown').hide(); if (!isOpen) $el.show(); }
 function closeFilter(id) { $('#' + id).hide(); }
 $(document).on('click', function(e) { if (!$(e.target).closest('.filter-wrapper').length) { $('.filter-dropdown').hide(); } });

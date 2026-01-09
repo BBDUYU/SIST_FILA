@@ -251,7 +251,7 @@ public class ProductService {
                 }
 
                 // [수정] userNumber를 파라미터로 같이 넘김 (내 좋아요 상태 확인용)
-                List<review.ReviewDTO> reviewList = reviewDao.selectListByFilter(productId, null, userNumber);
+                List<review.ReviewDTO> reviewList = reviewDao.selectListByFilter(productId, null, userNumber, null, null);
                 java.util.Map<String, Object> reviewSummary = reviewDao.getReviewSummary(productId);
                 
                 // -----------------------------------------------------------
