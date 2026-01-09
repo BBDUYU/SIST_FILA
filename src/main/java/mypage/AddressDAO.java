@@ -149,4 +149,33 @@ public class AddressDAO {
 		  }
 		}
 	
+	// ✅ 단건 조회 (본인 주소만)
+	public AddressDTO selectOneById(Connection conn, int addressId, int userNumber) throws Exception {
+	  String sql =
+	      "SELECT ADDRESS_ID, USER_NUMBER, ADDRESS_NAME, RECIPIENT_NAME, RECIPIENT_PHONE, " +
+	      "       ZIPCODE, MAIN_ADDR, DETAIL_ADDR, IS_DEFAULT " +
+	      "FROM DELIVERY_ADDRESS " +
+	      "WHERE ADDRESS_ID = ? AND USER_NUMBER = ?";
+
+	  try (PreparedStatement ps = conn.prepareStatement(sql)) {
+	    ps.setInt(1, addressId);
+	    ps.setInt(2, userNumber);
+	    try (ResultSet rs = ps.executeQuery()) {
+	      if (!rs.next()) return null;
+
+	      AddressDTO dto = new AddressDTO();
+	      dto.setAddressId(rs.getInt("ADDRESS_ID"));
+	      dto.setUserNumber(rs.getInt("USER_NUMBER"));
+	      dto.setAddressName(rs.getString("ADDRESS_NAME"));
+	      dto.setRecipientName(rs.getString("RECIPIENT_NAME"));
+	      dto.setRecipientPhone(rs.getString("RECIPIENT_PHONE"));
+	      dto.setZipcode(rs.getString("ZIPCODE"));
+	      dto.setMainAddr(rs.getString("MAIN_ADDR"));
+	      dto.setDetailAddr(rs.getString("DETAIL_ADDR"));
+	      dto.setIsDefault(rs.getInt("IS_DEFAULT"));
+	      return dto;
+	    }
+	  }
+	}
+	
 }
