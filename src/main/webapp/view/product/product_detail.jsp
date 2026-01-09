@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <script src="${pageContext.request.contextPath}/js/list.js"></script>
 
@@ -274,7 +275,9 @@
                                         <div>
                                             <button type="button" class="review-more__btn" onclick="openReviewModal()">
                                              상품 리뷰
-                                             <span class=" crema-product-reviews-count" data-product-code="${product.product_id}"></span>
+                                             <span class="crema-product-reviews-count" data-product-code="${product.product_id}">
+										        ${fn:length(reviewList)}
+										    </span>
                                          	</button>
                                         </div>
                                         <div>
@@ -445,7 +448,7 @@ $(document).ready(function() {
     // 2. 로그인 체크 (생략 가능하면 유지)
     var isLogin = ${empty sessionScope.auth ? "false" : "true"};
     if (!isLogin) {
-        location.href = "${loginUrl}";
+        location.href = "${pageContext.request.contextPath}/user/login.jsp";
         return;
     }
 
