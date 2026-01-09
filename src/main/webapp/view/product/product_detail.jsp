@@ -39,6 +39,7 @@
     <c:param name="action" value="add" />
     <c:param name="productId" value="${product.product_id}" />
 </c:url>
+
 <body class="view__style1" style="overflow-x: hidden;">
         <jsp:include page="../common/header.jsp" />
     <input type="hidden" name="bnftNm" id="bnftNm" value="" />    
@@ -270,7 +271,8 @@
 										<button type="button"
 										        class="wish__btn${wished ? ' on' : ''}"
 										        id="wishBtn"
-										        onclick="goWishAdd();">
+										        data-wish="${param.product_id}"
+										        onclick="goWishToggle(event);">
 										  wish
 										</button>
 										
@@ -567,42 +569,6 @@ function goBuyNow() {
 }
 </script>
 
-
-<script>
-	// [wishlist 관련 추가]
-	function goWishAdd(){
-		  var isLogin = ${empty sessionScope.auth ? "false" : "true"};
-		  if(!isLogin){
-		    location.href = "${loginUrl}";
-		    return;
-		  }
-		
-		  var btn = document.getElementById("wishBtn");
-		  var isOn = btn.classList.contains("on");
-		  var returnUrl = encodeURIComponent(location.pathname + location.search);
-		
-		  // ✅ 찜 취소
-		  if(isOn){
-		    location.href = "${wishDeleteUrl}" + "&returnUrl=" + returnUrl;
-		    return;
-		  }
-		
-		  // ✅ 찜 추가는 사이즈 필요
-		  var sizeChecked = document.querySelector('input[name="ProductSize"]:checked');
-		  if(!sizeChecked){
-		    alert("사이즈를 선택해 주세요");
-		    return;
-		  }
-		
-		  var label = document.querySelector('label[for="'+ sizeChecked.id +'"]');
-		  var sizeText = label ? label.textContent.trim() : "";
-		
-		  location.href = "${wishAddUrl}"
-		    + "&returnUrl=" + returnUrl
-		    + "&sizeText=" + encodeURIComponent(sizeText);
-		}
-</script>
-
 <script>
 (function(){
   // 버튼 상태를 BFCache/뒤로에서도 안정적으로 유지하려고 sessionStorage 사용
@@ -664,6 +630,59 @@ function goBuyNow() {
   });
 
 })();
+</script>
+
+<script>
+	function goWishToggle(e) {
+	  if (e) {
+	    e.preventDefault();
+	    e.stopPropagation();
+	    // default.js 같은 다른 click 핸들러까지 싹 막기
+	    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+	  }
+	
+	  const btn = document.getElementById("wishBtn");
+	  if (!btn) return;
+	  
+	  const productId = btn.dataset.wish;
+	  
+	// sizeText 추출
+      const sizeChecked = document.querySelector('input[name="ProductSize"]:checked');
+      let sizeText = "";
+      if (sizeChecked) {
+          const label = document.querySelector('label[for="' + sizeChecked.id + '"]');
+          sizeText = label ? label.textContent.trim() : "";
+      }
+
+      // 추가할 때만 사이즈 강제
+      const isOn = btn.classList.contains("on");
+      if (!isOn && !sizeChecked) {
+          alert("사이즈를 선택해 주세요");
+          return;
+      }
+	
+	  const url = "${pageContext.request.contextPath}/wishlist/toggle.htm?product_id=" + encodeURIComponent(productId);
+	
+	  fetch(url, {
+          method: "POST",
+          headers: {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"},
+          body: "product_id=" + encodeURIComponent(productId)
+              + "&sizeText=" + encodeURIComponent(sizeText)
+      })
+      .then(async (res) => {
+          const text = await res.text();
+          if (!res.ok) throw new Error("HTTP " + res.status + " / " + text);
+          return JSON.parse(text);
+      })
+      .then((data) => {
+          if (data.wished === true) btn.classList.add("on");
+          else btn.classList.remove("on");
+      })
+      .catch((err) => {
+          console.error(err);
+          alert("위시리스트 추가 실패\n" + err.message);
+      });
+	}
 </script>
 
 </body>
