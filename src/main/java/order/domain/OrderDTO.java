@@ -19,6 +19,8 @@ public class OrderDTO {
     private String deliveryMethod; // 배송방법 (일반, 오늘도착)
     private String deliveryRequest;// 배송요청사항
     private Date createdAt;        // 주문일시
+    private int issueId;
+    
     
     // 결제 처리를 위해 추가로 필요한 필드
     private String paymentMethod;  // 결제수단 (card, kakao 등)
