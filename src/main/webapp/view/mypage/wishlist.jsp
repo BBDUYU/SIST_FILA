@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -61,99 +62,146 @@
 <jsp:include page="/view/mypage/mypage.jsp"/>
 
 	<section class="my-con wishlist">
-	  <h2 class="tit__style4">위시리스트</h2>
-	
-	  <div class="odr-box">
-	    <form name="form5">
-	      <div class="odr-hd">
-	        <div>
-	          <input type="checkbox" id="checkAll" title="상품 선택" class="cb__style1">
-	          <label for="checkAll">선택</label>
-	        </div>
-	        <div class="txt-btn">
-	          <a href="javascript:void(0);" id="btnDeleteSelected">선택삭제</a>
-	        </div>
-	      </div>
-	
-	      <ul class="odr__list __my_chk">
-	        <c:choose>
-	          <c:when test="${empty wishList}">
-	            <p class="odr-txt_none">위시리스트가 비었습니다.</p>
-	          </c:when>
-	
-	          <c:otherwise>
-	            <c:forEach var="w" items="${wishList}">
-	              <li class="odr__item" style="display:flex; align-items:center; gap:20px; padding:20px 0; border-top:1px solid #eee;">
-	                <div>
-	                  <input type="checkbox" class="cb__style1 wishChk" value="${w.wishlistId}">
-	                </div>
-	
-	                <div style="display:flex; align-items:center; gap:20px; flex:1;">
-	                  <a href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${w.productId}">
-	                    <c:choose>
-	                      <c:when test="${empty w.imageUrl}">
-	                        <div style="width:120px; height:120px; background:#f3f3f3;"></div>
-	                      </c:when>
-	                      <c:otherwise>
-	                        <img src="${w.imageUrl}" alt="${w.productName}" style="width:120px; height:120px; object-fit:cover;">
-	                      </c:otherwise>
-	                    </c:choose>
-	                  </a>
-	
-	                  <div style="min-width:300px;">
-	                    <div style="font-weight:700;">FILA</div>
-	                    <div style="margin:6px 0; font-size:16px; font-weight:600;">${w.productName}</div>
-	
-	                    <!-- ✅ DB수정 없이 "사이즈만" : 지금은 고정값 -->
-	                    <div style="color:#777; font-size:13px;">W85(WS)</div>
-	
-	                    <div style="margin-top:8px; font-weight:700;">
-	                      <fmt:formatNumber value="${w.price}" pattern="#,###"/>원
-	                    </div>
-	                  </div>
-	                </div>
-	
-	                <div style="display:flex; align-items:center; gap:18px;">
-	                  <a href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${w.productId}" style="color:#777;">리뷰보기</a>
-	                  <button type="button" class="btnDelOne" data-wishid="${w.wishlistId}" style="border:0; background:transparent; cursor:pointer;">🗑</button>
-	                </div>
-	              </li>
-	            </c:forEach>
-	          </c:otherwise>
-	        </c:choose>
-	      </ul>
-	    </form>
-	  </div>
-	</section>
+  <h2 class="tit__style4">위시리스트</h2>
+
+  <div class="odr-box">
+    <form name="form5">
+      <div class="odr-hd">
+        <div>
+          <input type="checkbox" id="checkAll" title="상품 선택" class="cb__style1">
+          <label for="checkAll">선택</label>
+        </div>
+        <div class="txt-btn">
+          <a href="javascript:void(0);" id="btnDeleteSelected">선택삭제</a>
+        </div>
+      </div>
+
+      <ul class="odr__list __my_chk">
+		  <c:choose>
+		    <c:when test="${empty wishList}">
+		      <p class="odr-txt_none">위시리스트가 비었습니다.</p>
+		    </c:when>
+		
+		    <c:otherwise>
+		      <c:forEach var="w" items="${wishList}" varStatus="st">
+		        <li>
+		
+		          <!-- ✅ 공홈처럼: 체크박스 + label -->
+		          <div class="_soldout">
+		            <c:set var="cid" value="checkwish${st.index}" />
+		            <input type="checkbox"
+		                   id="${cid}"
+		                   name="checkwish"
+		                   value="${w.wishlist_id}"
+		                   class="cb__style1 wishChk">
+		            <label for="${cid}">선택</label>
+		          </div>
+		
+		          <!-- ✅ 공홈처럼 썸네일 -->
+		          <div class="goods-thumb">
+		            <a href="${pageContext.request.contextPath}/product/product_detail.htm?product_id=${w.product_id}">
+		              <img src="${w.image_url}" alt="${w.product_name}"
+		                   onerror="this.src='${pageContext.request.contextPath}/images/no_image.jpg';">
+		            </a>
+		          </div>
+		
+		          <!-- ✅ 공홈처럼 상품정보 -->
+		          <div class="goods-info">
+		            <p class="sex">FILA</p>
+		            <p class="tit">${w.product_name}</p>
+		            <p class="info">${w.size_text}</p>
+		            <p class="price">
+		              <span class="sale"><fmt:formatNumber value="${w.price}" pattern="#,###"/>원</span>
+		            </p>
+		          </div>
+		
+		          <!-- ✅ 공홈처럼 우측 버튼 -->
+		          <div class="goods-etc">
+		            <p class="ico">
+		              <button type="button" class="btn_review"
+		                      onclick="location.href='${pageContext.request.contextPath}/product/product_detail.htm?product_id=${w.product_id}';">
+		                리뷰보기
+		              </button>
+		
+		              <!-- ❗class/id 변경 금지라서 del + btnDelOne 같이 둠 -->
+		              <button type="button"
+		                      class="del btnDelOne"
+		                      data-wishid="${w.wishlist_id}">
+		                삭제
+		              </button>
+		            </p>
+		            <p class="btn-box"></p>
+		          </div>
+		
+		        </li>
+		      </c:forEach>
+		    </c:otherwise>
+		  </c:choose>
+		</ul>
+      
+    </form>
+  </div>
+</section>
 
 </div>
 </div>
 <jsp:include page="/view/common/footer.jsp"/>
 
-<!-- ===================== -->
-<!-- 🔥 JS : 이것만 있으면 무조건 뜸 -->
-<!-- ===================== -->
 <script>
 (function(){
   const $ = window.jQuery;
+  const ctx = "${pageContext.request.contextPath}";
 
-  // 전체선택
+  // ✅ returnUrl: 현재 페이지 그대로 돌아오게
+  function getReturnUrl(){
+    return encodeURIComponent(location.pathname + location.search);
+  }
+
+  /* ===============================
+     0) 전체 선택 (checkAll)
+  =============================== */
   $('#checkAll').on('change', function(){
     $('.wishChk').prop('checked', this.checked);
   });
 
-  // 단건 삭제(일단 alert만: 서버 delete 핸들러 없으면 여기서 링크만 막힘)
-  $('.odr__list').on('click', '.btnDelOne', function(){
-    const id = $(this).data('wishid');
-    alert('삭제(단건) wishlist_id=' + id + '  ※ delete 핸들러 연결 필요');
+  // ✅ 개별 체크 변경하면 checkAll 상태도 맞추기
+  $('.odr__list').on('change', '.wishChk', function(){
+    const total = $('.wishChk').length;
+    const checked = $('.wishChk:checked').length;
+    $('#checkAll').prop('checked', total > 0 && total === checked);
   });
 
-  // 선택삭제
+  /* ===============================
+     1) 단건 삭제 (.btnDelOne)
+  =============================== */
+  $('.odr__list').on('click', '.btnDelOne', function(){
+    const id = $(this).data('wishid');
+    if(!id) return;
+
+    if(!confirm('삭제하시겠습니까?')) return;
+
+    location.href =
+      ctx + "/mypage/wish/delete.htm?wishlist_id=" + encodeURIComponent(id)
+      + "&returnUrl=" + getReturnUrl();
+  });
+
+  /* ===============================
+     2) 선택 삭제 (#btnDeleteSelected)
+  =============================== */
   $('#btnDeleteSelected').on('click', function(){
     const ids = $('.wishChk:checked').map(function(){ return this.value; }).get();
-    if(ids.length === 0){ alert('삭제할 상품을 선택하세요.'); return; }
-    alert('삭제(선택) ids=' + ids.join(',') + '  ※ deleteSelected 핸들러 연결 필요');
+    if(ids.length === 0){
+      alert('삭제할 상품을 선택하세요.');
+      return;
+    }
+
+    if(!confirm('선택한 상품을 삭제하시겠습니까?')) return;
+
+    location.href =
+      ctx + "/mypage/wish/deleteSelected.htm?ids=" + encodeURIComponent(ids.join(','))
+      + "&returnUrl=" + getReturnUrl();
   });
+
 })();
 </script>
 

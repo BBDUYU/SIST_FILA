@@ -20,6 +20,7 @@ public class WishListDTO {
     private int user_number;        // 회원 번호 FK
     private String product_id;      // 상품 ID FK
     private Date created_at;        // 찜한 날짜
+    private String size_text;		// 사이즈
 
     // 2) 화면 출력용(조인으로 채울 값)
     private String product_name;    // PRODUCTS.NAME
@@ -42,5 +43,13 @@ public class WishListDTO {
         int rate = this.discount_rate;
         if (rate <= 0) return this.price;
         return this.price * (100 - rate) / 100;
+    }
+    
+    public String getSize_text() {
+    	return size_text;
+    }
+    
+    public void setSize_text(String size_text) {
+    	this.size_text = size_text;
     }
 }
