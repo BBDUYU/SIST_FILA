@@ -3,8 +3,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<script src="${pageContext.request.contextPath}/js/list.js"></script>
 
+
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<script src="${pageContext.request.contextPath}/js/list.js"></script>
+    <title>FILA 상품상세</title>
+</head>
 <c:if test="${not empty errorMsg}">
     <script>
         alert("${errorMsg}");
@@ -32,14 +39,8 @@
     <c:param name="action" value="add" />
     <c:param name="productId" value="${product.product_id}" />
 </c:url>
-
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <title>FILA 상품상세</title>
-</head>
-
 <body class="view__style1" style="overflow-x: hidden;">
+        <jsp:include page="../common/header.jsp" />
     <input type="hidden" name="bnftNm" id="bnftNm" value="" />    
     <input type="hidden" name="bnftVal" id="bnftVal" value="" />        
     <input type="hidden" name="bnftDate" id="bnftDate" value="" />    
@@ -47,7 +48,6 @@
     
     <div id="wrap">
         
-        <jsp:include page="../common/header.jsp" />
         <div id="contents" class="goods__contents">            
             <section class="goods-view-box">
                 <h2 class="hidden">상품 상세</h2>
@@ -518,21 +518,22 @@ function goBuyNow() {
         alert("사이즈를 선택해 주세요");
         return;
     }
-    var combinationId = sizeChecked.value; // 선택된 라디오 버튼의 value값
+    var combinationId = sizeChecked.value;
 
-    // 2. 현재 입력된 수량 가져오기
-    // 보통 수량 입력창의 id가 'quantity' 또는 'qty'일 것입니다.
-    var quantity = document.getElementById("quantity") ? document.getElementById("quantity").value : 1;
+    // 2. 수량 가져오기 (ID 수정: ProductQuantity)
+    var qtyInput = document.getElementById("ProductQuantity");
+    var quantity = qtyInput ? qtyInput.value : 1;
 
     // 3. 로그인 체크
     var isLogin = ${empty sessionScope.auth ? "false" : "true"};
     if (!isLogin) {
         alert("로그인이 필요한 서비스입니다.");
-        location.href = "${pageContext.request.contextPath}/login.htm"; // 로그인 경로 확인
+        // returnUrl을 포함하여 로그인 후 다시 이 페이지로 오게 설정하면 더 좋습니다.
+        location.href = "${pageContext.request.contextPath}/login.htm?returnUrl=" + encodeURIComponent(location.href);
         return;
     }
 
-    // 4. 결제 페이지로 이동 (productId는 고정값이므로 그대로 사용)
+    // 4. 결제 페이지로 이동
     var productId = "${product.product_id}"; 
     location.href = "${pageContext.request.contextPath}/order/orderForm.htm" 
                  + "?productId=" + productId 
@@ -542,5 +543,5 @@ function goBuyNow() {
 </script>
 
 </body>
-</html>
 </c:if>
+</html>

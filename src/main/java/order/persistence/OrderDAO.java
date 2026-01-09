@@ -111,7 +111,7 @@ public class OrderDAO {
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userNumber);
             pstmt.setString(2, orderId);
-            pstmt.setInt(3, usedAmount);
+            pstmt.setInt(3, -usedAmount);
             pstmt.setInt(4, userNumber); // 서브쿼리용
             pstmt.setInt(5, usedAmount); // 차감액
             pstmt.executeUpdate();
