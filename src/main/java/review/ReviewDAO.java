@@ -10,10 +10,10 @@ public interface ReviewDAO {
     public int insert(ReviewDTO dto) throws SQLException;
 
     // 2. 리뷰 목록 조회
-    public List<ReviewDTO> selectListByFilter(String productId, String[] ratingArr, int userNumber) throws Exception;
+    public List<ReviewDTO> selectListByFilter(String productId, String[] ratingArr, int userNumber, String sort, String keyword) throws Exception;
     
     // 리뷰 통계 정보를 담기 위한 간단한 Map이나 별도의 DTO를 반환
     Map<String, Object> getReviewSummary(String productId) throws Exception;
     int insertReviewLike(int reviewId, int userNumber, int type) throws Exception;
-    
+
 }

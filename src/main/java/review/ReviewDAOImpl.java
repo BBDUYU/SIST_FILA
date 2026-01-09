@@ -55,7 +55,7 @@ public class ReviewDAOImpl implements ReviewDAO {
     // 2. 리뷰 목록 조회 (필터링) 기능
     @Override
  	// [중요] 괄호 안에 int userNumber가 반드시 있어야 합니다!
-    public List<ReviewDTO> selectListByFilter(String productId, String[] ratingArr, int userNumber) {
+    public List<ReviewDTO> selectListByFilter(String productId, String[] ratingArr, int userNumber, String sort, String keyword) {
      List<ReviewDTO> list = new ArrayList<>();
      StringBuilder sql = new StringBuilder();
 
@@ -69,7 +69,7 @@ public class ReviewDAOImpl implements ReviewDAO {
      sql.append(" JOIN users u ON r.user_number = u.user_number ");
      sql.append(" WHERE r.product_id = ? ");
 
-     // 별점 필터
+  // [1] 별점 필터
      if (ratingArr != null && ratingArr.length > 0) {
          sql.append(" AND r.rating IN (");
          for (int i = 0; i < ratingArr.length; i++) {
@@ -78,8 +78,28 @@ public class ReviewDAOImpl implements ReviewDAO {
          }
          sql.append(") ");
      }
+     
+     // [2] 검색어 필터
+     if (keyword != null && !keyword.trim().equals("")) {
+         sql.append(" AND r.content LIKE ? ");
+     }
 
-     sql.append(" ORDER BY r.created_at DESC ");
+     // [3] 정렬 로직 (이것 하나만 남겨야 합니다!)
+     sql.append(" ORDER BY ");
+     
+     // 3-1. '포토 우선'이면 사진 있는 걸 맨 위로 (우선순위 0순위)
+     if ("photo".equals(sort) || "photo_rate".equals(sort)) {
+         sql.append(" (CASE WHEN r.review_img IS NOT NULL THEN 0 ELSE 1 END) ASC, ");
+     }
+     
+     // 3-2. 그 다음 정렬 기준 (별점순 vs 최신순)
+     if ("rate".equals(sort) || "photo_rate".equals(sort)) {
+         // 별점 높은순 -> 그 다음 최신순
+         sql.append(" r.rating DESC, r.created_at DESC ");
+     } else {
+         // 기본: 최신순
+         sql.append(" r.created_at DESC ");
+     }
 
      try {
          pstmt = conn.prepareStatement(sql.toString());
@@ -95,17 +115,22 @@ public class ReviewDAOImpl implements ReviewDAO {
              }
          }
 
+         // 검색어 바인딩
+         if (keyword != null && !keyword.trim().equals("")) {
+             pstmt.setString(pIndex++, "%" + keyword + "%"); // 앞뒤로 % 붙여서 부분일치 검색
+         }
+         
          rs = pstmt.executeQuery();
 
          while (rs.next()) {
              ReviewDTO dto = new ReviewDTO();
-             dto.setReview_id(rs.getInt("REVIEW_ID"));
-             dto.setProduct_id(rs.getString("PRODUCT_ID"));
-             dto.setUser_number(rs.getInt("USER_NUMBER"));
-             dto.setContent(rs.getString("CONTENT"));
-             dto.setRating(rs.getInt("RATING"));
-             dto.setReview_img(rs.getString("REVIEW_IMG"));
-             dto.setRegdate(rs.getDate("CREATED_AT"));
+             dto.setReview_id(rs.getInt("review_id"));
+             dto.setProduct_id(rs.getString("product_id"));
+             dto.setUser_number(rs.getInt("user_number"));
+             dto.setContent(rs.getString("content"));
+             dto.setRating(rs.getInt("rating"));
+             dto.setReview_img(rs.getString("review_img"));
+             dto.setRegdate(rs.getDate("created_at"));
              dto.setUser_id(rs.getString("user_id"));
              dto.setLike_cnt(rs.getInt("like_cnt"));
              dto.setDislike_cnt(rs.getInt("dislike_cnt"));
