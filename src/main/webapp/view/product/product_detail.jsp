@@ -253,12 +253,29 @@
                                     </div>
                                 </div>
                                 <div class="buy-btn-box">
-                                    <button type="button" class="buy__btn" onclick="goBuyNow();">바로 구매하기</button>
-                                    <div>
-                                        <button type="button" class="wish__btn" onclick="javascript:alert('로그인 후 이용가능합니다.');" id="wishBtn">wish</button> 
-                                        <button type="button" class="cart__btn" id="cartBtn" onclick="goCartAdd();">카트담기</button>
-                                    </div>
-                                </div>
+								    <button type="button" class="buy__btn" onclick="goBuyNow();">바로 구매하기</button>
+								
+								    <div>
+							            <%-- [WISH 추가] 로그인 상태면 add로, 아니면 login으로 --%>
+										<%-- ✅ WISH: add/delete 베이스 URL (returnUrl은 JS에서 붙임) --%>
+										<c:url var="wishAddUrl" value="/mypage/wish/add.htm">
+										  <c:param name="product_id" value="${product.product_id}" />
+										</c:url>
+										
+										<c:url var="wishDeleteUrl" value="/mypage/wish/deleteByProduct.htm">
+										  <c:param name="product_id" value="${product.product_id}" />
+										</c:url>
+										
+										<button type="button"
+										        class="wish__btn${wished ? ' on' : ''}"
+										        id="wishBtn"
+										        onclick="goWishAdd();">
+										  wish
+										</button>
+										
+								        <button type="button" class="cart__btn" id="cartBtn" onclick="goCartAdd();">카트담기</button>
+								    </div>
+								</div>
                                 <div class="lyr-btn-box">
                                     <a href="#" class="rv-ban-box">
                                         <img src="//filacdn.styleship.com/filacontent2/pc/resource/images/sub/review_event_d_banner_2506.jpg" alt="">
@@ -504,8 +521,16 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-
-
+<script>
+	window.addEventListener("pageshow", function(){
+	  var btn = document.getElementById("wishBtn");
+	  if(!btn) return;
+	
+	  // ✅ DB 결과(서버에서 내려준 wished)로 강제
+	  var serverWished = ${wished ? "true" : "false"};
+	  btn.classList.toggle("on", serverWished);
+	});
+</script>
 
 <script>
    //[pay 관련 추가 1] 바로 구매하기 클릭 처리
@@ -526,6 +551,105 @@ document.addEventListener("DOMContentLoaded", function () {
        // 실제 구매 로직으로 이동
        location.href = "/";
    }
+</script>
+
+
+<script>
+	// [wishlist 관련 추가]
+	function goWishAdd(){
+		  var isLogin = ${empty sessionScope.auth ? "false" : "true"};
+		  if(!isLogin){
+		    location.href = "${loginUrl}";
+		    return;
+		  }
+		
+		  var btn = document.getElementById("wishBtn");
+		  var isOn = btn.classList.contains("on");
+		  var returnUrl = encodeURIComponent(location.pathname + location.search);
+		
+		  // ✅ 찜 취소
+		  if(isOn){
+		    location.href = "${wishDeleteUrl}" + "&returnUrl=" + returnUrl;
+		    return;
+		  }
+		
+		  // ✅ 찜 추가는 사이즈 필요
+		  var sizeChecked = document.querySelector('input[name="ProductSize"]:checked');
+		  if(!sizeChecked){
+		    alert("사이즈를 선택해 주세요");
+		    return;
+		  }
+		
+		  var label = document.querySelector('label[for="'+ sizeChecked.id +'"]');
+		  var sizeText = label ? label.textContent.trim() : "";
+		
+		  location.href = "${wishAddUrl}"
+		    + "&returnUrl=" + returnUrl
+		    + "&sizeText=" + encodeURIComponent(sizeText);
+		}
+</script>
+
+<script>
+(function(){
+  // 버튼 상태를 BFCache/뒤로에서도 안정적으로 유지하려고 sessionStorage 사용
+  var KEY = "wish_state_${product.product_id}"; // 상품별 키
+
+  window.goWishAdd = function(){
+    var isLogin = ${empty sessionScope.auth ? "false" : "true"};
+    if(!isLogin){
+      location.href = "${loginUrl}";
+      return;
+    }
+
+    var btn = document.getElementById("wishBtn");
+    if(!btn) return;
+
+    var isOn = btn.classList.contains("on");
+    var returnUrl = encodeURIComponent(location.pathname + location.search);
+
+    if(isOn){
+      // ✅ 즉시 UI 반영 (색 빠짐)
+      btn.classList.remove("on");
+      sessionStorage.setItem(KEY, "0"); // 내가 OFF 눌렀다고 기록
+      location.href = "${wishDeleteUrl}" + "&returnUrl=" + returnUrl;
+      return;
+    }
+
+    // 찜 추가는 사이즈 필요
+    var sizeChecked = document.querySelector('input[name="ProductSize"]:checked');
+    if(!sizeChecked){
+      alert("사이즈를 선택해 주세요");
+      return;
+    }
+
+    var label = document.querySelector('label[for="'+ sizeChecked.id +'"]');
+    var sizeText = label ? label.textContent.trim() : "";
+
+    // ✅ 즉시 UI 반영 (색 채움)
+    btn.classList.add("on");
+    sessionStorage.setItem(KEY, "1"); // 내가 ON 눌렀다고 기록
+    location.href = "${wishAddUrl}"
+      + "&returnUrl=" + returnUrl
+      + "&sizeText=" + encodeURIComponent(sizeText);
+  };
+
+  // ✅ 뒤로가기/새로진입 시: 1) 서버가 내려준 wished(진짜 DB상태) 먼저 적용
+  //                     2) 방금 내가 눌렀던 값(sessionStorage)이 있으면 그걸로 즉시 덮어씀
+  window.addEventListener("pageshow", function(){
+    var btn = document.getElementById("wishBtn");
+    if(!btn) return;
+
+    // 1) 서버 기준(DB) 상태
+    var serverWished = ${wished ? "true" : "false"};
+    btn.classList.toggle("on", serverWished);
+
+    // 2) 방금 클릭한 UI 즉시 반영(redirect 전/후 BFCache 대비)
+    var local = sessionStorage.getItem(KEY);
+    if(local === "1") btn.classList.add("on");
+    if(local === "0") btn.classList.remove("on");
+  });
+
+})();
 </script>
 
 </body>
