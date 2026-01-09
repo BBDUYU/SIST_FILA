@@ -48,7 +48,10 @@ public class UserInfoDAO implements IUserInfo {
         UserInfoDTO userDto = null;
         
         // 1. 회원 기본 정보 조회
-        String sqlUser = "SELECT * FROM USERS WHERE USER_NUMBER = ?";
+        String sqlUser = "SELECT u.*, " +
+                " (SELECT NVL(MAX(BALANCE) KEEP (DENSE_RANK LAST ORDER BY POINT_ID), 0) " +
+                "  FROM USERPOINTS WHERE USER_NUMBER = u.USER_NUMBER) as CURRENT_BALANCE " +
+                "FROM USERS u WHERE u.USER_NUMBER = ?";
         // 2. 해당 회원의 자녀 리스트 조회 (CHILD 테이블)
         String sqlChild = "SELECT CHILD_NAME, CHILD_BIRTH, CHILD_GENDER FROM CHILD WHERE USER_NUMBER = ? ORDER BY CHILD_BIRTH ASC";
 
@@ -72,6 +75,7 @@ public class UserInfoDAO implements IUserInfo {
                         .createAt(rs.getTimestamp("CREATED_AT"))
                         .gender(rs.getString("GENDER"))
                         .birthday(rs.getDate("BIRTHDAY"))
+                        .balance(rs.getInt("CURRENT_BALANCE"))
                         .build();
             }
             JdbcUtil.close(rs);

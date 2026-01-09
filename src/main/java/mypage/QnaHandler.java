@@ -8,9 +8,8 @@ import javax.servlet.http.HttpSession;
 
 import command.CommandHandler;
 import member.MemberDTO;
-import mypage.qna.QnaDAO;
-import mypage.qna.QnaDAOImpl;
 import mypage.qna.QnaDTO;
+import mypage.QnaService;
 
 public class QnaHandler implements CommandHandler {
 
@@ -21,18 +20,16 @@ public class QnaHandler implements CommandHandler {
         MemberDTO auth = (session == null) ? null : (MemberDTO) session.getAttribute("auth");
 
         if (auth == null) {
-            response.sendRedirect(request.getContextPath() + "/login.htm");
-            return null;
+            return "redirect:/login.htm";
         }
 
-        long userNumber = auth.getUserNumber();
+        QnaService service = QnaService.getInstance();
 
-        QnaDAO dao = new QnaDAOImpl();
-        List<QnaDTO> qnaList = dao.findByUser(userNumber);
+        List<QnaDTO> qnaList = service.getQnaList(auth.getUserNumber());
 
         request.setAttribute("qnaList", qnaList);
         request.setAttribute("contentPage", "/view/mypage/qna.jsp");
 
-        return "/view/mypage/qna.jsp";
+        return "/view/mypage/mypage.jsp";
     }
 }

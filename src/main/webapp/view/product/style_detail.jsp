@@ -16,35 +16,54 @@
 	src="${pageContext.request.contextPath}/js/default.js?v=202504161631"></script>
 <script src="${pageContext.request.contextPath}/js/main.js"></script>
 <script src="${pageContext.request.contextPath}/js/list.js"></script>
+<link href="${pageContext.request.contextPath}/css/SpoqaHanSansNeo.css" rel="stylesheet">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/normalize.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/opt-default.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/swiper-bundle.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/product.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/sub.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
 <style>
-	/* 모달 배경 오버레이 */
+/* 모달 전체 배경 */
 .style-modal-overlay {
-    display: none;               /* 기본은 숨김 */
-    position: fixed;             /* 화면에 고정 */
-    top: 0;
-    left: 0;
-    width: 100%;                 /* 화면 전체 가로 */
-    height: 100%;                /* 화면 전체 세로 */
-    background-color: rgba(0, 0, 0, 0.7); /* 검은색 배경에 70% 투명도 */
-    z-index: 10000;              /* 헤더보다 위에 오도록 높게 설정 */
-    justify-content: center;     /* 자식 요소(모달창) 가로 중앙 정렬 */
-    align-items: center;         /* 자식 요소(모달창) 세로 중앙 정렬 */
+    display: none; 
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
 }
 
-/* 모달 컨텐츠 박스 (필요시 조정) */
+/* 모달 흰색 박스 */
 .style-modal-wrapper {
     position: relative;
-    background: #fff;            /* 모달창 자체는 하얀색 */
-    max-width: 90%;              /* 반응형 대응 */
-    max-height: 90vh;            /* 화면 높이의 90%를 넘지 않게 */
-    overflow-y: auto;            /* 내용이 많으면 모달 내부 스크롤 */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5); /* 그림자 효과로 입체감 */
+    background: #fff;
+    width: 1100px;
+    
+   
+    overflow: hidden;
+    z-index: 10001;
 }
+
+/* 휠라 내부 클래스 강제 보정 (가장 중요) */
+.style-modal-wrapper .common__layer {
+    display: flex !important;
+    position: relative !important;
+    left: 0 !important; top: 0 !important;
+    visibility: visible !important;
+}
+
+
+.style-modal-wrapper .photo { !important;  }
+.style-modal-wrapper .con { !important;   }
 </style>
 </head>
 <body class>
-	<div id="wrap">
 		<jsp:include page="../common/header.jsp" />
+	<div id="wrap">
 		<div id="contents" class="goods__contents">
 			<section class="goods-list-box _thumb03 _type_style">
 				<h2 class="hidden">상품 리스트</h2>

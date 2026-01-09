@@ -259,26 +259,31 @@ body {
 						</thead>
 						<tbody>
 							<c:forEach var="p" items="${user.pointList}">
-								<tr>
-									<td><fmt:formatDate value="${p.createAt}"
-											pattern="yyyy-MM-dd HH:mm" /></td>
-									<td>
-										<c:choose>
-											<%-- EARN, 적립, SAVED 등을 초록색 + 로 표시 --%>
-											<c:when test="${p.type eq '적립' or p.type eq 'SAVED' or p.type eq 'EARN'}">
-												<span style="color: #28a745; font-weight: bold;">+ ${p.type}</span>
-											</c:when>
-											<c:otherwise>
-												<span style="color: var(--fila-red); font-weight: bold;">- ${p.type}</span>
-											</c:otherwise>
-										</c:choose>
-									</td>
-									<td style="font-weight: bold;"><fmt:formatNumber
-											value="${p.amout}" pattern="#,###" /> P</td>
-									<td><fmt:formatNumber value="${p.balance}" pattern="#,###" />
-										P</td>
-									<td style="text-align: left;">${p.description}</td>
-								</tr>
+							    <tr>
+							        <td><fmt:formatDate value="${p.createAt}" pattern="yyyy-MM-dd HH:mm" /></td>
+							        <td>
+							            <c:choose>
+							                <c:when test="${p.type eq 'EARN'}">
+							                    <span style="color: #28a745; font-weight: bold;">+ 적립</span>
+							                </c:when>
+							                <c:when test="${p.type eq 'USED'}">
+							                    <span style="color: var(--fila-red); font-weight: bold;">- 사용</span>
+							                </c:when>
+							                <c:otherwise>
+							                    <span style="color: #666;">${p.type}</span>
+							                </c:otherwise>
+							            </c:choose>
+							        </td>
+							        <td style="font-weight: bold;">
+							            <%-- DAO에서 .amout으로 담았으므로 그대로 사용 --%>
+							            <fmt:formatNumber value="${p.amout}" pattern="#,###" /> P
+							        </td>
+							        <%-- 🚩 잔액(Balance) 칸이 빠져있어서 추가했습니다. --%>
+							        <td>
+							            <fmt:formatNumber value="${p.balance}" pattern="#,###" /> P
+							        </td>
+							        <td style="text-align: left;">${p.description}</td>
+							    </tr>
 							</c:forEach>
 							<c:if test="${empty user.pointList}">
 								<tr>

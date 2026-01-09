@@ -1,9 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
+
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
 <script src="${pageContext.request.contextPath}/js/list.js"></script>
-
+    <title>FILA 상품상세</title>
+</head>
 <c:if test="${not empty errorMsg}">
     <script>
         alert("${errorMsg}");
@@ -31,14 +39,8 @@
     <c:param name="action" value="add" />
     <c:param name="productId" value="${product.product_id}" />
 </c:url>
-
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <title>FILA 상품상세</title>
-</head>
-
 <body class="view__style1" style="overflow-x: hidden;">
+        <jsp:include page="../common/header.jsp" />
     <input type="hidden" name="bnftNm" id="bnftNm" value="" />    
     <input type="hidden" name="bnftVal" id="bnftVal" value="" />        
     <input type="hidden" name="bnftDate" id="bnftDate" value="" />    
@@ -46,7 +48,6 @@
     
     <div id="wrap">
         
-        <jsp:include page="../common/header.jsp" />
         <div id="contents" class="goods__contents">            
             <section class="goods-view-box">
                 <h2 class="hidden">상품 상세</h2>
@@ -291,7 +292,9 @@
                                         <div>
                                             <button type="button" class="review-more__btn" onclick="openReviewModal()">
                                              상품 리뷰
-                                             <span class=" crema-product-reviews-count" data-product-code="${product.product_id}"></span>
+                                             <span class="crema-product-reviews-count" data-product-code="${product.product_id}">
+										        ${fn:length(reviewList)}
+										    </span>
                                          	</button>
                                         </div>
                                         <div>
@@ -462,7 +465,7 @@ $(document).ready(function() {
     // 2. 로그인 체크 (생략 가능하면 유지)
     var isLogin = ${empty sessionScope.auth ? "false" : "true"};
     if (!isLogin) {
-        location.href = "${loginUrl}";
+        location.href = "${pageContext.request.contextPath}/user/login.jsp";
         return;
     }
 
@@ -533,24 +536,35 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 <script>
-   //[pay 관련 추가 1] 바로 구매하기 클릭 처리
-   function goBuyNow() {
-   
-       var sizeChecked = document.querySelector('input[name="ProductSize"]:checked');
-       if (!sizeChecked) {
-           alert("사이즈를 선택해 주세요");
-           return;
-       }
-   
-       var isLogin = ${empty sessionScope.auth ? "false" : "true"};
-       if (!isLogin) {
-           location.href = "${loginUrl}";
-           return;
-       }
-   
-       // 실제 구매 로직으로 이동
-       location.href = "/";
-   }
+function goBuyNow() {
+    // 1. 선택된 사이즈(Combination ID) 가져오기
+    var sizeChecked = document.querySelector('input[name="ProductSize"]:checked');
+    if (!sizeChecked) {
+        alert("사이즈를 선택해 주세요");
+        return;
+    }
+    var combinationId = sizeChecked.value;
+
+    // 2. 수량 가져오기 (ID 수정: ProductQuantity)
+    var qtyInput = document.getElementById("ProductQuantity");
+    var quantity = qtyInput ? qtyInput.value : 1;
+
+    // 3. 로그인 체크
+    var isLogin = ${empty sessionScope.auth ? "false" : "true"};
+    if (!isLogin) {
+        alert("로그인이 필요한 서비스입니다.");
+        // returnUrl을 포함하여 로그인 후 다시 이 페이지로 오게 설정하면 더 좋습니다.
+        location.href = "${pageContext.request.contextPath}/login.htm?returnUrl=" + encodeURIComponent(location.href);
+        return;
+    }
+
+    // 4. 결제 페이지로 이동
+    var productId = "${product.product_id}"; 
+    location.href = "${pageContext.request.contextPath}/order/orderForm.htm" 
+                 + "?productId=" + productId 
+                 + "&quantity=" + quantity 
+                 + "&combinationId=" + combinationId;
+}
 </script>
 
 
@@ -653,5 +667,5 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 </body>
-</html>
 </c:if>
+</html>

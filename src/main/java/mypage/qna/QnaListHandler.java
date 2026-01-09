@@ -1,11 +1,15 @@
 package mypage.qna;
 
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import command.CommandHandler;
 import member.MemberDTO;
+import mypage.qna.QnaDTO;
+import mypage.QnaService;
+import categories.CategoriesDTO;
 
 public class QnaListHandler implements CommandHandler {
 
@@ -17,19 +21,17 @@ public class QnaListHandler implements CommandHandler {
             return "redirect:/login.htm";
         }
 
-        QnaDAO dao = new QnaDAOImpl();
+        QnaService service = QnaService.getInstance();
 
-        // 1️⃣ QnA 목록
-        List<QnaDTO> qnaList = dao.findByUser(loginUser.getUserNumber());
+        // 1. 내 문의 목록
+        List<QnaDTO> qnaList = service.getQnaList(loginUser.getUserNumber());
         request.setAttribute("qnaList", qnaList);
 
-        // 2️⃣ 카테고리 (모달에서도 사용)
-        request.setAttribute("categoryList", dao.findCategoryList());
+        // 2. 문의 카테고리 (모달용)
+        List<CategoriesDTO> categoryList = service.getCategoryList();
+        request.setAttribute("categoryList", categoryList);
 
-        // 🔥 핵심: mypage.jsp가 이걸 include 하게 만든다
-        request.setAttribute("contentPage", "/view/mypage/qna.jsp");
-
-        // 🔥 반드시 mypage.jsp로 간다 (단독 렌더링 금지)
-        return "/view/mypage/mypage.jsp";
+        // 3. mypage 레이아웃 사용
+        return "/view/mypage/qna.jsp";
     }
 }

@@ -172,6 +172,8 @@ public class ProductService {
             conn = DBConn.getConnection();
             ProductsDAO pDao = ProductsDAO.getInstance();
             CategoriesDAO cDao = CategoriesDAO.getInstance();
+            
+            // ReviewDAO 객체 생성
             review.ReviewDAO reviewDao = new review.ReviewDAOImpl(conn);
             
             String productId = request.getParameter("product_id");
@@ -182,7 +184,7 @@ public class ProductService {
             if (dto != null) {
                 productId = dto.getProduct_id();
                 
-                // 이미지 파일 스캔
+                // 이미지 파일 스캔 로직
                 List<String> mainImages = new ArrayList<>();
                 List<String> modelImages = new ArrayList<>();
                 List<String> detailImages = new ArrayList<>();
@@ -235,9 +237,22 @@ public class ProductService {
                 if (styleTag == null) styleTag = "라이프스타일";
 
                 // -----------------------------------------------------------
-                // [G] 추가: 리뷰 목록 조회 (review_modal.jsp 출력용)
+                // [G] 추가 및 수정: 로그인한 유저 정보 확인 후 리뷰 목록 조회
                 // -----------------------------------------------------------
-                List<review.ReviewDTO> reviewList = reviewDao.selectListByFilter(productId, null);
+                int userNumber = 0; // 기본값 (비로그인)
+                
+                // 세션 가져오기
+                javax.servlet.http.HttpSession session = request.getSession();
+                // MemberDTO는 패키지명 포함해서 명시 (혹시 import 안 되어 있을까봐)
+                member.MemberDTO auth = (member.MemberDTO) session.getAttribute("auth");
+                
+                if (auth != null) {
+                    userNumber = auth.getUserNumber(); // 로그인했으면 번호 추출
+                }
+
+                // [수정] userNumber를 파라미터로 같이 넘김 (내 좋아요 상태 확인용)
+                List<review.ReviewDTO> reviewList = reviewDao.selectListByFilter(productId, null, userNumber, null, null);
+                java.util.Map<String, Object> reviewSummary = reviewDao.getReviewSummary(productId);
                 
                 // -----------------------------------------------------------
                 // 4. JSP 전송 (Attribute 설정)
@@ -251,7 +266,9 @@ public class ProductService {
                 request.setAttribute("finalPrice", finalPrice);
                 request.setAttribute("styleTag", styleTag);
                 request.setAttribute("genderTag", genderTag);
-                request.setAttribute("reviewList", reviewList);		  // 리뷰 리스트 전달
+                
+                request.setAttribute("reviewList", reviewList);       // 리뷰 리스트 (myLike 포함됨)
+                request.setAttribute("reviewSummary", reviewSummary); // 통계 정보
                 
                 if(sizeOptions != null && !sizeOptions.isEmpty()) {
                     request.setAttribute("sizeOption", "Y");
@@ -263,6 +280,7 @@ public class ProductService {
             DBConn.close();
         }
     }
+
     public void getCartOptionInfo(HttpServletRequest request) {
         Connection conn = null;
         try {
@@ -286,4 +304,5 @@ public class ProductService {
             DBConn.close();
         }
     }
+
 }

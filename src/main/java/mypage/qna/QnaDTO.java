@@ -1,90 +1,34 @@
 package mypage.qna;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class QnaDTO {
 
-    private long inquiryId;
-    private long userNumber;
-
-    private int categoryId;        // ⭐ 추가
-    private String categoryName;
+    // ===== INQUIRY =====
+    private long inquiry_id;
+    private long user_number;
+    private int category_id;
 
     private String title;
     private String content;
-    private String status;
+    private String image_url;
 
-    private String replyContent;
-    private Timestamp replyAt;
-    private Timestamp createdAt;
+    private String status;          // WAIT / DONE
+    private String reply_content;
+    private Date reply_at;
 
-    public long getInquiryId() {
-        return inquiryId;
-    }
-    public void setInquiryId(long inquiryId) {
-        this.inquiryId = inquiryId;
-    }
+    private Date created_at;
+    private Date updated_at;
 
-    public long getUserNumber() {
-        return userNumber;
-    }
-    public void setUserNumber(long userNumber) {
-        this.userNumber = userNumber;
-    }
-
-    public int getCategoryId() {
-        return categoryId;
-    }
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getReplyContent() {
-        return replyContent;
-    }
-    public void setReplyContent(String replyContent) {
-        this.replyContent = replyContent;
-    }
-
-    public Timestamp getReplyAt() {
-        return replyAt;
-    }
-    public void setReplyAt(Timestamp replyAt) {
-        this.replyAt = replyAt;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
+    // ===== JOIN (INQUIRY_CATEGORY) =====
+    private String category_name;
 }
