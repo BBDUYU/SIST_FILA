@@ -11,7 +11,7 @@ public class MemberDAO {
     private static MemberDAO instance = new MemberDAO();
 
     // 외부에서 new MemberDAO() 못하게 private으로 막음 (선택사항이지만 권장)
-    private MemberDAO() {} 
+    public MemberDAO() {} 
 
     // 서비스에서 호출할 static 메서드
     public static MemberDAO getInstance() {
@@ -46,56 +46,39 @@ public class MemberDAO {
         return null;
     }
 
-    // ✅ 카카오 로그인 (기존 회원 조회)
-    public MemberDTO findByKakaoId(String kakaoId) {
-        String sql = "SELECT user_number, id, name, kakao_id FROM users WHERE kakao_id = ?";
+ // ✅ 회원가입
+    public int insert(MemberDTO dto) {
+    	String sql =
+    		    "INSERT INTO USERS ( " +
+    		    " USER_NUMBER, ID, PASSWORD, NAME, EMAIL, PHONE, " +
+    		    " BIRTHDAY, GENDER, MARKETING_AGREE, ROLE, STATUS, GRADE, CREATED_AT " +
+    		    ") VALUES ( " +
+    		    " SEQ_USERS.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE " +
+    		    ")";
+
+
         try (Connection conn = ConnectionProvider.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, kakaoId);
+            pstmt.setString(1, dto.getId());
+            pstmt.setString(2, dto.getPassword());
+            pstmt.setString(3, dto.getName());
+            pstmt.setString(4, dto.getEmail());
+            pstmt.setString(5, dto.getPhone());
+            pstmt.setDate(6, java.sql.Date.valueOf(dto.getBirthday())); // yyyy-MM-dd
+            pstmt.setString(7, dto.getGender());
+            pstmt.setInt(8, dto.getMarketingAgree());
+            pstmt.setString(9, dto.getRole());
+            pstmt.setString(10, dto.getStatus());
+            pstmt.setString(11, dto.getGrade());
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    MemberDTO dto = new MemberDTO();
-                    dto.setUserNumber(rs.getInt("user_number"));
-                    dto.setId(rs.getString("id"));
-                    dto.setName(rs.getString("name"));
-                    dto.setKakaoId(rs.getString("kakao_id"));
-                    return dto;
-                }
-            }
+            return pstmt.executeUpdate(); // 1이면 성공
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return 0;
     }
 
-    // ✅ 카카오 회원가입 + 로그인용 DTO 반환
-    public MemberDTO insertKakaoMember(String kakaoId, String name) {
-        String insertSql = "INSERT INTO users (user_number, name, kakao_id) VALUES (SEQ_USERS.NEXTVAL, ?, ?)";
-        String selectSql = "SELECT user_number, name, kakao_id FROM users WHERE kakao_id = ?";
-
-        try (Connection conn = ConnectionProvider.getConnection()) {
-            try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
-                pstmt.setString(1, name);
-                pstmt.setString(2, kakaoId);
-                pstmt.executeUpdate();
-            }
-            try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
-                pstmt.setString(1, kakaoId);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        MemberDTO dto = new MemberDTO();
-                        dto.setUserNumber(rs.getInt("user_number"));
-                        dto.setName(rs.getString("name"));
-                        dto.setKakaoId(rs.getString("kakao_id"));
-                        return dto;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+   
+  
 }

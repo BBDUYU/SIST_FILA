@@ -20,7 +20,7 @@ public class QnaWriteHandler implements CommandHandler {
 	        return null;
 	    }
 
-	    int categoryId = Integer.parseInt(request.getParameter("category_id"));
+	    int categoryId = Integer.parseInt(request.getParameter("categoryID"));
 	    String title = request.getParameter("title");
 	    String content = request.getParameter("content");
 
