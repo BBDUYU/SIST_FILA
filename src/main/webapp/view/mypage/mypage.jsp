@@ -78,7 +78,7 @@
                         <a href="#">
                             <dl>
                                 <dt>주문내역</dt>
-                                <dd>0건</dd>
+                                <dd>${totalCount}건</dd>
                             </dl>
                         </a>
                     </div>
@@ -112,7 +112,7 @@
                     <p class="tit">상품정보</p>
                     <ul>
                         <li><a href="${pageContext.request.contextPath}/mypage/wishlist.htm">위시리스트</a></li>
-                        <li><a href="#">재입고 알림</a></li>
+                        <li><a href="#" onclick="alert('서비스 준비 중입니다.'); return false;">재입고 알림</a></li>
                     </ul>
                 </div>
 

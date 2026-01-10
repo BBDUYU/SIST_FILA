@@ -20,7 +20,7 @@ public class OrderDTO {
     private String deliveryRequest;// 배송요청사항
     private Date createdAt;        // 주문일시
     private int issueId;
-    
+    private Date updatedAt;
     
     // 결제 처리를 위해 추가로 필요한 필드
     private String paymentMethod;  // 결제수단 (card, kakao 등)
