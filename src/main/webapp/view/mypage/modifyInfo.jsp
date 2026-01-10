@@ -37,7 +37,30 @@
     }
     .btn-small:hover { background: #f4f4f4; }
 </style>
+<style>
+/* 기존 스타일 아래에 추가 */
+.style-modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+    z-index: 1000;
+    display: none; /* 기본은 숨김 */
+    align-items: center;
+    justify-content: center;
+}
 
+.style-modal-wrapper {
+    position: relative;
+    z-index: 1001;
+    background: #fff;
+    width: auto;
+    max-width: 500px;
+}
+
+/* FILA 스타일 레이어 보정 */
+.common__layer { display: block !important; position: static !important; }
+</style>
 </head>
 
 <body>
@@ -238,6 +261,9 @@
 					
 				</form>
 				</section>
+				<div id="PwdModifyModalOverlay" class="style-modal-overlay" style="display: none;">
+    <div id="PwdModifyModalContent" class="style-modal-wrapper"></div>
+</div>
 <%-- 하단 안내 및 JS는 기존과 동일 --%>
 
 </div>
@@ -248,6 +274,33 @@
 <!-- 🔥 JS : 이것만 있으면 무조건 뜸 -->
 <!-- ===================== -->
 <script>
+$(document).ready(function() {
+    // 비밀번호 변경 버튼 클릭 시
+    $('.pw-change__btn').on('click', function(e) {
+        e.preventDefault();
+        
+        // 1. modifyPwd.jsp의 내용을 AJAX로 가져옴
+        $.ajax({
+            url: "${pageContext.request.contextPath}/view/mypage/modifyPwd.jsp", // 실제 파일 경로 확인
+            type: "GET",
+            success: function(data) {
+                // 2. 모달 컨텐츠 영역에 HTML 주입
+                $('#PwdModifyModalContent').html(data);
+                // 3. 모달 레이어 표시
+                $('#PwdModifyModalOverlay').fadeIn(200);
+            },
+            error: function() {
+                alert("비밀번호 변경 창을 불러오는데 실패했습니다.");
+            }
+        });
+    });
+
+    // 모달 닫기 (취소 버튼 또는 X 버튼 클릭 시)
+    $(document).on('click', '.close__btn, .btn_can', function() {
+        $('#PwdModifyModalOverlay').fadeOut(200);
+        $('#PwdModifyModalContent').empty(); // 내용 비우기
+    });
+});
 function fn_append(id) {
     const html = `
         <div class="child-group" style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
@@ -325,6 +378,15 @@ function fn_reset(id) {
         $first.find('select').val('');
     }
 }
+//회원탈퇴 버튼 클릭 시
+$('.retire-change__btn').on('click', function(e) {
+    e.preventDefault();
+    
+    if (confirm("정말로 탈퇴하시겠습니까?\n탈퇴 시 동일 아이디로 재가입이 불가능할 수 있으며, 모든 혜택이 소멸됩니다.")) {
+        // 탈퇴 핸들러로 이동
+        location.href = "${pageContext.request.contextPath}/mypage/retireMember.htm";
+    }
+});
 </script>
 
 </body>
