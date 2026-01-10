@@ -5,7 +5,6 @@
 
 
 
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -299,9 +298,15 @@
 										    </span>
                                          	</button>
                                         </div>
+                                        
                                         <div>
-                                            <button type="button" class="qna-more__btn" data-no="${product.product_id}">상품 문의<span>0</span></button>
-                                        </div>
+										    <button type="button" class="qna-more__btn" onclick="openQnaModal()">
+										        상품 문의
+										        <span class="qna-product-reviews-count" data-product-code="${product.product_id}">
+										            ${not empty qnaList ? fn:length(qnaList) : 0}
+										        </span>
+										    </button>
+										</div>
                                     </div>
 
                                     <div class="lyr__style2">
@@ -450,7 +455,7 @@ $(document).ready(function() {
 </script>
 
 <jsp:include page="/view/review/review_modal.jsp" />
-
+<jsp:include page="/view/qna/qna_modal.jsp" />
 <script>
     // [cart 관련 추가 4] 카트담기 클릭 처리
     // - 비로그인: 로그인 페이지로 (returnUrl 포함)

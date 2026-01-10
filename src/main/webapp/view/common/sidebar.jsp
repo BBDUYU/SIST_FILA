@@ -73,4 +73,13 @@
          onclick="location.href='${pageContext.request.contextPath}/admin/inquiryList.htm'">
         1:1 문의 <span style="background: #e21836; padding: 2px 6px; border-radius: 10px; font-size: 10px;">3</span>
     </div>
+    <div class="nav-item ${pageName eq 'productQna' ? 'active' : ''}"
+    	onclick="location.href='${pageContext.request.contextPath}/admin/productQnaList.htm'">
+    	상품문의 관리
+    </div>
+
+    <div class="nav-item ${pageName eq 'notice' ? 'active' : ''}"
+    	onclick="location.href='${pageContext.request.contextPath}/admin/noticeList.htm'">
+    	공지사
+	</div>
 </div>
