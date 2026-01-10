@@ -52,34 +52,34 @@
                 <!-- 쿠폰 / 포인트 / 위시 / 주문 -->
                 <div class="my-link-box">
                     <div>
-                        <a href="#">
+                        <a href="${pageContext.request.contextPath}/mypage/mycoupon.htm">
                             <dl>
                                 <dt>쿠폰</dt>
-                                <dd>0개</dd>
+                                <dd><span id="summary-coupon">0</span>개</dd>
                             </dl>
                         </a>
                     </div>
                     <div>
-                        <a href="#">
+                        <a href="${pageContext.request.contextPath}/mypage/mypoint.htm">
                             <dl>
                                 <dt>포인트</dt>
-                                <dd>0P</dd>
+                                <dd><span id="summary-point">0</span>P</dd>
                             </dl>
                         </a>
                     </div>
                     <div>
-                        <a href="#">
+                        <a href="${pageContext.request.contextPath}/mypage/wishlist.htm">
                             <dl>
                                 <dt>위시리스트</dt>
-                                <dd>0개</dd>
+                                <dd><span id="summary-wish">0</span>개</dd>
                             </dl>
                         </a>
                     </div>
                     <div>
-                        <a href="#">
+                        <a href="${pageContext.request.contextPath}/mypage/orders.htm">
                             <dl>
                                 <dt>주문내역</dt>
-                                <dd>${totalCount}건</dd>
+                                <dd><span id="summary-order">0</span>건</dd>
                             </dl>
                         </a>
                     </div>
@@ -103,8 +103,6 @@
                     <ul>
                     <li><a href="${pageContext.request.contextPath}/mypage/orders.htm">주문 · 배송 조회</a></li>
                     <li><a href="${pageContext.request.contextPath}/mypage/inquiry.htm">교환 · 취소 · 반품 조회</a></li>
-                        <li><a href="#"></a></li>
-                        <li><a href="${pageContext.request.contextPath}/mypage/review.htm">리뷰</a></li>
                     </ul>
                 </div>
 
@@ -121,7 +119,7 @@
                 <div>
                     <p class="tit">회원정보</p>
                     <ul>
-                        <li><a href="#">내 정보 변경</a></li>
+                        <li><a href="#" class="info-modify__btn">내 정보 변경</a></li>
                        <li><a href="${pageContext.request.contextPath}/mypage/delivery_address.htm">배송지 관리</a></li>
                        <li><a href="${pageContext.request.contextPath}/mypage/lgmanage.htm">로그인 관리</a></li>
                     </ul>
@@ -179,6 +177,23 @@
         $('#ModifyModalContent').empty();
         $('body').css('overflow', 'auto');
     };
+    $(document).ready(function() {
+        // 마이페이지 요약 정보를 가져오는 AJAX 호출
+        $.ajax({
+            url: '${pageContext.request.contextPath}/api/mypage/summary.htm', 
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $('#summary-coupon').text(data.couponCount);
+                $('#summary-point').text(data.pointBalance.toLocaleString()); // 천단위 콤마
+                $('#summary-wish').text(data.wishCount);
+                $('#summary-order').text(data.orderCount);
+            },
+            error: function() {
+                console.log("요약 정보를 불러오는데 실패했습니다.");
+            }
+        });
+    });
 </script>
             <!-- 🔥 우측 콘텐츠는 각 페이지(qna.jsp 등)에서 채움 -->
             <!-- ex) <section class="my-con"> ... </section> -->

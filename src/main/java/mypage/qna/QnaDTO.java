@@ -31,4 +31,5 @@ public class QnaDTO {
 
     // ===== JOIN (INQUIRY_CATEGORY) =====
     private String category_name;
+    private String user_name;
 }
