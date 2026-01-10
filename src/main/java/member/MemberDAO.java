@@ -46,16 +46,19 @@ public class MemberDAO {
         return null;
     }
 
+
  // ✅ 회원가입
     public int insert(MemberDTO dto) {
-    	String sql =
-    		    "INSERT INTO USERS ( " +
-    		    " USER_NUMBER, ID, PASSWORD, NAME, EMAIL, PHONE, " +
-    		    " BIRTHDAY, GENDER, MARKETING_AGREE, ROLE, STATUS, GRADE, CREATED_AT " +
-    		    ") VALUES ( " +
-    		    " SEQ_USERS.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE " +
-    		    ")";
 
+        int result = 0;
+
+        String sql =
+            "INSERT INTO USERS ( " +
+            " USER_NUMBER, ID, PASSWORD, NAME, EMAIL, PHONE, " +
+            " BIRTHDAY, GENDER, ROLE, STATUS, GRADE, CREATED_AT, UPDATED_AT, KAKAO_ID " +
+            ") VALUES ( " +
+            " SEQ_USERS.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, SYSDATE, NULL " +
+            ")";
 
         try (Connection conn = ConnectionProvider.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -65,18 +68,48 @@ public class MemberDAO {
             pstmt.setString(3, dto.getName());
             pstmt.setString(4, dto.getEmail());
             pstmt.setString(5, dto.getPhone());
-            pstmt.setDate(6, java.sql.Date.valueOf(dto.getBirthday())); // yyyy-MM-dd
+            pstmt.setDate(6, java.sql.Date.valueOf(dto.getBirthday()));
             pstmt.setString(7, dto.getGender());
-            pstmt.setInt(8, dto.getMarketingAgree());
-            pstmt.setString(9, dto.getRole());
-            pstmt.setString(10, dto.getStatus());
-            pstmt.setString(11, dto.getGrade());
+            pstmt.setString(8, dto.getRole());
+            pstmt.setString(9, dto.getStatus());
+            pstmt.setString(10, dto.getGrade());
 
-            return pstmt.executeUpdate(); // 1이면 성공
+            result = pstmt.executeUpdate();
+
+            System.out.println("▶ USERS INSERT ROW = " + result);
+            System.out.println("ID=" + dto.getId());
+            System.out.println("EMAIL=" + dto.getEmail());
+            System.out.println("BIRTHDAY=" + dto.getBirthday());
+
+            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0;
+
+        return result;
+    }
+
+
+
+ // ✅ 아이디 중복확인
+    public boolean isDuplicateId(String id) {
+        String sql = "SELECT COUNT(*) FROM users WHERE id = ?";
+
+        try (Connection conn = ConnectionProvider.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // true = 이미 존재
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
    

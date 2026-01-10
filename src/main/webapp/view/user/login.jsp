@@ -30,7 +30,7 @@
 			<!-- 입력 폼 - 이메일, 비밀번호 -->
 			<form id="loginForm" name="loginForm"
 				  action="${pageContext.request.contextPath}/login.htm"
-				  method="post" class="on">
+				  method="post" clasus="on">
 
 				<input type="hidden" name="rtnUrl" value="index.htm">
 				<input type="hidden" name="lgc" id="lgc" value="0">

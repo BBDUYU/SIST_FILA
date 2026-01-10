@@ -112,11 +112,24 @@ public class DispatcherServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		
-		// 4) 뷰페이지로 포워딩
-		if (viewPage != null ) {
-			RequestDispatcher dispatcher = request.getRequestDispatcher(viewPage);
-			dispatcher.forward(request, response);
+		// 4) 뷰 처리
+		// 4) 뷰페이지 처리
+		if (viewPage != null) {
+
+		    // 🔥 redirect 처리
+		    if (viewPage.startsWith("redirect:")) {
+		        String redirectPath = viewPage.substring("redirect:".length());
+		        response.sendRedirect(request.getContextPath() + redirectPath);
+		        return;
+		    }
+
+		    // 기존 forward
+		    RequestDispatcher dispatcher =
+		            request.getRequestDispatcher(viewPage);
+		    dispatcher.forward(request, response);
 		}
+
+
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

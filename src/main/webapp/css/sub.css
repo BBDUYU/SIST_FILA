@@ -9382,5 +9382,16 @@ body.layer_open {
     overflow: hidden;
 }
 
+.certView.is-hide {
+  display: none;
+}
+
+.mbr-box,
+.join-sec {
+  overflow: visible !important;
+}
+
+
+
 
 /* //2025-11-24 대리점개설 수정 */
