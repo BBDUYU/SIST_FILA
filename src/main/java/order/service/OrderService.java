@@ -69,8 +69,10 @@ public class OrderService {
                     orderDao.insertOrderPoint(conn, order.getUserNumber(), rewardPoint, generatedOrderId);
                 }
             }
+            System.out.println("DEBUG: 전달된 쿠폰 ID = " + order.getUserCouponId());
             // 6. 쿠폰 사용 처리 (쿠폰을 선택했을 경우만)
             if (order.getUserCouponId() > 0) {
+            	System.out.println("DEBUG: 쿠폰 업데이트 시작!");
                 orderDao.updateCouponUsed(conn, order.getUserCouponId());
             }
             
@@ -140,4 +142,27 @@ public class OrderService {
             JdbcUtil.close(conn);
         }
     }
+ // 주문 상세 정보 가져오기 (주문 완료 페이지용)
+    public OrderDTO getOrderDetail(String orderId) {
+        Connection conn = null;
+        try {
+            conn = ConnectionProvider.getConnection();
+            // 1. 주문 기본 정보 조회
+            OrderDTO order = orderDao.selectOrderById(conn, orderId);
+            
+            if (order != null) {
+                // 2. 주문한 상품 목록 조회 (이미 DAO에 있는 메서드 활용)
+                List<OrderItemDTO> items = orderDao.selectOrderItemsDetail(conn, orderId);
+                order.setOrderItems(items); // OrderDTO에 List<OrderItemDTO> 필드가 있어야 합니다.
+            }
+            
+            return order;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("주문 상세 조회 중 오류 발생");
+        } finally {
+            JdbcUtil.close(conn);
+        }
+    }
+    
 }

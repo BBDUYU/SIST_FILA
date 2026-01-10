@@ -21,4 +21,5 @@ public class CouponDTO {
 	private Date expires_at;
 	private Timestamp created_at;
 	private String status;
+	private String serial_number; 
 }

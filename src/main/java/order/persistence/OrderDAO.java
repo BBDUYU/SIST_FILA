@@ -250,4 +250,46 @@ public class OrderDAO {
             return pstmt.executeUpdate();
         }
     }
+ // OrderDAO.java 하단에 추가
+    public void updateMasterCouponStatus(Connection conn, int userCouponId) throws SQLException {
+        // 유저가 가진 쿠폰 ID(userCouponId)를 통해 해당 마스터 쿠폰(COUPON_ID)을 찾아 STATUS를 'N'으로 변경
+        String sql = "UPDATE COUPON SET STATUS = 'N' " +
+                     "WHERE COUPON_ID = (SELECT COUPON_ID FROM USER_COUPON WHERE USER_COUPON_ID = ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userCouponId);
+            pstmt.executeUpdate();
+        }
+    }
+    /**
+     * 주문번호로 주문 마스터 정보 단건 조회 (주문 완료/상세 페이지용)
+     */
+    public OrderDTO selectOrderById(Connection conn, String orderId) throws SQLException {
+    	String sql = "SELECT o.*, a.RECIPIENT_NAME, a.RECIPIENT_PHONE, a.ZIPCODE, a.MAIN_ADDR, a.DETAIL_ADDR, p.PAYMENT_METHOD " +
+                "FROM ORDERS o " +
+                "JOIN DELIVERY_ADDRESS a ON o.ADDRESS_ID = a.ADDRESS_ID " +
+                "LEFT JOIN PAYMENT p ON o.ORDER_ID = p.ORDER_ID " + // 결제 정보 조인 추가
+                "WHERE o.ORDER_ID = ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, orderId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return OrderDTO.builder()
+                            .orderId(rs.getString("ORDER_ID"))
+                            .totalAmount(rs.getInt("TOTAL_AMOUNT"))
+                            .orderStatus(rs.getString("ORDER_STATUS"))
+                            .deliveryMethod(rs.getString("DELIVERY_METHOD"))
+                            .deliveryRequest(rs.getString("DELIVERY_REQUEST"))
+                            .createdAt(rs.getTimestamp("CREATED_AT"))
+                            // 🚩 DTO에 아래 정보들을 담아야 합니다 (필드가 없다면 DTO에 추가 필요)
+                            .recipientName(rs.getString("RECIPIENT_NAME"))
+                            .recipientPhone(rs.getString("RECIPIENT_PHONE"))
+                            .address("(" + rs.getString("ZIPCODE") + ") " + rs.getString("MAIN_ADDR") + " " + rs.getString("DETAIL_ADDR"))
+                            .paymentMethod(rs.getString("PAYMENT_METHOD"))
+                            .build();
+                }
+            }
+        }
+        return null;
+    }
 }

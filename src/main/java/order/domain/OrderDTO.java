@@ -1,6 +1,8 @@
 package order.domain;
 
 import java.util.Date;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,4 +28,8 @@ public class OrderDTO {
     private String paymentMethod;  // 결제수단 (card, kakao 등)
     private int usedPoint;         // 사용한 포인트
     private int userCouponId;      // 사용한 쿠폰ID
+    private List<OrderItemDTO> orderItems;
+    private String recipientName;
+    private String recipientPhone;
+    private String address;
 }

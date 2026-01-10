@@ -301,7 +301,7 @@
                             <div class="account-menu-box">
                                 <ul>
                                     <li><a href="${pageContext.request.contextPath}/login.htm">로그인</a></li>
-                                    <a href="${pageContext.request.contextPath}/member/join.htm">회원가입</a>
+                                    <li><a href="${pageContext.request.contextPath}/member/join.htm">회원가입</a></li>
 
 
                                     
@@ -340,8 +340,8 @@
                                             <li><a href="${pageContext.request.contextPath}/mypage/orders.htm">주문/배송</a></li>
                                             <li><a href="${pageContext.request.contextPath}/review/list.htm">1:1 문의</a></li>
                                             <li><a href="${pageContext.request.contextPath}/mypage/wishlist.htm">위시리스트</a></li>
-                                            <li><a href="#">쿠폰</a></li>
-                                            <li><a href="#">포인트</a></li>
+                                            <li><a href="${pageContext.request.contextPath}/mypage/mycoupon.htm">쿠폰</a></li>
+                                            <li><a href="${pageContext.request.contextPath}/mypage/mypoint.htm">포인트</a></li>
                                         </ul>
                                         <button type="button" class="logout__btn" onclick="location.href='${pageContext.request.contextPath}/logout.htm';">로그아웃</button>
                                     </div>

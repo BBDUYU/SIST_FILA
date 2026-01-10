@@ -44,51 +44,56 @@
            			<h2 class="tit__style4" style="user-select: auto !important;">1:1 문의</h2>
 					<a href="#" class="btn_sld__bk btn_rt qna-write__btn" style="user-select: auto !important;">1:1 문의하기</a>
 
-					<!-- 1:1문의 -->
 					<ul class="qna__list" style="user-select: auto !important;">
-					<!-- 복제예정 -->
-						<li style="user-select: auto !important;" class>
-							<!-- Q -->
-							<div class="qna-q" style="user-select: auto !important;">
-								<div class="info" style="user-select: auto !important;">
-									<div style="user-select: auto !important;">
-										<p class="status" style="user-select: auto !important;">완료</p>
-										<p class="category" style="user-select: auto !important;">고객의 소리</p>
-									</div>
+    <c:choose>
+        <c:when test="${not empty qnaList}">
+            <c:forEach var="dto" items="${qnaList}">
+                <li style="user-select: auto !important;">
+                    <div class="qna-q" style="user-select: auto !important; cursor: pointer;">
+                        <div class="info" style="user-select: auto !important;">
+                            <div style="user-select: auto !important;">
+                                <p class="status ${dto.status == 'DONE' ? 'on' : ''}" style="user-select: auto !important;">
+                                    ${dto.status == 'WAIT' ? '답변대기' : '답변완료'}
+                                </p>
+                                <p class="category" style="user-select: auto !important;">${dto.category_name}</p>
+                            </div>
+                            <p class="date" style="user-select: auto !important;">
+                                <fmt:formatDate value="${dto.created_at}" pattern="yyyy-MM-dd"/>
+                            </p>
+                        </div>
 
-									<p class="date" style="user-select: auto !important;">2026-01-03</p>
-								</div>
+                        <div class="qna-tit" style="user-select: auto !important;">
+                            <p style="user-select: auto !important;">${dto.title}</p>
+                        </div>
+                    </div>
+                    <div class="qna-a" style="user-select: auto !important; display: none;">
+                        <div class="q-txt-box" style="user-select: auto !important;">
+                            <div>
+                                <p style="user-select: auto !important;">${dto.content}</p>
+                            </div>
+                        </div>
 
-								<div class="qna-tit" style="user-select: auto !important;">
-									<p style="user-select: auto !important;">문의합니다</p>
-								</div>
-							</div>
-							<!-- //Q -->
-							<div class="qna-a" style="user-select: auto !important;">
-								<div class="q-txt-box" style="user-select: auto !important;">
-									<div style="user-select: auto !important;">
-
-										<p style="user-select: auto !important;">바로삭제할꼐요..</p>
-
-									</div>
-								</div>
-
-								<div class="a-txt-box" style="user-select: auto !important;">
-									<div style="user-select: auto !important;">
-										<p style="user-select: auto !important;">
-											</p><div style="user-select: auto !important;">안녕하세요, FILA 온라인스토어 입니다.&nbsp;</div><div style="user-select: auto !important;">문의사항에 대한 답변 안내드립니다~!&nbsp;</div><div style="user-select: auto !important;"><br style="user-select: auto !important;"></div><div style="user-select: auto !important;"><div style="user-select: auto !important;">문의하신 내용 관련하여 어떤 내용으로 문의하는지</div><div style="user-select: auto !important;">확인이 어려워 답변 드리지 못하는 점 너른 양해 부탁드립니다.</div><div style="user-select: auto !important;"><br style="user-select: auto !important;"></div><div style="user-select: auto !important;">궁금하신 점 기재하여 재차 문의주시면</div><div style="user-select: auto !important;">정성껏 답변 안내 드리도록 하겠습니다.&nbsp;</div></div><div style="user-select: auto !important;"><br style="user-select: auto !important;"></div><div style="user-select: auto !important;">궁금하신 사항이 있다면 언제든지 문의 부탁드립니다.</div><div style="user-select: auto !important;">오늘 하루도 좋은하루 되시길 바랍니다.</div><div style="user-select: auto !important;">감사합니다.</div>
-										<p style="user-select: auto !important;"></p>
-									</div>
-
-									<p class="date" style="user-select: auto !important;">2026-01-05 10:51</p>
-								</div>
-	
-
-							</div>
-							
-						</li>
-						<!-- 복제예정 -->
-					</ul>
+                        <c:if test="${dto.status == 'DONE'}">
+                            <div class="a-txt-box" style="user-select: auto !important;">
+                                <div>
+                                    <p style="user-select: auto !important;">${dto.reply_content}</p>
+                                </div>
+                                <p class="date" style="user-select: auto !important;">
+                                    <fmt:formatDate value="${dto.reply_at}" pattern="yyyy-MM-dd HH:mm"/>
+                                </p>
+                            </div>
+                        </c:if>
+                    </div>
+                </li>
+            </c:forEach>
+        </c:when>
+        <c:otherwise>
+            <li class="no-data" style="text-align:center; padding:50px 0;">
+                등록된 문의 내역이 없습니다.
+            </li>
+        </c:otherwise>
+    </c:choose>
+</ul>
 					<!-- //1:1문의 -->
 					<div id="qnaModalOverlay" style="display:none;">
 						    <div id="qnaModalContent"></div>
@@ -113,28 +118,30 @@ var contextPath = '${pageContext.request.contextPath}';
 
 	  function openQnaModal() {
 		    $.ajax({
-		        url: contextPath + '/view/mypage/qna_modal.jsp',
+		        url: contextPath + '/mypage/qnaWriteForm.htm',
 		        type: 'GET',
 		        success: function (res) {
 		            // 1. 데이터를 먼저 넣는다
 		            $('#qnaModalContent').html(res);
 		            
-		            // 2. 부모 div를 단순히 보이게 한다
-		            $('#qnaModalOverlay').show(); 
-
-		            // 3. (핵심) AJAX로 들어온 태그들이 CSS 스타일을 먹도록 강제 노출
-		            // 만약 CSS 파일에 display: none이 걸려있을 수 있으므로 강제 block 처리
-		            $('.common__layer').css({
+		            $('#qnaModalOverlay').css({
 		                'display': 'block',
-		                'z-index': '9999' 
-		            });
-		            
-		            $('.common__layer .inner').css({
-		                'display': 'block',
-		                'z-index': '10000'
+		                'position': 'fixed',
+		                'top': '0',
+		                'left': '0',
+		                'width': '100%',
+		                'height': '100%',
+		                'background': 'rgba(0, 0, 0, 0.6)', // 👈 배경을 까맣게 만드는 핵심
+		                'z-index': '9998'
 		            });
 
-		            $('body').css('overflow', 'hidden'); // 뒷배경 스크롤 방지
+		            // 3. 모달 레이어 노출
+		            $('.common__layer').show().css({
+		                'display': 'block',
+		                'z-index': '9999'
+		            });
+
+		            $('body').css('overflow', 'hidden');
 		        }
 		    });
 		}
@@ -150,7 +157,21 @@ var contextPath = '${pageContext.request.contextPath}';
 	  $(document).on('click', '#btnCloseQna, .close__btn', function () {
 	    closeQnaModal();
 	  });
+	  $(document).on('click', '.qna-q', function () {
+	        const $parentLi = $(this).closest('li');
+	        const $answer = $parentLi.find('.qna-a');
 
+	        // 1. 클릭한 질문의 답변을 토글 (열려있으면 닫고, 닫혀있으면 열기)
+	        $answer.stop().slideToggle(300);
+
+	        // 2. 답변이 열릴 때 부모 li에 'on' 클래스 추가 (화살표 방향 변경 등을 위해)
+	        $parentLi.toggleClass('on');
+
+	        // 3. (선택사항) 다른 답변은 자동으로 닫고 싶다면 아래 주석 해제
+	        /*
+	        $parentLi.siblings().removeClass('on').find('.qna-a').slideUp(300);
+	        */
+	    });
 	})(jQuery);
 
 </script>
