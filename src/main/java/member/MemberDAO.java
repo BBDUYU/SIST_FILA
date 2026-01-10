@@ -31,7 +31,9 @@ public class MemberDAO {
     // ✅ 일반 로그인
     public MemberDTO login(String id, String pw) {
         // 💡 필요한 모든 컬럼을 SELECT 문에 포함해야 합니다.
-        String sql = "SELECT user_number, id, name, email, phone, birthday, gender FROM users WHERE id = ? AND password = ?";
+    	String sql = "SELECT user_number, id, name, email, phone, birthday, gender, status " +
+                "FROM users " +
+                "WHERE id = ? AND password = ? AND status = 'ACTIVE'";
         try (Connection conn = ConnectionProvider.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, id);
@@ -45,7 +47,8 @@ public class MemberDAO {
                     dto.setEmail(rs.getString("email"));      
                     dto.setPhone(rs.getString("phone"));     
                     dto.setBirthday(rs.getString("birthday")); 
-                    dto.setGender(rs.getString("gender"));     
+                    dto.setGender(rs.getString("gender"));   
+                    dto.setStatus(rs.getString("status"));
                     return dto;
                 }
             }
@@ -187,5 +190,23 @@ public class MemberDAO {
             pstmt.executeUpdate();
         }
     }
-  
+ // MemberDAO.java 내부에 추가
+    public void updatePassword(Connection conn, int userNum, String newPassword) throws SQLException {
+        String sql = "UPDATE USERS SET PASSWORD = ?, UPDATED_AT = SYSDATE WHERE USER_NUMBER = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, newPassword);
+            pstmt.setInt(2, userNum);
+            pstmt.executeUpdate();
+        }
+    }
+ // MemberDAO.java
+    public int retireMember(Connection conn, int userNum) throws SQLException {
+        // 상태를 INACTIVE로 변경하고 수정일시를 기록
+        String sql = "UPDATE USERS SET STATUS = 'INACTIVE', UPDATED_AT = SYSDATE WHERE USER_NUMBER = ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userNum);
+            return pstmt.executeUpdate();
+        }
+    }
 }
