@@ -253,6 +253,8 @@ public class ProductService {
                 // [수정] userNumber를 파라미터로 같이 넘김 (내 좋아요 상태 확인용)
                 List<review.ReviewDTO> reviewList = reviewDao.selectListByFilter(productId, null, userNumber, null, null);
                 java.util.Map<String, Object> reviewSummary = reviewDao.getReviewSummary(productId);
+                qna.QnaDAO qnaDao = qna.QnaDAOImpl.getInstance(); 
+                java.util.List<qna.QnaDTO> qnaList = qnaDao.selectList(productId);
                 
                 // -----------------------------------------------------------
                 // 4. JSP 전송 (Attribute 설정)
@@ -269,6 +271,7 @@ public class ProductService {
                 
                 request.setAttribute("reviewList", reviewList);       // 리뷰 리스트 (myLike 포함됨)
                 request.setAttribute("reviewSummary", reviewSummary); // 통계 정보
+                request.setAttribute("qnaList", qnaList);
                 
                 if(sizeOptions != null && !sizeOptions.isEmpty()) {
                     request.setAttribute("sizeOption", "Y");
