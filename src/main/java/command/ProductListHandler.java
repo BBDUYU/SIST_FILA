@@ -2,9 +2,13 @@ package command;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set; // wishedSet(Set<String>)
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import member.MemberDTO; // 세션 auth에서 로그인 유저 꺼내려고
+import mypage.WishListService; // 유저별 찜 목록 조회 서비스
 import products.ProductsDTO;
 import products.service.ProductService;
 import service.MainService;
@@ -43,7 +47,19 @@ public class ProductListHandler implements CommandHandler {
             e.printStackTrace();
         }
         
-        // 5. 뷰 페이지(JSP) 경로 리턴 (경로가 /view/product/ 인지 /product/ 인지 다시 확인!)
+        // 5. 로그인 유저 기준 wishedSet 내려주기 (리스트 상품 카드 하트 표시용)
+        MemberDTO loginUser = (MemberDTO) request.getSession().getAttribute("auth");
+        if (loginUser != null) {
+            // 로그인 유저가 찜한 product_id 목록(Set<String>)을 가져와서 JSP로 내려줌
+            Set<String> wishedSet = WishListService.getInstance()
+                    .getWishedSet(loginUser.getUserNumber());
+            request.setAttribute("wishedSet", wishedSet);
+        } else {
+            // 비로그인: 비어있는 Set 내려줌 (JSP/JS에서 전부 OFF 처리)
+            request.setAttribute("wishedSet", java.util.Collections.emptySet());
+        }
+        
+        // 6. 뷰 페이지(JSP) 경로 리턴 (경로가 /view/product/ 인지 /product/ 인지 다시 확인!)
         return "/view/product/list.jsp";
     }
 }
