@@ -292,7 +292,7 @@
         </div>
 
         <div class="util-account">
-            <button type="button" class="account__btn" onclick="location.href='${pageContext.request.contextPath}/mypage.htm'">account</button>
+            <button type="button" class="account__btn" onclick="location.href='${pageContext.request.contextPath}/mypage/orders.htm'">account</button>
             <div class="account__layer">
                 <div class="inner">
                     <c:choose>

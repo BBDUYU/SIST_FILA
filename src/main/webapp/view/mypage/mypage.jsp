@@ -20,6 +20,7 @@
 <script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
 <script src="${pageContext.request.contextPath}/js/default.js?v=202504161631"></script>
 <script src="${pageContext.request.contextPath}/js/main.js"></script>
+<script src="${pageContext.request.contextPath}/js/mypage.js"></script>
 <!-- 🔴 중요: wrap 안에 contents -->
 <div id="wrap">
 
@@ -135,7 +136,50 @@
                     </ul>
                 </div>
             </div>
+<div id="ModifyModalOverlay" class="style-modal-overlay" style="display: none;">
+    <div id="ModifyModalContent" class="style-modal-wrapper"></div>
+</div>
 
+<script>
+    // 1. 전역 변수 설정 (중복 선언 방지)
+    if (typeof contextPath === 'undefined') {
+        var contextPath = '${pageContext.request.contextPath}';
+    }
+
+    // 2. 공통 모달 노출 함수
+    function showModalForce(overlayId) {
+        var $ov = $(overlayId);
+        $ov.css('display', 'flex').show();
+        
+        var $layer = $ov.find('.common__layer');
+        $layer.css({ display: 'block', visibility: 'visible', opacity: '1', zIndex: '9999' });
+        $layer.find('.inner').css({ display: 'block', visibility: 'visible', zIndex: '10000' });
+        
+        $('body').css('overflow', 'hidden');
+    }
+
+    // 3. 내 정보 변경 버튼 클릭 이벤트 (모든 페이지 공통 적용)
+    $(document).on('click', '.info-modify__btn', function (e) {
+        e.preventDefault();
+        
+        // 부모 페이지의 contextPath를 사용하거나 여기서 직접 정의
+        var path = window.contextPath || '${pageContext.request.contextPath}';
+        
+        $('#ModifyModalContent').load(
+            path + '/view/mypage/pwd_chk.jsp', 
+            function () {
+                showModalForce('#ModifyModalOverlay'); 
+            }
+        );
+    });
+
+    // 4. 모달 닫기 함수
+    window.closeModifyModal = function() {
+        $('#ModifyModalOverlay').hide();
+        $('#ModifyModalContent').empty();
+        $('body').css('overflow', 'auto');
+    };
+</script>
             <!-- 🔥 우측 콘텐츠는 각 페이지(qna.jsp 등)에서 채움 -->
             <!-- ex) <section class="my-con"> ... </section> -->
 
