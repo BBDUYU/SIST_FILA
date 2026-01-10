@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import order.domain.OrderDTO;
@@ -148,6 +149,105 @@ public class OrderDAO {
             pstmt.setInt(5, amount);    // 적립액
             pstmt.setString(6, "주문 번호[" + orderId + "] 결제 적립(5%)");
             pstmt.executeUpdate();
+        }
+    }
+    /**
+     * 6. 주문 목록 조회 (관리자/사용자 공용)
+     * userNumber가 0이면 전체 조회(관리자), 0보다 크면 특정 유저 조회(사용자)
+     */
+ // OrderDAO.java 내의 메서드 수정
+
+    public List<OrderDTO> selectUserOrderList(Connection conn, int userNumber, String type) throws SQLException {
+        List<OrderDTO> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM ORDERS WHERE 1=1 ");
+
+        if (userNumber > 0) {
+            sql.append(" AND USER_NUMBER = ? ");
+        }
+
+        if ("ORDER".equals(type)) {
+            sql.append(" AND ORDER_STATUS IN ('결제완료', '상품준비중', '배송준비중', '배송중', '배송완료') ");
+        } 
+        else if ("CANCEL".equals(type)) {
+            sql.append(" AND ORDER_STATUS IN ('취소요청', '반품요청', '취소완료', '반품완료') ");
+        }
+
+        sql.append(" ORDER BY CREATED_AT DESC ");
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+            if (userNumber > 0) {
+                pstmt.setInt(1, userNumber);
+            }
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    OrderDTO dto = new OrderDTO();
+                    dto.setOrderId(rs.getString("ORDER_ID"));
+                    dto.setTotalAmount(rs.getInt("TOTAL_AMOUNT"));
+                    dto.setOrderStatus(rs.getString("ORDER_STATUS"));
+                    dto.setCreatedAt(rs.getTimestamp("CREATED_AT"));
+                    list.add(dto);
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 7. 관리자 전용: 주문 상태 및 송장 번호 업데이트
+     */
+    public int updateOrderStatus(Connection conn, String orderId, String status) throws SQLException {
+        String sql = "UPDATE ORDERS SET ORDER_STATUS = ?, UPDATED_AT = SYSDATE WHERE ORDER_ID = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, status);
+            pstmt.setString(2, orderId);
+            return pstmt.executeUpdate();
+        }
+    }
+    /**
+     * 특정 주문의 상세 상품 목록 조회
+     */
+    public List<OrderItemDTO> selectOrderItemsDetail(Connection conn, String orderId) throws SQLException {
+        List<OrderItemDTO> list = new ArrayList<>();
+        
+        StringBuilder sql = new StringBuilder();
+        // i에는 없는 상품명(p.NAME)을 PRODUCTS 테이블에서 가져옵니다.
+        sql.append("SELECT i.PRODUCT_ID, p.NAME AS PRODUCT_NAME, i.QUANTITY, i.PRICE,i.COMBINATION_ID, ");
+        sql.append("       v.VALUE_NAME AS OPTION_SIZE ");
+        sql.append("FROM ORDER_ITEMS i ");
+        sql.append("JOIN PRODUCTS p ON i.PRODUCT_ID = p.PRODUCT_ID "); // 상품명 조인
+        sql.append("LEFT JOIN PRODUCT_OPTION_COMBI_VALUES cv ON i.COMBINATION_ID = cv.COMBINATION_ID ");
+        sql.append("LEFT JOIN PRODUCT_OPTION_VALUES v ON cv.VALUE_ID = v.VALUE_ID ");
+        sql.append("WHERE i.ORDER_ID = ? ");
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+            pstmt.setString(1, orderId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    OrderItemDTO item = OrderItemDTO.builder()
+                        .productId(rs.getString("PRODUCT_ID"))
+                        .productName(rs.getString("PRODUCT_NAME")) // 이제 p.NAME 값이 들어옵니다.
+                        .quantity(rs.getInt("QUANTITY"))
+                        .price(rs.getInt("PRICE"))
+                        .combinationId(rs.getInt("COMBINATION_ID"))
+                        .size(rs.getString("OPTION_SIZE") == null ? "기본" : rs.getString("OPTION_SIZE"))
+                        .build();
+                    list.add(item);
+                }
+            }
+        }
+        return list;
+    }
+    public int updateIncreaseStock(Connection conn, int combinationId, int quantity) throws SQLException {
+        String sql = "UPDATE PRODUCT_OPTION_STOCK " +
+                     "SET STOCK = STOCK + ?, " +
+                     "    IS_SOLDOUT = CASE WHEN (STOCK + ?) > 0 THEN 0 ELSE 1 END " +
+                     "WHERE COMBINATION_ID = ? AND STORE_ID = 4"; // 매장 ID 조건 확인 필요
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, quantity);
+            pstmt.setInt(2, quantity);
+            pstmt.setInt(3, combinationId);
+            return pstmt.executeUpdate();
         }
     }
 }

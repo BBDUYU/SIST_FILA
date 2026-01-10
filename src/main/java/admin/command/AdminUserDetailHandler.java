@@ -23,10 +23,15 @@ public class AdminUserDetailHandler implements CommandHandler {
         AdminUserService service = AdminUserService.getInstance();
         
         UserInfoDTO user = service.getUserDetail(userNum);
+        
         CouponService couponService = CouponService.getInstance();
         List<UserInfoDTO> couponList = couponService.getUserCouponList(userNum);        
-        
         user.setCouponList(couponList);
+        
+        order.service.OrderService orderService = order.service.OrderService.getInstance();
+        List<order.domain.OrderDTO> orderList = orderService.getUserOrderList(userNum);
+        user.setOrderList(orderList);
+        
         request.setAttribute("user", user);
         
         return "/view/admin/admin_user_info.jsp";

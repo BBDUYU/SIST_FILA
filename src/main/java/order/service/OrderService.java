@@ -92,4 +92,52 @@ public class OrderService {
 
         return generatedOrderId;
     }
+    public List<OrderDTO> getUserOrderList(int userNumber) {
+        Connection conn = null;
+        try {
+            conn = ConnectionProvider.getConnection();
+            
+            // 🚩 수정 포인트 1: 메서드명을 selectUserOrderList로 변경 (DAO와 일치)
+            // 🚩 수정 포인트 2: 세 번째 인자에 null을 넣어 상태 필터 없이 전체 조회
+            return orderDao.selectUserOrderList(conn, userNumber, null);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("주문 내역 조회 중 오류 발생");
+        } finally {
+            JdbcUtil.close(conn);
+        }
+    }
+    public boolean cancelOrder(String orderId, String targetStatus) {
+        Connection conn = null;
+        try {
+            conn = ConnectionProvider.getConnection();
+            conn.setAutoCommit(false); // 🚩 트랜잭션 시작
+
+            // 1. 해당 주문의 상품 리스트와 수량, combinationId를 가져옴
+            List<OrderItemDTO> items = orderDao.selectOrderItemsDetail(conn, orderId);
+
+            // 2. 주문 상태를 '취소완료' 등으로 업데이트
+            orderDao.updateOrderStatus(conn, orderId, targetStatus);
+
+            // 3. 재고 복구 로직 (취소완료인 경우에만 재고를 돌려줌)
+            if ("취소완료".equals(targetStatus)) {
+                for (OrderItemDTO item : items) {
+                    // combinationId가 있는 옵션 상품인 경우에만 재고 복구
+                    if (item.getCombinationId() > 0) {
+                        orderDao.updateIncreaseStock(conn, item.getCombinationId(), item.getQuantity());
+                    }
+                }
+            }
+
+            conn.commit(); // ✅ 성공 시 커밋
+            return true;
+        } catch (Exception e) {
+            JdbcUtil.rollback(conn); // ❌ 실패 시 롤백
+            e.printStackTrace();
+            return false;
+        } finally {
+            JdbcUtil.close(conn);
+        }
+    }
 }

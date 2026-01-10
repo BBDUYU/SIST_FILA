@@ -190,10 +190,16 @@ public class OrderHandler implements CommandHandler {
                     String cIdStr = request.getParameter("combinationId");
                     
                     if (pId != null) {
+                    	ProductsDAO productsDao = ProductsDAO.getInstance();
+                        ProductsDTO product = productsDao.getProduct(conn, pId);
+                        
+                        // 할인가 계산 (GET 방식에서 썼던 로직과 동일하게)
+                        int salePrice = product.getPrice() * (100 - product.getDiscount_rate()) / 100;
                         items.add(OrderItemDTO.builder()
                                 .productId(pId)
                                 .quantity(Integer.parseInt(qtyStr))
                                 .combinationId(Integer.parseInt(cIdStr))
+                                .price(salePrice)
                                 .build());
                     }
                 }
