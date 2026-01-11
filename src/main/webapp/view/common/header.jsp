@@ -303,7 +303,8 @@
                             <div class="account-menu-box">
                                 <ul>
                                     <li><a href="${pageContext.request.contextPath}/login.htm">로그인</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/member/join.htm">회원가입</a></li>
+                                   <li><a href="${pageContext.request.contextPath}/member/joinMain.htm">회원가입</a></li>
+
 
 
                                     

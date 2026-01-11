@@ -12,46 +12,68 @@ public class JoinSubmitHandler implements CommandHandler {
     @Override
     public String process(HttpServletRequest request, HttpServletResponse response) {
 
-        // 1️⃣ 파라미터 수집
-        String id = request.getParameter("id");
-        String password = request.getParameter("password");
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
-        String birthday = request.getParameter("birthday"); // yyyy-MM-dd
-        String gender = request.getParameter("gender");
+        try {
+            // 1️⃣ 파라미터 수집
+            String id = request.getParameter("memberId");
+            String password = request.getParameter("memberPassword");
+            String name = request.getParameter("memberName");
+            String email = request.getParameter("email");
 
-        String marketingAgreeParam = request.getParameter("marketingAgree");
-        int marketingAgree = (marketingAgreeParam != null) ? 1 : 0;
+            String phone1 = request.getParameter("phone1");
+            String phone2 = request.getParameter("phone2");
 
-        // 2️⃣ DTO 매핑 (DB 테이블 기준)
-        MemberDTO dto = new MemberDTO();
-        dto.setId(id);
-        dto.setPassword(password);
-        dto.setName(name);
-        dto.setEmail(email);
-        dto.setPhone(phone);
-        dto.setBirthday(birthday);
-        dto.setGender(gender);
-        dto.setMarketingAgree(marketingAgree);
+            if (phone1 == null) phone1 = "";
+            if (phone2 == null) phone2 = "";
+            String phone = phone1 + phone2;
 
-        // 기본값
-        dto.setRole("USER");
-        dto.setStatus("ACTIVE");
-        dto.setGrade("BASIC");
+            String birthday = request.getParameter("birthDay");
+            String gender = request.getParameter("MemberGender");
 
-        // 3️⃣ DB 저장
-        MemberDAO dao = MemberDAO.getInstance();
-        int result = dao.insert(dto);
+            // 2️⃣ 필수값 검증 (🔥 이거 없으면 무조건 터짐)
+            if (id == null || password == null || name == null ||
+                birthday == null || birthday.length() != 8) {
 
-        // 4️⃣ 결과 처리
-        if (result == 1) {
-            // 성공 → 로그인 페이지
-            return "redirect:/login.htm";
-        } else {
-            // 실패 → 다시 회원가입 페이지
-            request.setAttribute("error", "joinFail");
-            return "/view/user/member_join_intro.jsp";
+                System.out.println("❌ JOIN PARAM INVALID");
+                return "redirect:/member/join.htm";
+            }
+
+            // yyyyMMdd → yyyy-MM-dd
+            birthday =
+                birthday.substring(0, 4) + "-" +
+                birthday.substring(4, 6) + "-" +
+                birthday.substring(6, 8);
+
+            // 3️⃣ DTO 매핑
+            MemberDTO dto = new MemberDTO();
+            dto.setId(id);
+            dto.setPassword(password);
+            dto.setName(name);
+            dto.setEmail(email);
+            dto.setPhone(phone);
+            dto.setBirthday(birthday);
+            dto.setGender(gender);
+
+            dto.setRole("CUSTOMER");
+            dto.setStatus("ACTIVE");
+            dto.setGrade("BRONZE");
+
+            // 4️⃣ DB 저장
+            MemberDAO dao = MemberDAO.getInstance();
+            int result = dao.insert(dto);
+
+            System.out.println("✅ JOIN INSERT RESULT = " + result);
+
+            // 5️⃣ 결과 처리
+            if (result == 1) {
+                return "redirect:/member/joinend.htm";
+            } else {
+                return "redirect:/member/join.htm";
+            }
+
+        } catch (Exception e) {
+            // 🔥 이게 없어서 지금까지 흰 화면 나온 거다
+            e.printStackTrace();
+            return "redirect:/member/join.htm";
         }
     }
 }
