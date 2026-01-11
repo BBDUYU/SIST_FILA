@@ -111,7 +111,93 @@ public class MemberDAO {
         }
         return false;
     }
+ // ✅ 이름+휴대폰으로 아이디 찾기
+    public String findIdByNameAndPhone(String name, String phone) {
 
-   
+        String sql =
+            "SELECT id FROM users " +
+            "WHERE name = ? AND REPLACE(phone, '-', '') = ?";
+
+        try (Connection conn = ConnectionProvider.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, name);
+            pstmt.setString(2, phone.replace("-", ""));
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("id");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+  
+    public boolean updatePassword(String id, String newPw) {
+
+        String sql = "UPDATE users SET password = ? WHERE id = ?";
+
+        try (Connection conn = ConnectionProvider.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, newPw);
+            pstmt.setString(2, id);
+
+            return pstmt.executeUpdate() == 1;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+ // ✅ 이름 + 휴대폰 존재 여부 (아이디 찾기용)
+    public boolean existsByNameAndPhone(String name, String phone) {
+
+        String sql =
+            "SELECT COUNT(*) FROM users " +
+            "WHERE name = ? AND REPLACE(phone, '-', '') = ?";
+
+        try (Connection conn = ConnectionProvider.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, name);
+            pstmt.setString(2, phone.replace("-", ""));
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+ // ✅ 아이디 + 휴대폰 존재 여부 (비밀번호 재설정용)
+    public boolean existsByIdAndPhone(String id, String phone) {
+
+        String sql =
+            "SELECT COUNT(*) FROM users " +
+            "WHERE id = ? AND REPLACE(phone, '-', '') = ?";
+
+        try (Connection conn = ConnectionProvider.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, id);
+            pstmt.setString(2, phone.replace("-", ""));
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    
   
 }
