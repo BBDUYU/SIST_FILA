@@ -684,9 +684,10 @@ $(document).on('click', '#offlineBtn', function(e) {
         data: { "randomNo": serial.trim() },
         dataType: "json",
         success: function(res) {
-            alert("쿠폰이 성공적으로 등록되었습니다.");
-            // 등록 성공 시 목록 갱신을 위해 쿠폰 선택창 다시 로드
-            $(".coupon__btn").trigger('click'); 
+        	alert(res.message);
+        	if (res.status === "success") {
+                $(".coupon__btn").trigger('click'); 
+            }
         },
         error: function() { 
             alert("유효하지 않은 쿠폰 번호입니다."); 

@@ -30,6 +30,7 @@ public class CouponDAO {
                 dto.setExpires_at(rs.getDate("EXPIRES_AT"));
                 dto.setCreated_at(rs.getTimestamp("CREATED_AT"));
                 dto.setStatus(rs.getString("STATUS"));
+                dto.setSerial_number(rs.getString("SERIAL_NUMBER"));
                 list.add(dto);
             }
         }

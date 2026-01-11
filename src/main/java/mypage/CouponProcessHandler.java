@@ -55,7 +55,8 @@ public class CouponProcessHandler implements CommandHandler {
                 ResultSet rs2 = pstmt2.executeQuery();
                 
                 if (rs2.next() && rs2.getInt(1) > 0) {
-                    resultMap.put("msg", "alert('이미 등록된 쿠폰입니다.');");
+                	resultMap.put("status", "fail");
+                    resultMap.put("message", "이미 등록된 쿠폰입니다.");
                 } else {
                     // 3. USER_COUPON 테이블에 등록
                     String sqlInsert = "INSERT INTO USER_COUPON (USER_COUPON_ID, COUPON_ID, USER_NUMBER, IS_USED, EXPIRE_DATE, RECEIVED_AT) " +
@@ -67,10 +68,12 @@ public class CouponProcessHandler implements CommandHandler {
                     pstmt3.executeUpdate();
                     
                     conn.commit(); // 성공 시 확정
-                    resultMap.put("msg", "alert('쿠폰이 성공적으로 등록되었습니다.'); location.reload();");
+                    resultMap.put("status", "success");
+                    resultMap.put("message", "쿠폰이 성공적으로 등록되었습니다.");
                 }
             } else {
-                resultMap.put("msg", "alert('유효하지 않은 쿠폰 번호입니다.');");
+            	resultMap.put("status", "fail");
+                resultMap.put("message", "유효하지 않거나 중지된 쿠폰 번호입니다.");
             }
         } catch (Exception e) {
             if (conn != null) conn.rollback();

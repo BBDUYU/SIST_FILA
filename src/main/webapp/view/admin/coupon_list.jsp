@@ -133,6 +133,7 @@ tr:hover {
             <tr>
                 <th style="width: 80px;">번호</th>
                 <th>쿠폰명</th>
+                <th style="width: 150px;">시리얼 번호</th>
                 <th style="width: 120px;">할인 유형</th>
                 <th style="width: 150px;">할인 혜택</th>
                 <th style="width: 120px;">만료일</th>
@@ -155,6 +156,9 @@ tr:hover {
                         <tr style="${dto.status eq 'N' ? 'background-color: #f9f9f9; color: #bbb;' : ''}">
                             <td>${dto.coupon_id}</td>
                             <td><strong>${dto.name}</strong></td>
+                            <td style="font-family: 'Courier New', monospace; color: #666; font-weight: bold;">
+                                ${not empty dto.serial_number ? dto.serial_number : '-'}
+                            </td>
                             <td>
                                 <c:choose>
                                     <c:when test="${dto.discount_type eq 'AMOUNT'}">
