@@ -7,7 +7,6 @@
 <meta charset="UTF-8">
 <title>FILA ADMIN - 상품문의 상세</title>
 <style>
-/* 조장님 스타일 (CSS 변수 및 공통 레이아웃) */
 :root {
 	--fila-navy: #001E62;
 	--fila-red: #E2001A;
@@ -146,7 +145,7 @@ body {
                 </tr>
                 <tr>
                     <th>작성자</th>
-                    <td>${qna.name} (ID: ${qna.user_id})</td>
+                    <td>${qna.name}</td>
                     <th>상품코드</th>
                     <td>${empty qna.product_id ? '-' : qna.product_id}</td>
                 </tr>

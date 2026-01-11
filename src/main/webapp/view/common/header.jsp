@@ -146,8 +146,10 @@
 
     <div class="util">
         <div class="util-store">
-            <a href="${pageContext.request.contextPath}/notice/notice_list.htm" class="store__btn">store</a>
-        </div>
+		    <a href="${pageContext.request.contextPath}/admin/noticeList.htm" class="store__btn">
+		        store
+		    </a>
+		</div>
 
         <div class="util-search">
             <button type="button" class="search-open__btn">search</button>
