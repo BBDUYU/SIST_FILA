@@ -78,7 +78,11 @@
 			하나의 통합아이디로 FILA의 모든 서비스를 이용하실 수 있습니다.</p>
 
 			<div class="btn-box">
-				<a href="/member/join_member.asp" class="btn_sld__bk" tabindex="59">회원가입</a>
+				<div class="btn-box">
+  <a href="<%=request.getContextPath()%>/member/join.htm"
+     class="btn_sld__bk" tabindex="59">
+     회원가입
+  </a>
 				<a href="guest.asp" class="txt__btn" tabindex="60">비회원 주문조회</a>
 			</div>
 		</section>

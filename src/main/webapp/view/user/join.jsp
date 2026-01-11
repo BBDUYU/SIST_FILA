@@ -55,22 +55,21 @@
 
   <section class="mbr-box certWrap">
 
-    <!-- 카카오 영역(요청대로 로직 신경 X, UI만 유지) -->
-    <div class="join-sec">
-      <p class="txt">카카오 간편 회원가입으로 보다 간편하게 회원가입이 가능합니다.</p>
-      <div class="btn-box">
-        <a href="javascript:;" class="join_kakao">카카오 1초 간편가입</a>
-      </div>
+<div class="join-sec">
+    <p class="txt">
+        카카오 간편 회원가입으로 보다 간편하게 회원가입이 가능합니다.
+    </p>
+
+    <div class="btn-box">
+        <a href="javascript:void(0);" class="join_kakao">
+            <span class="ico"></span>
+            <span class="txt">카카오 1초 간편가입</span>
+        </a>
     </div>
+</div>
 
     <!-- 실제 가입 폼 -->
-<form id="joinForm"
-      method="post"
-      action="<%=request.getContextPath()%>/member/join_submit.htm">
-
-
-
-
+<form id="joinForm"method="post"action="<%=request.getContextPath()%>/member/join_submit.htm">
 
       <!-- 상태값 -->
       <input type="hidden" name="join_cert" id="join_cert" value="no">
