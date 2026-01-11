@@ -179,7 +179,23 @@ public class WishListDAO {
 	         }
 	     }
 	 }
+	 
+	 // -----------------------------------------------------------
+	 // 8) 유저가 찜한 상품ID 목록
+	 // -----------------------------------------------------------
+	 public List<String> selectWishedProductIds(Connection conn, int userNumber) throws SQLException {
+	     List<String> ids = new ArrayList<>();
+	     String sql = "SELECT PRODUCT_ID FROM WISHLIST WHERE USER_NUMBER = ?";
 
-
+	     try (PreparedStatement ps = conn.prepareStatement(sql)) {
+	         ps.setInt(1, userNumber);
+	         try (ResultSet rs = ps.executeQuery()) {
+	             while (rs.next()) {
+	                 ids.add(rs.getString("PRODUCT_ID"));
+	             }
+	         }
+	     }
+	     return ids;
+	 }
 
 }

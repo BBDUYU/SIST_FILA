@@ -10,18 +10,17 @@ public class QnaWriteHandler implements CommandHandler {
 
 	@Override
 	public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-	    System.out.println("🔥🔥 QnaWriteHandler 진입");
-
 	    MemberDTO loginUser = (MemberDTO) request.getSession().getAttribute("auth");
 	    if (loginUser == null) {
 	        response.sendRedirect(request.getContextPath() + "/login.htm");
 	        return null;
 	    }
 
-	    int categoryId = Integer.parseInt(request.getParameter("categoryID"));
+	    // JSP의 <select name="categoryId">와 <input name="privacyAgree"> 확인 필수!
+	    int categoryId = Integer.parseInt(request.getParameter("categoryId")); 
 	    String title = request.getParameter("title");
 	    String content = request.getParameter("content");
+	    int privacyAgree = Integer.parseInt(request.getParameter("privacyAgree")); // 추가
 
 	    QnaDTO dto = QnaDTO.builder()
 	            .category_id(categoryId)
@@ -30,9 +29,9 @@ public class QnaWriteHandler implements CommandHandler {
 	            .build();
 
 	    QnaService service = QnaService.getInstance();
-	    service.writeQna(loginUser, dto);
+	    // privacyAgree 인자 추가 전달
+	    service.writeQna(loginUser, dto, privacyAgree);
 
-	    // 🔥 핵심 수정
 	    response.sendRedirect(request.getContextPath() + "/mypage/qna.htm");
 	    return null;
 	}

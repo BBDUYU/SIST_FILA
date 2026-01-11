@@ -101,7 +101,16 @@
 				</div>
 			</section>
 			<!-- //상단 슬라이드 -->
-
+			
+			<script>
+			  // 서버에서 내려준 wishedSet(Set<String>)을 JS 배열로 변환, wishlist 하트버튼
+			  const WISHED = new Set([
+			    <c:forEach var="pid" items="${wishedSet}" varStatus="st">
+			      "${pid}"<c:if test="${!st.last}">,</c:if>
+			    </c:forEach>
+			  ]);
+			</script>
+			
 			<script>
 				function mainGroup(num) {
 					var formStr = "";
@@ -203,6 +212,7 @@ function mainGroup(tagId, element) {
             for (var i = 0; i < data.length; i++) {
                 var prod = data[i];
                 var id = prod.product_id;
+                var onClass = (typeof WISHED !== 'undefined' && WISHED.has(id)) ? " on" : "";
                 var name = prod.name;
                 var price = (prod.price || 0).toLocaleString() + "원";
                 var category = prod.category_name || "공용";
@@ -239,7 +249,7 @@ function mainGroup(tagId, element) {
                     + '        <p class="sale">' + price + '</p>'
                     + '      </div>'
                     + '    </a>'
-                    + '    <button type="button" class="wish__btn wish" data-wish="' + id + '">wish</button>'
+                    + '    <button type="button" class="wish__btn wish' + onClass + '" data-wish="' + id + '">wish</button>'
                     + '  </div>'
                     + '</div>';
             }

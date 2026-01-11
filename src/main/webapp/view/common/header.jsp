@@ -146,8 +146,10 @@
 
     <div class="util">
         <div class="util-store">
-            <a href="#" class="store__btn">store</a>
-        </div>
+		    <a href="${pageContext.request.contextPath}/admin/noticeList.htm" class="store__btn">
+		        store
+		    </a>
+		</div>
 
         <div class="util-search">
             <button type="button" class="search-open__btn">search</button>
@@ -292,7 +294,7 @@
         </div>
 
         <div class="util-account">
-            <button type="button" class="account__btn" onclick="location.href='${pageContext.request.contextPath}/login.htm'">account</button>
+            <button type="button" class="account__btn" onclick="location.href='${pageContext.request.contextPath}/mypage/orders.htm'">account</button>
             <div class="account__layer">
                 <div class="inner">
                     <c:choose>
@@ -312,7 +314,7 @@
                                     <li><a href="${pageContext.request.contextPath}/mypageWishlist.htm">위시리스트</a></li> --%>
                                     
                                     <li><a href="${pageContext.request.contextPath}/member/find_id_pw.htm">아이디/비번찾기</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/event.htm">이벤트</a></li>
+                                    <li><a href="#">이벤트</a></li>
                                 </ul>
                             </div>
                         </c:when>
@@ -337,12 +339,12 @@
                                     </div>
                                     <div class="account-menu-box">
                                         <ul>
-                                            <li><a href="${pageContext.request.contextPath}/mypage.htm">마이페이지</a></li>
-                                            <li><a href="${pageContext.request.contextPath}/mypageOrder.htm">주문/배송</a></li>
-                                            <li><a href="${pageContext.request.contextPath}/inquiry/list.htm">1:1 문의</a></li>
-                                            <li><a href="${pageContext.request.contextPath}/mypageWishlist.htm">위시리스트</a></li>
-                                            <li><a href="${pageContext.request.contextPath}/mypageCoupon.htm">쿠폰</a></li>
-                                            <li><a href="${pageContext.request.contextPath}/mypagePoint.htm">포인트</a></li>
+                                            <li><a href="${pageContext.request.contextPath}/mypage/orders.htm">마이페이지</a></li>
+                                            <li><a href="${pageContext.request.contextPath}/mypage/orders.htm">주문/배송</a></li>
+                                            <li><a href="${pageContext.request.contextPath}/review/list.htm">1:1 문의</a></li>
+                                            <li><a href="${pageContext.request.contextPath}/mypage/wishlist.htm">위시리스트</a></li>
+                                            <li><a href="${pageContext.request.contextPath}/mypage/mycoupon.htm">쿠폰</a></li>
+                                            <li><a href="${pageContext.request.contextPath}/mypage/mypoint.htm">포인트</a></li>
                                         </ul>
                                         <button type="button" class="logout__btn" onclick="location.href='${pageContext.request.contextPath}/logout.htm';">로그아웃</button>
                                     </div>

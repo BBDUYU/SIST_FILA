@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import command.CommandHandler;
 import member.MemberDTO;
-import mypage.qna.QnaDTO;
-import categories.CategoriesDTO;
 
 public class QnaListHandler implements CommandHandler {
 
@@ -27,7 +25,13 @@ public class QnaListHandler implements CommandHandler {
         request.setAttribute("qnaList", qnaList);
 
         // 2. 문의 카테고리 (모달용)
-        List<CategoriesDTO> categoryList = service.getCategoryList();
+        List<QNACategoriesDTO> categoryList = service.getCategoryList();
+        System.out.println(">>> 카테고리 개수: " + (categoryList != null ? categoryList.size() : "null"));
+        if (categoryList != null) {
+            for(QNACategoriesDTO c : categoryList) {
+                System.out.println("ID: " + c.getCategory_id() + ", Name: " + c.getCategory_name());
+            }
+        }
         request.setAttribute("categoryList", categoryList);
 
         // 3. mypage 레이아웃 사용
