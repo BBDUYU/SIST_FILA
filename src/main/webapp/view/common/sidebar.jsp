@@ -79,7 +79,7 @@
     </div>
 
     <div class="nav-item ${pageName eq 'notice' ? 'active' : ''}"
-    	onclick="location.href='${pageContext.request.contextPath}/admin/noticeList.htm'">
-    	공지사
+	    onclick="location.href='${pageContext.request.contextPath}/admin/noticeManage.htm'">
+	    공지사항 관리
 	</div>
 </div>
