@@ -18,5 +18,6 @@ public class OrderItemDTO {
     private int price;          // 주문 당시 판매가
     private String cancelStatus;// 취소여부 (N)
     private String productName;
+    private String size;
     private int originalPrice;
 }

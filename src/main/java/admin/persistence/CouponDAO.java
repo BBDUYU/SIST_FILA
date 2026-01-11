@@ -51,13 +51,14 @@ public class CouponDAO {
         }
     }
     public int insertCoupon(Connection conn, CouponDTO dto) throws SQLException {
-        String sql = "INSERT INTO COUPON (COUPON_ID, NAME, DISCOUNT_TYPE, DISCOUNT_VALUE, EXPIRES_AT, CREATED_AT) " +
-                     "VALUES (SEQ_COUPON.NEXTVAL, ?, ?, ?, ?, SYSDATE)";
+        String sql = "INSERT INTO COUPON (COUPON_ID, NAME, DISCOUNT_TYPE, DISCOUNT_VALUE, SERIAL_NUMBER,EXPIRES_AT, CREATED_AT) " +
+                     "VALUES (SEQ_COUPON.NEXTVAL, ?, ?, ?, ?, ?, SYSDATE)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, dto.getName());
             pstmt.setString(2, dto.getDiscount_type());
             pstmt.setInt(3, dto.getDiscount_value());
-            pstmt.setDate(4, dto.getExpires_at()); // null 허용됨
+            pstmt.setString(4, dto.getSerial_number());
+            pstmt.setDate(5, dto.getExpires_at()); // null 허용됨
             return pstmt.executeUpdate();
         }
     }
@@ -90,5 +91,13 @@ public class CouponDAO {
         }
         return list;
     }
-
+ // CouponDAO.java 에 추가
+    public int useUserCoupon(Connection conn, int userCouponId) throws SQLException {
+        // IS_USED를 '1'로 변경하고 사용 일시를 기록
+        String sql = "UPDATE USER_COUPON SET IS_USED = '1', USED_AT = SYSDATE WHERE USER_COUPON_ID = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userCouponId);
+            return pstmt.executeUpdate();
+        }
+    }
 }

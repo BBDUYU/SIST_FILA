@@ -1,11 +1,13 @@
 package admin.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import order.domain.OrderDTO;
 
 @Data
 @AllArgsConstructor
@@ -87,4 +89,9 @@ public class UserInfoDTO {
 	private java.util.List<UserInfoDTO> childList;
 	private java.util.List<UserInfoDTO> pointList;
 	private java.util.List<UserInfoDTO> couponList;
+	private List<OrderDTO> orderList;
+	
+	private int couponCount; // 보유 쿠폰 개수
+	private int wishCount;   // 위시리스트 상품 개수
+	private int orderCount;  // 총 주문 건수
 }

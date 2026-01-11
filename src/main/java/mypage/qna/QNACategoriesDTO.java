@@ -22,4 +22,5 @@ public class QNACategoriesDTO {
 
     private Date created_at;
     private Date updated_at;
+    
 }
