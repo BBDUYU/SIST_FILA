@@ -56,7 +56,7 @@
 						<label for="idCheck">아이디 저장</label>
 					</div>
 
-					<div class="id-srh"><a href="/member/searchIDPW.asp" tabindex="55">아이디 / 비밀번호 찾기</a></div>
+					<div class="id-srh"><a href="<%=request.getContextPath()%>/view/user/SearchIdPw.jsp" tabindex="55">아이디 / 비밀번호 찾기</a></div>
 				</div>
 
 				<!-- 로그인 버튼 -->

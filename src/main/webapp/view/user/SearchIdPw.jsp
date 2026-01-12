@@ -58,42 +58,100 @@
 </div>
 
 <!-- ===== 아이디 결과 ===== -->
-<div class="common__layer" id="idLayer" style="display:none;">
-  <div class="inner">
-    <div class="head">
-      <p class="tit">아이디 찾기</p>
-      <button type="button" class="close__btn" onclick="closeIdLayer()">close</button>
-    </div>
-    <div class="con">
-      <p id="resultText"></p>
-      <div class="btn-box">
-        <button type="button" class="btn_bg__bk" id="btnPwOpen">비밀번호 재설정</button>
-      </div>
-    </div>
-  </div>
+<div class="common__layer sch-idpw" id="idLayer" style="display:none;">
+	<div class="layer-bg__wrap"></div>
+
+	<div class="inner">
+		<div class="head">
+			<p class="tit">아이디 찾기</p>
+			<button type="button" class="close__btn" onclick="closeIdLayer()">close</button>
+		</div>
+
+		<div class="con">
+			<div class="wrap">
+				<p id="resultText">
+					
+				</p>
+				
+
+				<div class="top__line2">
+					<p class="txt">
+						비밀번호가 기억나지 않으실 경우<br>
+						재설정이 가능합니다.
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="foot">
+			<button type="button" class="btn_bg__bk" id="btnPwOpen" onclick="openPwLayer()">비밀번호 재설정</button>
+			<button type="button" class="on" onclick="location.href='/member/login.asp'">로그인</button>
+		</div>
+	</div>
 </div>
+
 
 <!-- ===== 비밀번호 재설정 ===== -->
-<div class="common__layer" id="pwLayer" style="display:none;">
-  <div class="inner">
-    <div class="head">
-      <p class="tit">비밀번호 재설정</p>
-      <button type="button" class="close__btn" onclick="closePwLayer()">close</button>
-    </div>
-    <div class="con">
-      <p>아이디 : <strong id="pwTargetId"></strong></p>
+<div class="common__layer sch-idpw" id="pwLayer" style="display:none;">
+	<div class="layer-bg__wrap"></div>
 
-      <input type="password" id="newPw" placeholder="새 비밀번호">
-      <input type="password" id="newPw2" placeholder="새 비밀번호 확인">
+	<div class="inner">
+		<div class="head">
+			<p class="tit">비밀번호 재설정</p>
+			<button type="button" class="close__btn" onclick="closePwLayer()">close</button>
+		</div>
 
-      <div class="btn-box">
-        <button type="button" class="btn_bg__bk" id="btnPwSubmit">비밀번호 변경</button>
-      </div>
-    </div>
-  </div>
+		<div class="con">
+			<form name="pwForm" method="post" class="join_form modify_form">
+				<input type="hidden" name="memberID" id="pwTargetId">
+
+				<div class="wrap">
+					<div class="password-box">
+						<input type="password"
+							   class="inp__pw"
+							   name="MemberPassword"
+							   id="newPw"
+							   placeholder="8 - 16자 영문, 숫자, 특수문자 조합"
+							   maxlength="16">
+					</div>
+
+					<div class="password-box">
+						<input type="password"
+							   class="inp__pw"
+							   name="MemberPassword"
+							   id="newPw2"
+							   placeholder="비밀번호 확인"
+							   maxlength="16">
+					</div>
+					<p id="pwResult"
+					   style="color:#cc3333; font-style:normal; font-family:dotum; font-size:12px;"></p>&nbsp;
+
+					<p class="txt2">
+						8-12자의 영문 / 숫자 / 특수문자(!@#$%^&amp;*) 조합만 사용 가능합니다.
+					</p>
+
+					<p class="err-msg"></p>
+				</div>
+			</form>
+		</div>
+
+		<div class="foot">
+			<button type="reset" class="btn_can" onclick="resetPwForm()">취소</button>
+			<button type="button" class="on" id="btnPwSubmit">변경 후 로그인</button>
+		</div>
+	</div>
 </div>
 
+
 <script>
+function resetPwForm(){
+	  document.pwForm.reset();   // 폼 리셋
+	}
+
+
+
+
+
 var contextPath = '<%=request.getContextPath()%>';
 
 var AUTH_CODE = '';
@@ -149,7 +207,7 @@ $(function(){
         }
 
         FOUND_ID = id;
-        $('#resultText').html('아이디 : <strong>' + FOUND_ID + '</strong>');
+        $('#resultText').html('<h3 class="txt__id" id="resultId"> 아이디 : '  + FOUND_ID + '</h3>');
         $('#pwTargetId').text(FOUND_ID);
 
         clearInterval(timer);
