@@ -7,6 +7,8 @@ import member.MemberDTO;
 import mypage.WishListService;
 import products.ProductsDTO;
 import products.service.ProductService;
+import review.ReviewDAO;
+import review.ReviewDAOImpl;
 
 public class ProductDetailHandler implements CommandHandler {
 	
@@ -47,6 +49,21 @@ public class ProductDetailHandler implements CommandHandler {
 
         request.setAttribute("wished", wished);
 
+        // -------------------------------------------------------------
+        // 리뷰 작성 권한 체크
+        // -------------------------------------------------------------
+        boolean canReview = false;
+
+        // 로그인했고, 상품ID가 확실히 있을 때만 DB 조회
+        if (loginUser != null && productId != null && !productId.isEmpty()) {
+            ReviewDAO reviewDao = ReviewDAOImpl.getInstance();
+            // 위에서 만든 메서드 호출
+            canReview = reviewDao.isPurchased(loginUser.getUserNumber(), productId);
+        }
+
+        // JSP로 권한(true/false)을 보냄
+        request.setAttribute("canReview", canReview);
+        
         // 3) JSP
         return "/view/product/product_detail.jsp";
     }

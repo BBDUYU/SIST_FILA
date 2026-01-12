@@ -2,7 +2,9 @@ package mypage;
 
 import java.sql.Connection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.util.ConnectionProvider;
 
@@ -66,14 +68,51 @@ public class WishListService {
         }
     }
     
-	 // 6) 상세페이지: 찜 여부
-	    public boolean isWished(int userNumber, String productId) {
-	        try (Connection conn = ConnectionProvider.getConnection()) {
-	            return dao.existsByProduct(conn, userNumber, productId);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return false;
-	        }
-	    }
+	// 6) 상세페이지: 찜 여부
+    public boolean isWished(int userNumber, String productId) {
+        try (Connection conn = ConnectionProvider.getConnection()) {
+            return dao.existsByProduct(conn, userNumber, productId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+	
+    // 7) 메인/리스트용: 찜 상품ID Set
+    public Set<String> getWishedSet(int userNumber) {
+        try (Connection conn = ConnectionProvider.getConnection()) {
+            return new HashSet<>(dao.selectWishedProductIds(conn, userNumber));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new HashSet<>();
+        }
+    }
+    
+    // 8) 찜 토글 (있으면 삭제, 없으면 추가)
+    public boolean toggleWished(int userNumber, String productId, String sizeText) {
+        try (Connection conn = ConnectionProvider.getConnection()) {
 
+            boolean exists = dao.existsByProduct(conn, userNumber, productId);
+
+            if (exists) {
+                dao.deleteByProduct(conn, userNumber, productId);
+                return false;
+            } else {
+                // ✅ [유지/확인] sizeText가 빈값이면 null로 저장되게
+                if (sizeText == null || sizeText.trim().isEmpty()) sizeText = null;
+                dao.insertWish(conn, userNumber, productId, sizeText); // null 들어가면 DB에도 NULL
+                return true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // 기존 코드 호환용(너 Handler가 아직 2개짜리 호출해도 살려줌)
+    public boolean toggleWished(int userNumber, String productId) {
+        return toggleWished(userNumber, productId, "미선택");
+    }
+    
 }

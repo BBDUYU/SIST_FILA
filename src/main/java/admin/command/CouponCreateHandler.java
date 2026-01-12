@@ -20,11 +20,13 @@ public class CouponCreateHandler implements CommandHandler {
             String discountType = request.getParameter("discount_type"); // AMOUNT or PERCENT
             int discountValue = Integer.parseInt(request.getParameter("discount_value"));
             String expiresAtStr = request.getParameter("expires_at");
-
+            String serialNumber = generateSerial();
+            
             CouponDTO dto = new CouponDTO();
             dto.setName(name);
             dto.setDiscount_type(discountType);
             dto.setDiscount_value(discountValue);
+            dto.setSerial_number(serialNumber);
             
             // 만료일이 입력되었을 경우에만 처리
             if (expiresAtStr != null && !expiresAtStr.isEmpty()) {
@@ -39,5 +41,14 @@ public class CouponCreateHandler implements CommandHandler {
             response.sendRedirect(contextPath + "/admin/coupon_list.htm");
             return null;
         }
+    }
+    private String generateSerial() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder sb = new StringBuilder();
+        java.util.Random random = new java.util.Random();
+        for (int i = 0; i < 16; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
     }
 }

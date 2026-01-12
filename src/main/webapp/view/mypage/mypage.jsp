@@ -20,6 +20,7 @@
 <script src="${pageContext.request.contextPath}/js/swiper-bundle.js"></script>
 <script src="${pageContext.request.contextPath}/js/default.js?v=202504161631"></script>
 <script src="${pageContext.request.contextPath}/js/main.js"></script>
+<script src="${pageContext.request.contextPath}/js/mypage.js"></script>
 <!-- 🔴 중요: wrap 안에 contents -->
 <div id="wrap">
 
@@ -51,34 +52,34 @@
                 <!-- 쿠폰 / 포인트 / 위시 / 주문 -->
                 <div class="my-link-box">
                     <div>
-                        <a href="#">
+                        <a href="${pageContext.request.contextPath}/mypage/mycoupon.htm">
                             <dl>
                                 <dt>쿠폰</dt>
-                                <dd>0개</dd>
+                                <dd><span id="summary-coupon">0</span>개</dd>
                             </dl>
                         </a>
                     </div>
                     <div>
-                        <a href="#">
+                        <a href="${pageContext.request.contextPath}/mypage/mypoint.htm">
                             <dl>
                                 <dt>포인트</dt>
-                                <dd>0P</dd>
+                                <dd><span id="summary-point">0</span>P</dd>
                             </dl>
                         </a>
                     </div>
                     <div>
-                        <a href="#">
+                        <a href="${pageContext.request.contextPath}/mypage/wishlist.htm">
                             <dl>
                                 <dt>위시리스트</dt>
-                                <dd>0개</dd>
+                                <dd><span id="summary-wish">0</span>개</dd>
                             </dl>
                         </a>
                     </div>
                     <div>
-                        <a href="#">
+                        <a href="${pageContext.request.contextPath}/mypage/orders.htm">
                             <dl>
                                 <dt>주문내역</dt>
-                                <dd>0건</dd>
+                                <dd><span id="summary-order">0</span>건</dd>
                             </dl>
                         </a>
                     </div>
@@ -102,8 +103,6 @@
                     <ul>
                     <li><a href="${pageContext.request.contextPath}/mypage/orders.htm">주문 · 배송 조회</a></li>
                     <li><a href="${pageContext.request.contextPath}/mypage/inquiry.htm">교환 · 취소 · 반품 조회</a></li>
-                        <li><a href="#"></a></li>
-                        <li><a href="${pageContext.request.contextPath}/mypage/review.htm">리뷰</a></li>
                     </ul>
                 </div>
 
@@ -112,7 +111,7 @@
                     <p class="tit">상품정보</p>
                     <ul>
                         <li><a href="${pageContext.request.contextPath}/mypage/wishlist.htm">위시리스트</a></li>
-                        <li><a href="#">재입고 알림</a></li>
+                        <li><a href="#" onclick="alert('서비스 준비 중입니다.'); return false;">재입고 알림</a></li>
                     </ul>
                 </div>
 
@@ -120,7 +119,7 @@
                 <div>
                     <p class="tit">회원정보</p>
                     <ul>
-                        <li><a href="#">내 정보 변경</a></li>
+                        <li><a href="#" class="info-modify__btn">내 정보 변경</a></li>
                        <li><a href="${pageContext.request.contextPath}/mypage/delivery_address.htm">배송지 관리</a></li>
                        <li><a href="${pageContext.request.contextPath}/mypage/lgmanage.htm">로그인 관리</a></li>
                     </ul>
@@ -135,7 +134,67 @@
                     </ul>
                 </div>
             </div>
+<div id="ModifyModalOverlay" class="style-modal-overlay" style="display: none;">
+    <div id="ModifyModalContent" class="style-modal-wrapper"></div>
+</div>
 
+<script>
+    // 1. 전역 변수 설정 (중복 선언 방지)
+    if (typeof contextPath === 'undefined') {
+        var contextPath = '${pageContext.request.contextPath}';
+    }
+
+    // 2. 공통 모달 노출 함수
+    function showModalForce(overlayId) {
+        var $ov = $(overlayId);
+        $ov.css('display', 'flex').show();
+        
+        var $layer = $ov.find('.common__layer');
+        $layer.css({ display: 'block', visibility: 'visible', opacity: '1', zIndex: '9999' });
+        $layer.find('.inner').css({ display: 'block', visibility: 'visible', zIndex: '10000' });
+        
+        $('body').css('overflow', 'hidden');
+    }
+
+    // 3. 내 정보 변경 버튼 클릭 이벤트 (모든 페이지 공통 적용)
+    $(document).on('click', '.info-modify__btn', function (e) {
+        e.preventDefault();
+        
+        // 부모 페이지의 contextPath를 사용하거나 여기서 직접 정의
+        var path = window.contextPath || '${pageContext.request.contextPath}';
+        
+        $('#ModifyModalContent').load(
+            path + '/view/mypage/pwd_chk.jsp', 
+            function () {
+                showModalForce('#ModifyModalOverlay'); 
+            }
+        );
+    });
+
+    // 4. 모달 닫기 함수
+    window.closeModifyModal = function() {
+        $('#ModifyModalOverlay').hide();
+        $('#ModifyModalContent').empty();
+        $('body').css('overflow', 'auto');
+    };
+    $(document).ready(function() {
+        // 마이페이지 요약 정보를 가져오는 AJAX 호출
+        $.ajax({
+            url: '${pageContext.request.contextPath}/api/mypage/summary.htm', 
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $('#summary-coupon').text(data.couponCount);
+                $('#summary-point').text(data.pointBalance.toLocaleString()); // 천단위 콤마
+                $('#summary-wish').text(data.wishCount);
+                $('#summary-order').text(data.orderCount);
+            },
+            error: function() {
+                console.log("요약 정보를 불러오는데 실패했습니다.");
+            }
+        });
+    });
+</script>
             <!-- 🔥 우측 콘텐츠는 각 페이지(qna.jsp 등)에서 채움 -->
             <!-- ex) <section class="my-con"> ... </section> -->
 

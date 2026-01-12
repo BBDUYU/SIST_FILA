@@ -44,5 +44,27 @@ public class AdminUserService {
             JdbcUtil.close(conn);
         }
     }
+    public UserInfoDTO getMyPageSummary(int userNum) {
+        Connection conn = null;
+        try {
+            conn = ConnectionProvider.getConnection();
+            UserInfoDAO dao = UserInfoDAO.getInstance();
+            
+            // 1. 기본 정보 조회 (잔액 포함)
+            UserInfoDTO summary = dao.selectOne(conn, userNum);
+            
+            // 2. 각 항목 개수 세팅 (UserInfoDTO에 필드가 있다고 가정)
+            if (summary != null) {
+                summary.setCouponCount(dao.getCouponCount(conn, userNum));
+                summary.setWishCount(dao.getWishCount(conn, userNum));
+                summary.setOrderCount(dao.getOrderCount(conn, userNum));
+            }
+            return summary;
+        } catch (Exception e) {
+            throw new RuntimeException("요약 정보 조회 실패", e);
+        } finally {
+            JdbcUtil.close(conn);
+        }
+    }
     
 }

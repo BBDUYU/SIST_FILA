@@ -9,11 +9,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.util.ConnectionProvider;
+import com.util.JdbcUtil;
+
 public class ReviewDAOImpl implements ReviewDAO {
 
-    private Connection conn;
-    private PreparedStatement pstmt;
-    private ResultSet rs;
+	private static ReviewDAOImpl instance = new ReviewDAOImpl();
+	private ReviewDAOImpl() {} 
+	public static ReviewDAOImpl getInstance() {
+		return instance;
+	}
+	
+	private Connection conn;
+	private PreparedStatement pstmt;
+	private ResultSet rs;
+	
 
     // 생성자
     public ReviewDAOImpl(Connection conn) {
@@ -203,5 +213,71 @@ public class ReviewDAOImpl implements ReviewDAO {
         }
     }
     
+    @Override
+    public boolean isPurchased(int userNumber, String productId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        boolean canReview = false;
+
+        try {
+            conn = ConnectionProvider.getConnection();
+
+            // ---------------------------------------------------------
+            // 1단계: '배송완료'된 주문 건수가 몇 개인지 조회
+            // ---------------------------------------------------------
+            String buySql = " SELECT COUNT(*) "
+                          + " FROM ORDERS o "
+                          + " JOIN ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID "
+                          + " WHERE o.USER_NUMBER = ? "
+                          + "   AND oi.PRODUCT_ID = ? "
+                          + "   AND o.ORDER_STATUS = '배송완료' "; // '배송완료'만 허용
+
+            pstmt = conn.prepareStatement(buySql);
+            pstmt.setInt(1, userNumber);
+            pstmt.setString(2, productId);
+            rs = pstmt.executeQuery();
+
+            int buyCount = 0;
+            if (rs.next()) {
+                buyCount = rs.getInt(1);
+            }
+            
+            // 자원 해제 후 재사용
+            JdbcUtil.close(rs);
+            JdbcUtil.close(pstmt);
+
+            // ---------------------------------------------------------
+            // 2단계: 이미 작성한 리뷰 건수가 몇 개인지 조회
+            // ---------------------------------------------------------
+            String reviewSql = " SELECT COUNT(*) FROM REVIEW "
+                             + " WHERE USER_NUMBER = ? AND PRODUCT_ID = ? ";
+            
+            pstmt = conn.prepareStatement(reviewSql);
+            pstmt.setInt(1, userNumber);
+            pstmt.setString(2, productId);
+            rs = pstmt.executeQuery();
+
+            int reviewCount = 0;
+            if (rs.next()) {
+                reviewCount = rs.getInt(1);
+            }
+
+            // ---------------------------------------------------------
+            // 3단계: 주문 횟수가 리뷰 횟수보다 많을 때만 작성 가능 (1주문 1리뷰)
+            // ---------------------------------------------------------
+            if (buyCount > reviewCount) {
+                canReview = true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            JdbcUtil.close(rs);
+            JdbcUtil.close(pstmt);
+            JdbcUtil.close(conn);
+        }
+        return canReview;
+    }
     
 }

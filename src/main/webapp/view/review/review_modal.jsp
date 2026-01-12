@@ -110,13 +110,15 @@
                     </div>
 
                     <div class="info">
-                        <div>
-                            <p class="txt1">${product.name != null ? product.name : '상품명'}</p>
-                        </div>
-                        <button type="button" class="review-write__btn" onclick="switchToWrite()">
-	                        작성하기
-	                    </button>
-                    </div>
+					    <div>
+					        <p class="txt1">${product.name != null ? product.name : '상품명'}</p>
+					    </div>
+					    
+					    <%-- 작성하기 버튼 동작 제어 --%>
+					    <button type="button" class="review-write__btn" onclick="checkReviewPermission()">
+					        작성하기
+					    </button>
+					</div>
                 </div>
                 <button type="button" class="close__btn" onclick="closeReviewModal()">close</button>
             </div>
@@ -557,5 +559,30 @@ function handleLike(btn, reviewId, type) {
         },
         error: function() { alert("통신 오류"); }
     });
+}
+</script>
+
+<script>
+function checkReviewPermission() {
+    // 1. 로그인 여부 확인 (auth가 없으면 빈 문자열)
+    var user = "${sessionScope.auth}"; 
+    
+    if (!user) {
+        alert("로그인이 필요한 서비스입니다.");
+        location.href = "/login/login.htm"; // 로그인 페이지 경로
+        return;
+    }
+
+    // 2. 구매 여부 확인 (Handler에서 보내준 canReview 값 사용)
+    // EL 표기법 ${canReview}는 true 또는 false로 변환됨
+    var canReview = ${canReview}; 
+
+    if (canReview) {
+        // 구매했으면 원래 있던 글쓰기 화면 전환 함수 호출
+        switchToWrite(); 
+    } else {
+        // 구매하지 않았으면 경고창
+        alert("작성할 리뷰가 없습니다.");
+    }
 }
 </script>

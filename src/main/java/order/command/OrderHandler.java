@@ -156,8 +156,8 @@ public class OrderHandler implements CommandHandler {
                 String cartItemIds = request.getParameter("cartItemIds");
                 
                 // [추가] 쿠폰(ISSUE_ID) 파라미터 받기 (나중에 JSP에서 name="issueId"로 넘겨주세요)
-                String issueIdStr = request.getParameter("issueId");
-                int issueId = (issueIdStr != null && !issueIdStr.isEmpty()) ? Integer.parseInt(issueIdStr) : 0;
+                String couponIdStr = request.getParameter("userCouponId");
+                int userCouponId = (couponIdStr != null && !couponIdStr.isEmpty()) ? Integer.parseInt(couponIdStr) : 0;
                 
                 int usedPoint = 0;
                 String usemileStr = request.getParameter("usemile");
@@ -174,7 +174,7 @@ public class OrderHandler implements CommandHandler {
                         .deliveryRequest(deliveryRequest)
                         .paymentMethod(paymentMethod)
                         .usedPoint(usedPoint)
-                        .issueId(issueId) // 미리 추가 (필드 없으면 DTO에 추가 필요)
+                        .userCouponId(userCouponId) // 미리 추가 (필드 없으면 DTO에 추가 필요)
                         .orderStatus("결제완료") // 기본 상태값 설정
                         .build();
 
@@ -190,10 +190,16 @@ public class OrderHandler implements CommandHandler {
                     String cIdStr = request.getParameter("combinationId");
                     
                     if (pId != null) {
+                    	ProductsDAO productsDao = ProductsDAO.getInstance();
+                        ProductsDTO product = productsDao.getProduct(conn, pId);
+                        
+                        // 할인가 계산 (GET 방식에서 썼던 로직과 동일하게)
+                        int salePrice = product.getPrice() * (100 - product.getDiscount_rate()) / 100;
                         items.add(OrderItemDTO.builder()
                                 .productId(pId)
                                 .quantity(Integer.parseInt(qtyStr))
                                 .combinationId(Integer.parseInt(cIdStr))
+                                .price(salePrice)
                                 .build());
                     }
                 }

@@ -18,42 +18,6 @@
     <!-- jQuery -->
     <script src="${pageContext.request.contextPath}/js/jquery-1.12.4.js"></script>
 
-    <!-- 🔥 모달 강제 표시용 보정 CSS -->
-    <style>
-        .common__layer {
-            position: fixed !important;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999 !important;
-            display: none;
-        }
-        .common__layer .layer_dim {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,.6);
-        }
-        .common__layer .inner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            width: 90%;
-            max-width: 420px;
-            border-radius: 8px;
-            padding: 20px;
-        }
-        .common__layer .head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-    </style>
 </head>
 
 <body>
@@ -118,11 +82,11 @@
 		          <!-- ✅ 공홈처럼 우측 버튼 -->
 		          <div class="goods-etc">
 		            <p class="ico">
-		              <button type="button" class="btn_review"
-		                      onclick="location.href='${pageContext.request.contextPath}/product/product_detail.htm?product_id=${w.product_id}';">
-		                리뷰보기
-		              </button>
-		
+		              <button type="button"
+						      class="btn_review"
+						      onclick="openReviewFromWishlist('${w.product_id}')">
+						리뷰보기
+						</button>
 		              <!-- ❗class/id 변경 금지라서 del + btnDelOne 같이 둠 -->
 		              <button type="button"
 		                      class="del btnDelOne"
@@ -204,6 +168,98 @@
 
 })();
 </script>
+
+<script>
+/* ✅ [수정] 위시리스트에서 리뷰 모달을 product_detail과 동일 스타일로 띄우기 */
+function openReviewFromWishlist(productId) {
+  const CTX = "${pageContext.request.contextPath}";
+
+  fetch(CTX + "/product/product_detail.htm?product_id=" + encodeURIComponent(productId))
+    .then(res => res.text())
+    .then(html => {
+      const temp = document.createElement("div");
+      temp.innerHTML = html;
+
+      // ✅ 1) product_detail의 CSS들을 wishlist <head>에 주입 (중복은 자동 방지)
+      injectDetailStyles(temp);
+
+      // ✅ 2) 리뷰 모달만 추출
+      const modal = temp.querySelector("#reviewModal");
+      if (!modal) {
+        alert("리뷰 모달(#reviewModal)을 찾지 못했습니다.");
+        return;
+      }
+
+      // ✅ 3) 위시리스트 페이지에 꽂기
+      const container = document.getElementById("reviewModalContainer");
+      container.innerHTML = "";
+      container.appendChild(modal);
+
+      // ✅ 4) product_detail에서 모달 스타일이 body class(view__style1)에 걸려있을 수 있어서
+      //       모달 열릴 동안만 body에 클래스 추가
+      document.body.classList.add("view__style1");
+
+      // ✅ 5) 열기
+      modal.style.display = "block";
+      document.body.style.overflow = "hidden";
+
+      // ✅ 6) 닫기 함수는 wishlist에서 확실히 먹게 “추가만”으로 오버라이드
+      window.closeReviewModal = function () {
+        const m = document.getElementById("reviewModal");
+        if (m) m.style.display = "none";
+        document.body.style.overflow = "auto";
+        document.body.classList.remove("view__style1"); // ✅ 원복
+      };
+
+      // ✅ 7) 모달 내부에 swiper/높이체크 같은게 있다면, 실행 트리거 (있을 때만)
+      if (typeof window.checkReviewHeightLocal === "function") {
+        setTimeout(window.checkReviewHeightLocal, 120);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("리뷰 로딩 실패");
+    });
+}
+
+/* ✅ [추가] product_detail의 CSS를 wishlist head에 주입 */
+function injectDetailStyles(tempRoot) {
+  const head = document.head;
+
+  // product_detail의 <link rel="stylesheet">를 전부 가져와서 head에 넣기
+  const links = tempRoot.querySelectorAll('link[rel="stylesheet"][href]');
+  links.forEach(l => {
+    const href = l.getAttribute("href");
+    if (!href) return;
+
+    // ✅ 이미 같은 href가 있으면 스킵 (중복 방지)
+    const exists = head.querySelector('link[rel="stylesheet"][href="' + href + '"]');
+    if (exists) return;
+
+    const newLink = document.createElement("link");
+    newLink.rel = "stylesheet";
+    newLink.href = href;
+    head.appendChild(newLink);
+  });
+
+  // 혹시 product_detail이 head에 <style>로 모달 스타일을 박아놨으면 그것도 복사
+  const styles = tempRoot.querySelectorAll("style");
+  styles.forEach(s => {
+    const css = (s.textContent || "").trim();
+    if (!css) return;
+
+    // 너무 많이 복사하면 과할 수 있어서, 'review' / 'common__layer' 관련만 골라서 주입
+    if (css.includes("common__layer") || css.includes("_review") || css.includes("review")) {
+      const tag = document.createElement("style");
+      tag.textContent = css;
+      head.appendChild(tag);
+    }
+  });
+}
+</script>
+
+<!-- ✅ [추가] 리뷰 모달이 삽입될 자리 -->
+<div id="reviewModalContainer"></div>
 
 </body>
 </html>

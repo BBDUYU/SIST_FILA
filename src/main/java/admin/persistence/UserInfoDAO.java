@@ -138,5 +138,50 @@ public class UserInfoDAO implements IUserInfo {
         }
         return list;
     }
-    
+ // 마이페이지 요약 정보를 위한 카운트 조회 메서드들
+    public int getCouponCount(Connection conn, int userNum) throws SQLException {
+        // IS_USED: 미사용 0, 사용 1
+        // EXPIRE_DATE가 현재 시간(SYSDATE)보다 뒤에 있는 것만 카운트
+        String sql = "SELECT COUNT(*) FROM USER_COUPON " +
+                     "WHERE USER_NUMBER = ? AND IS_USED = 0 AND EXPIRE_DATE > SYSDATE";
+        
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, userNum);
+            rs = pstmt.executeQuery();
+            return rs.next() ? rs.getInt(1) : 0;
+        } finally {
+            JdbcUtil.close(rs);
+            JdbcUtil.close(pstmt);
+        }
+    }
+
+ // 1. 위시리스트 개수 조회
+    public int getWishCount(Connection conn, int userNum) throws SQLException {
+        // 테이블명: WISHLIST, 컬럼명: USER_NUMBER
+        String sql = "SELECT COUNT(*) FROM WISHLIST WHERE USER_NUMBER = ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userNum);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        }
+    }
+
+    // 2. 총 주문 건수 조회
+    public int getOrderCount(Connection conn, int userNum) throws SQLException {
+        // 테이블명: ORDERS, 컬럼명: USER_NUMBER
+        String sql = "SELECT COUNT(*) FROM ORDERS WHERE USER_NUMBER = ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userNum);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        }
+    }
 }
