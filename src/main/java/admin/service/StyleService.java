@@ -1,6 +1,7 @@
 package admin.service;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -214,4 +215,35 @@ public class StyleService {
             return style;
         }
     }
+    public List<StyleDTO> getStyleList() {
+        Connection conn = null;
+        try {
+            conn = ConnectionProvider.getConnection();
+            // 아까 만든 DAO의 selectStyleList 호출 (WHERE 조건 없는 쿼리)
+            return styleDAO.selectStyleList(conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            JdbcUtil.close(conn);
+        }
+    }
+
+    // 2. 상태 변경 (Toggle) 처리
+    public boolean updateStyleStatus(int id, int status) {
+        Connection conn = null;
+        try {
+            conn = ConnectionProvider.getConnection();
+            // 서비스에서는 DAO에 커넥션과 데이터를 넘겨줍니다.
+            int result = styleDAO.updateStyleStatus(conn, id, status);
+            return result > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            JdbcUtil.close(conn);
+        }
+    }
+    
+    
 }

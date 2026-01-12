@@ -17,7 +17,7 @@ public class StyleListHandler implements CommandHandler {
     public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
         StyleService service = StyleService.getInstance();
         
-        List<StyleDTO> styleList = service.getActiveStyleList();
+        List<StyleDTO> styleList = service.getStyleList();
         
 
         request.setAttribute("styleList", styleList);

@@ -173,12 +173,16 @@ public void deleteStyleProducts(Connection conn, int styleId) throws SQLExceptio
          return pstmt.executeUpdate();
      }
  }
- public int updateStyleStatus(Connection conn, int styleId, int status) throws SQLException {
-	    String sql = "UPDATE STYLE SET USE_YN = ? WHERE STYLE_ID = ?";
-	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+ public int updateStyleStatus(Connection conn, int id, int status) throws SQLException {
+	    String sql = "UPDATE STYLE SET USE_YN = ? WHERE STYLE_ID = ?"; 
+	    PreparedStatement pstmt = null;
+	    try {
+	        pstmt = conn.prepareStatement(sql);
 	        pstmt.setInt(1, status);
-	        pstmt.setInt(2, styleId);
+	        pstmt.setInt(2, id);
 	        return pstmt.executeUpdate();
+	    } finally {
+	        JdbcUtil.close(pstmt);
 	    }
 	}
 //5. 메인 화면용 활성 스타일 리스트 조회

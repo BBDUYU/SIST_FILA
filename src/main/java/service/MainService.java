@@ -72,7 +72,7 @@ public class MainService {
             }
             dataMap.put("bannerList", bannerList);
 
-            ArrayList<CategoriesDTO> activeTags = cDao.selectTagList(conn);
+            ArrayList<CategoriesDTO> activeTags = cDao.selectActiveTagList(conn);
             dataMap.put("activeTags", activeTags);
             
             List<StyleDTO> activeStyles = styleDao.selectActiveStyleList(conn);

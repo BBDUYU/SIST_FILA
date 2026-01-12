@@ -27,6 +27,7 @@ public class TagListHandler implements CommandHandler {
     	        CategoriesDAO.getInstance().updateTag(conn, id, name);
     	    }
     	    response.sendRedirect(request.getContextPath() + "/admin/tagList.htm");
+    	    return null;
     	}
 
     	// 삭제 시 (GET 방식)

@@ -15,10 +15,10 @@
             <h2 class="tit__style1">고객센터</h2>
             
             <div class="cs__tab-box">
-                <a href="/customer/faq.asp">FAQ</a>
-                <a href="/customer/store.asp">매장안내</a>
-                <a href="/customer/as.asp">A/S 안내</a>
-                <a href="${pageContext.request.contextPath}/admin/noticeList.htm">공지사항</a>
+                <a href="#">FAQ</a>
+                <a href="#">매장안내</a>
+                <a href="#">A/S 안내</a>
+                <a href="${pageContext.request.contextPath}/noticeList.htm">공지사항</a>
                 <a href="${pageContext.request.contextPath}/customer/membership.htm" class="on">Membership</a>
             </div>
 

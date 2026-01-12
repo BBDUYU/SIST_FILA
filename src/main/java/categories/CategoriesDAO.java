@@ -208,4 +208,33 @@ public class CategoriesDAO implements ICategories {
             JdbcUtil.close(pstmt);
         }
     }
+ // 활성화된 태그만 조회하는 메서드 추가
+    public ArrayList<CategoriesDTO> selectActiveTagList(Connection conn) throws SQLException {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        ArrayList<CategoriesDTO> list = new ArrayList<>();
+        
+        String sql = "SELECT * FROM CATEGORIES WHERE CATEGORY_ID >= 4000 AND DEPTH = 4 AND USE_YN = 1 ORDER BY CATEGORY_ID DESC";
+        
+        try {
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                CategoriesDTO dto = CategoriesDTO.builder()
+                    .category_id(rs.getInt("category_id"))
+                    .name(rs.getString("name"))
+                    .parent_id(rs.getInt("parent_id"))
+                    .depth(rs.getInt("depth"))
+                    .created_at(rs.getDate("created_at"))
+                    .updated_at(rs.getDate("updated_at"))
+                    .use_yn(rs.getInt("use_yn"))
+                    .build();
+                list.add(dto);
+            }
+        } finally {
+            JdbcUtil.close(rs);
+            JdbcUtil.close(pstmt);
+        }
+        return list;
+    }
 }
