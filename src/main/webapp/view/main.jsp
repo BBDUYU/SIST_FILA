@@ -32,7 +32,7 @@
 
 							<div class="swiper-slide ${isVideo ? '_type_vdo' : ''}">
 								<a
-									href="<%=request.getContextPath()%>/event.htm?eventId=1"
+									href="#"
 									target="_self">
 									<div class="vdo-box">
 										<c:choose>
