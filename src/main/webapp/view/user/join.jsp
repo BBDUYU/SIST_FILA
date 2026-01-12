@@ -15,34 +15,7 @@
 
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 
-<style>
-/* =========================
-   1) "클릭 안됨" 방어: 헤더 오버레이 강제 차단
-   ========================= */
-.search-bg__wrap,
-.gnb-bg__wrap {
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
 
-/* =========================
-   2) 초기 숨김
-   ========================= */
-.certView { display: none; }
-
-/* =========================
-   3) join 영역 잘림 방지
-   ========================= */
-.mbr-box, .join-sec { overflow: visible; }
-
-/* =========================
-   4) 최소한의 안정 레이아웃(공용 CSS가 깨져도 최소 유지)
-   ========================= */
-#contents.mbr__contents { max-width: 520px; margin: 0 auto; padding: 40px 20px 120px; }
-.join_kakao { display:block; text-align:center; border-radius:999px; padding:14px 18px; }
-.btn_bg__bk, .btn_sld__bk { cursor:pointer; }
-</style>
 </head>
 
 <body>
