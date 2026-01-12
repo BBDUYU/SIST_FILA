@@ -259,7 +259,7 @@ public class OrderDAO {
             pstmt.setInt(1, userCouponId);
             pstmt.executeUpdate();
         }
-    }
+    }//이건안씀
     /**
      * 주문번호로 주문 마스터 정보 단건 조회 (주문 완료/상세 페이지용)
      */
@@ -281,7 +281,6 @@ public class OrderDAO {
                             .deliveryMethod(rs.getString("DELIVERY_METHOD"))
                             .deliveryRequest(rs.getString("DELIVERY_REQUEST"))
                             .createdAt(rs.getTimestamp("CREATED_AT"))
-                            // 🚩 DTO에 아래 정보들을 담아야 합니다 (필드가 없다면 DTO에 추가 필요)
                             .recipientName(rs.getString("RECIPIENT_NAME"))
                             .recipientPhone(rs.getString("RECIPIENT_PHONE"))
                             .address("(" + rs.getString("ZIPCODE") + ") " + rs.getString("MAIN_ADDR") + " " + rs.getString("DETAIL_ADDR"))

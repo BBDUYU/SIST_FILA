@@ -44,13 +44,7 @@ public class CouponDAO {
             return pstmt.executeUpdate();
         }
     }
-    public int delete(Connection conn, int couponId) throws SQLException {
-        String sql = "UPDATE COUPON SET STATUS = 'N' WHERE COUPON_ID = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, couponId);
-            return pstmt.executeUpdate();
-        }
-    }
+
     public int insertCoupon(Connection conn, CouponDTO dto) throws SQLException {
         String sql = "INSERT INTO COUPON (COUPON_ID, NAME, DISCOUNT_TYPE, DISCOUNT_VALUE, SERIAL_NUMBER,EXPIRES_AT, CREATED_AT) " +
                      "VALUES (SEQ_COUPON.NEXTVAL, ?, ?, ?, ?, ?, SYSDATE)";

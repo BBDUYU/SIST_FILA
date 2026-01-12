@@ -222,7 +222,6 @@ public class CreateproductDAO {
 		}
 	}
 
-	// 중복 코드를 줄이기 위한 헬퍼 메서드 (내부에서 사용)
 	private void insertSingleOption(PreparedStatement seq, PreparedStatement grp, PreparedStatement val, 
 			PreparedStatement mName, PreparedStatement vName, 
 			String pId, int mId, String vId) throws SQLException {
