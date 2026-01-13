@@ -142,7 +142,7 @@ function showImage(li, imgUrl) {
 
     // 2. 이미지 주소 처리
     if (imgUrl && imgUrl !== 'null' && imgUrl !== '') {
-        var displayUrl = "${pageContext.request.contextPath}/admin/imageDisplay.htm?fileName=" + encodeURIComponent(imgUrl);
+        var displayUrl = "${pageContext.request.contextPath}/imageDisplay.htm?fileName=" + encodeURIComponent(imgUrl);
         
         // src를 먼저 바꾸고 나서 show()를 해야 바로 뜨는 느낌이 납니다.
         $imgView.attr("src", displayUrl);
@@ -160,7 +160,7 @@ function searchNotice() {
     var keyword = $("#keyword").val();
     
     // 2. 서버 경로 설정
-    var url = "${pageContext.request.contextPath}/admin/noticeList.htm";
+    var url = "${pageContext.request.contextPath}/noticeList.htm";
     
     // 3. 파라미터 조합 (값이 있을 때만 깔끔하게 보냄)
     url += "?category=" + encodeURIComponent(category);
