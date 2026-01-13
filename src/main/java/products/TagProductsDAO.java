@@ -22,7 +22,6 @@ public class TagProductsDAO {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-     // 서브쿼리 방식: 조인 때문에 발생하는 뻥튀기를 원천 차단합니다.
         String sql = " SELECT P.PRODUCT_ID, P.NAME, P.PRICE, P.DISCOUNT_RATE, P.STATUS, "
                    + "        P.CATEGORY_ID, I.IMAGE_URL " 
                    + " FROM PRODUCTS P "

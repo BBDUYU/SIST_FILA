@@ -123,12 +123,11 @@ public class QnaDAOImpl implements QnaDAO {
     public List<QnaDTO> selectAllInquiries(Connection conn) throws SQLException {
         List<QnaDTO> list = new ArrayList<>();
         
-        // USERS 테이블명으로 수정 완료
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT i.*, c.CATEGORY_NAME, u.NAME as USER_NAME "); 
         sql.append("FROM INQUIRY i "); 
         sql.append("JOIN INQUIRY_CATEGORY c ON i.CATEGORY_ID = c.CATEGORY_ID ");
-        sql.append("JOIN USERS u ON i.USER_NUMBER = u.USER_NUMBER "); // MEMBER -> USERS
+        sql.append("JOIN USERS u ON i.USER_NUMBER = u.USER_NUMBER ");
         sql.append("ORDER BY i.CREATED_AT DESC");
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql.toString());
@@ -139,7 +138,7 @@ public class QnaDAOImpl implements QnaDAO {
                         .category_name(rs.getString("CATEGORY_NAME"))
                         .title(rs.getString("TITLE"))
                         .content(rs.getString("CONTENT"))
-                        .user_name(rs.getString("USER_NAME")) // USERS 테이블의 NAME
+                        .user_name(rs.getString("USER_NAME")) 
                         .status(rs.getString("STATUS"))
                         .created_at(rs.getTimestamp("CREATED_AT"))
                         .reply_content(rs.getString("REPLY_CONTENT"))

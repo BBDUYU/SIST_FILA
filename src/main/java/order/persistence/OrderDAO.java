@@ -120,7 +120,6 @@ public class OrderDAO {
     }
     /* 재고 관련 DAO 메서드 */
     public int updateDecreaseStock(Connection conn, int combinationId, int quantity) throws SQLException {
-        // 재고를 차감하고, 수량이 0이 되면 IS_SOLDOUT을 1로 업데이트
         String sql = "UPDATE PRODUCT_OPTION_STOCK " +
                      "SET STOCK = STOCK - ?, " +
                      "    IS_SOLDOUT = CASE WHEN (STOCK - ?) <= 0 THEN 1 ELSE 0 END " +
@@ -204,11 +203,10 @@ public class OrderDAO {
         List<OrderItemDTO> list = new ArrayList<>();
         
         StringBuilder sql = new StringBuilder();
-        // i에는 없는 상품명(p.NAME)을 PRODUCTS 테이블에서 가져옵니다.
         sql.append("SELECT i.PRODUCT_ID, p.NAME AS PRODUCT_NAME, i.QUANTITY, i.PRICE,i.COMBINATION_ID, ");
         sql.append("       v.VALUE_NAME AS OPTION_SIZE ");
         sql.append("FROM ORDER_ITEMS i ");
-        sql.append("JOIN PRODUCTS p ON i.PRODUCT_ID = p.PRODUCT_ID "); // 상품명 조인
+        sql.append("JOIN PRODUCTS p ON i.PRODUCT_ID = p.PRODUCT_ID "); 
         sql.append("LEFT JOIN PRODUCT_OPTION_COMBI_VALUES cv ON i.COMBINATION_ID = cv.COMBINATION_ID ");
         sql.append("LEFT JOIN PRODUCT_OPTION_VALUES v ON cv.VALUE_ID = v.VALUE_ID ");
         sql.append("WHERE i.ORDER_ID = ? ");
@@ -219,7 +217,7 @@ public class OrderDAO {
                 while (rs.next()) {
                     OrderItemDTO item = OrderItemDTO.builder()
                         .productId(rs.getString("PRODUCT_ID"))
-                        .productName(rs.getString("PRODUCT_NAME")) // 이제 p.NAME 값이 들어옵니다.
+                        .productName(rs.getString("PRODUCT_NAME")) 
                         .quantity(rs.getInt("QUANTITY"))
                         .price(rs.getInt("PRICE"))
                         .combinationId(rs.getInt("COMBINATION_ID"))

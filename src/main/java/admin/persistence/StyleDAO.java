@@ -19,10 +19,8 @@ public class StyleDAO {
     private StyleDAO() {}
     public static StyleDAO getInstance() { return instance; }
 
-    // 1. 관리자 스타일 목록 조회 (대표 이미지 포함)
- // 1. 관리자 스타일 목록 조회 (대표 이미지 포함)
+
     public List<StyleDTO> selectStyleList(Connection conn) throws SQLException {
-        // AS MAIN_IMAGE 를 AS main_image_url 로 변경
         String sql = "SELECT s.STYLE_ID, s.STYLE_NAME, s.USE_YN, s.DESCRIPTION, si.IMAGE_URL AS main_image_url " +
                      "FROM STYLE s " +
                      "LEFT JOIN STYLE_IMAGE si ON s.STYLE_ID = si.STYLE_ID AND si.IS_MAIN = 1 " +
@@ -35,9 +33,9 @@ public class StyleDAO {
                 StyleDTO dto = StyleDTO.builder()
                         .style_id(rs.getInt("STYLE_ID"))
                         .style_name(rs.getString("STYLE_NAME"))
-                        .description(rs.getString("DESCRIPTION")) // description도 추가해주는게 좋습니다
+                        .description(rs.getString("DESCRIPTION")) 
                         .use_yn(rs.getInt("USE_YN"))
-                        .main_image_url(rs.getString("main_image_url")) // 변경된 별칭으로 받기
+                        .main_image_url(rs.getString("main_image_url"))
                         .build();
                 list.add(dto);
             }

@@ -137,7 +137,7 @@ public class ProductCreateHandler implements CommandHandler {
      */
     private ArrayList<CreateproductDTO> processFiles(HttpServletRequest request, String productId, boolean isEdit) throws Exception {
         ArrayList<CreateproductDTO> imageList = new ArrayList<>();
-        String baseDiskPath = "C:\\fila_upload\\product\\" + productId + "\\";
+        String baseDiskPath = "C:/fila_upload/product/" + productId + "/";
         File saveDir = new File(baseDiskPath);
 
         // 폴더 생성 및 기존 파일 관리

@@ -101,8 +101,15 @@ public class ProductService {
 	        if (deleteImageIds != null && deleteImageIds.length > 0) {
 	            List<String> pathsToDelete = dao.getImagePathsByIds(conn, deleteImageIds);
 	            for (String path : pathsToDelete) {
-	                File file = new File(path);
-	                if (file.exists()) file.delete(); 
+	            	String cleanPath = path.replace("\\", "/").trim();
+	                File file = new File(cleanPath);
+	                if (file.exists()) {
+	                    if(file.delete()) {
+	                        System.out.println("✅ 물리 파일 삭제 성공!");
+	                    }
+	                } else {
+	                    System.out.println("❌ 파일 없음: " + cleanPath);
+	                }
 	            }
 	            dao.deleteSpecificImages(conn, deleteImageIds);
 	        }

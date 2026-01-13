@@ -284,7 +284,6 @@ public class MemberDAO {
         }
         return map;
     }
- // 마케팅 정보 수정 (6번: SMS, 7번: E-MAIL)
     public void updateMarketing(Connection conn, int userNum, boolean sms, boolean email) throws SQLException {
         // 6번(SMS) 처리
         updateMarketingStatus(conn, userNum, 6, sms ? 1 : 0);
@@ -292,9 +291,7 @@ public class MemberDAO {
         updateMarketingStatus(conn, userNum, 7, email ? 1 : 0);
     }
 
-    // 개별 마케팅 항목 업데이트 (MERGE 사용 시 존재하면 UPDATE, 없으면 INSERT)
     public void updateMarketingStatus(Connection conn, int userNum, int mktId, int isAgreed) throws SQLException {
-        // isAgreed 변수에는 이미 1 또는 0이 담겨서 내려옵니다.
         String sql = "MERGE INTO USER_MARKETING_MAP m " +
                      "USING DUAL ON (m.USER_NUMBER = ? AND m.MARKETING_ID = ?) " +
                      "WHEN MATCHED THEN " +
