@@ -153,17 +153,12 @@ public class OrderDAO {
     }
     /**
      * 6. 주문 목록 조회 (관리자/사용자 공용)
-     * userNumber가 0이면 전체 조회(관리자), 0보다 크면 특정 유저 조회(사용자)
      */
  // OrderDAO.java 내의 메서드 수정
 
     public List<OrderDTO> selectUserOrderList(Connection conn, int userNumber, String type) throws SQLException {
         List<OrderDTO> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM ORDERS WHERE 1=1 ");
-
-        if (userNumber > 0) {
-            sql.append(" AND USER_NUMBER = ? ");
-        }
+        StringBuilder sql = new StringBuilder("SELECT * FROM ORDERS WHERE USER_NUMBER = ? ");
 
         if ("ORDER".equals(type)) {
             sql.append(" AND ORDER_STATUS IN ('결제완료', '상품준비중', '배송준비중', '배송중', '배송완료') ");
@@ -175,9 +170,8 @@ public class OrderDAO {
         sql.append(" ORDER BY CREATED_AT DESC ");
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
-            if (userNumber > 0) {
-                pstmt.setInt(1, userNumber);
-            }
+            pstmt.setInt(1, userNumber); // 파라미터 설정을 고정
+            
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     OrderDTO dto = new OrderDTO();
