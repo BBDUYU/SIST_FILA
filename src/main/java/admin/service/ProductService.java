@@ -29,7 +29,7 @@ public class ProductService {
 	}
 
 
-	public void createProduct(CreateproductDTO product, String[] categoryIds, 
+	public void createProduct(CreateproductDTO product, String[] categoryIds, String[] tagIds,
 			String genderOption, String sportOption, String[] sizeOptions,
 			ArrayList<CreateproductDTO> imageList,
 			int styleId, int sectionId, int stock) {
@@ -40,7 +40,10 @@ public class ProductService {
 
 			dao.insertProduct(conn, product);
 			dao.insertCategoryRelations(conn, product.getProduct_id(), categoryIds,genderOption);
-
+			if (tagIds != null && tagIds.length > 0) {
+	            // 기존에 만든 insertCategoryRelations를 재활용하거나, 태그 전용을 호출
+	            dao.insertCategoryRelations(conn, product.getProduct_id(), tagIds, null); 
+	        }
 			dao.insertProductOptions(conn, product.getProduct_id(), genderOption, sportOption, sizeOptions);
 			dao.insertDefaultStock(conn, product.getProduct_id(), sizeOptions, stock);            
 			if (imageList != null && !imageList.isEmpty()) {
@@ -84,74 +87,69 @@ public class ProductService {
 	// 상품 수정 프로세스
 	// ProductService.java
 	public void updateProduct(CreateproductDTO dto, List<CreateproductDTO> newImages, String[] deleteImageIds, 
-			String[] categoryIds, String genderOption, String sportOption, String[] sizeOptions, 
-			int styleId, int sectionId, int stock) {
-		Connection conn = null;
-		try {
-			
-			conn = ConnectionProvider.getConnection();
-			conn.setAutoCommit(false);
+	        String[] categoryIds, String[] tagIds, String genderOption, String sportOption, String[] sizeOptions, 
+	        int styleId, int sectionId, int stock) {
+	    Connection conn = null;
+	    try {
+	        conn = ConnectionProvider.getConnection();
+	        conn.setAutoCommit(false);
 
-			// 1. [기본 정보 수정]
-			dao.updateProduct(conn, dto);
+	        // 1. 기본 정보 업데이트
+	        dao.updateProduct(conn, dto);
 
-			// 2. [물리적 파일 삭제] 사용자가 삭제 버튼 누른 것들 실제 하드에서 지우기
-			if (deleteImageIds != null && deleteImageIds.length > 0) {
-				List<String> deletePaths = dao.getImagePathsByIds(conn, deleteImageIds);
-				for (String path : deletePaths) {
-					// 경로 정제: 가상경로가 포함되어 있다면 순수 C:/... 만 추출
-					String pPath = path.contains("path=") ? path.split("path=")[1] : path;
-					File f = new File(pPath);
-					if (f.exists()) f.delete();
-				}
-				dao.deleteSpecificImages(conn, deleteImageIds); // DB에서 해당 이미지들 삭제
-			}
+	        // 2. 사용자가 'X' 눌러서 넘긴 이미지만 정확히 삭제
+	        if (deleteImageIds != null && deleteImageIds.length > 0) {
+	            List<String> pathsToDelete = dao.getImagePathsByIds(conn, deleteImageIds);
+	            for (String path : pathsToDelete) {
+	            	String cleanPath = path.replace("\\", "/").trim();
+	                File file = new File(cleanPath);
+	                if (file.exists()) {
+	                    if(file.delete()) {
+	                        System.out.println("✅ 물리 파일 삭제 성공!");
+	                    }
+	                } else {
+	                    System.out.println("❌ 파일 없음: " + cleanPath);
+	                }
+	            }
+	            dao.deleteSpecificImages(conn, deleteImageIds);
+	        }
 
-			// 3. [기존 이미지 확보 및 정제] DB에 아직 남아있는 이미지들 가져오기
-			List<CreateproductDTO> currentImages = dao.selectImagesByProductId(conn, dto.getProduct_id());
-			List<CreateproductDTO> finalImageList = new ArrayList<>();
+	        // 3. 새 이미지 추가 등록
+	        if (newImages != null && !newImages.isEmpty()) { // isEmpty 체크 추가
+	            for (CreateproductDTO img : newImages) {
+	                String url = img.getImage_url();
+	                if (url.contains("path=")) {
+	                    url = url.split("path=")[1];
+	                }
+	                url = url.replace("/", "\\").replace("C:C:", "C:");
+	                img.setImage_url(url);
+	            }
+	            // 여기서 새 이미지만 DB에 추가 (기존 이미지는 가만히 둠)
+	            dao.insertProductImages(conn, newImages); 
+	        }
 
-			for (CreateproductDTO img : currentImages) {
-				String url = img.getImage_url();
-				// 이미 /displayImage... 가 붙어있다면 떼어내고 순수 C:/ 경로만 보관
-				if (url.contains("path=")) {
-					img.setImage_url(url.split("path=")[1]);
-				}
-				finalImageList.add(img);
-			}
+	        // 4. 연관 데이터 동기화 (이미지 제외)
+	        // [주의] dao.deleteRelatedData 내부에 이미지를 지우는 SQL이 있다면 반드시 제거하세요!
+	        dao.deleteRelatedData(conn, dto.getProduct_id()); 
 
-			// 4. [새 이미지 추가] 핸들러에서 넘어온 새 이미지들도 합치기
-			if (newImages != null) {
-				finalImageList.addAll(newImages);
-			}
+	        dao.insertCategoryRelations(conn, dto.getProduct_id(), categoryIds, genderOption);
+	        if (tagIds != null && tagIds.length > 0) {
+	            dao.insertCategoryRelations(conn, dto.getProduct_id(), tagIds, null);
+	        }
+	        dao.insertProductOptions(conn, dto.getProduct_id(), genderOption, sportOption, sizeOptions);
+	        dao.insertDefaultStock(conn, dto.getProduct_id(), sizeOptions, stock);
 
-			// 5. [중요: 전체 삭제 후 재등록] 관계 데이터 싹 지우기
-			dao.deleteRelatedData(conn, dto.getProduct_id());     // 옵션, 카테고리 등 삭제
-			dao.deleteAllImagesByProductId(conn, dto.getProduct_id()); // 이미지 레코드만 싹 삭제
+	        if (styleId > 0) dao.insertStyleProduct(conn, dto.getProduct_id(), styleId);
+	        if (sectionId > 0) dao.insertEventProduct(conn, dto.getProduct_id(), sectionId);
 
-			// 6. [데이터 재등록]
-			// 이미지 저장 (정제된 C:/... 경로로 깨끗하게 인서트)
-			if (!finalImageList.isEmpty()) {
-				dao.insertProductImages(conn, finalImageList);
-			}
-
-			dao.insertCategoryRelations(conn, dto.getProduct_id(), categoryIds, genderOption);
-			dao.insertProductOptions(conn, dto.getProduct_id(), genderOption, sportOption, sizeOptions);
-			dao.insertDefaultStock(conn, dto.getProduct_id(), sizeOptions, stock);
-
-			if (styleId > 0) dao.insertStyleProduct(conn, dto.getProduct_id(), styleId);
-			if (sectionId > 0) dao.insertEventProduct(conn, dto.getProduct_id(), sectionId);
-
-			conn.commit();
-			System.out.println("상품 수정 완료: " + dto.getProduct_id());
-
-		} catch (Exception e) {
-			JdbcUtil.rollback(conn);
-			e.printStackTrace();
-			throw new RuntimeException("수정 실패: " + e.getMessage());
-		} finally {
-			JdbcUtil.close(conn);
-		}
+	        conn.commit();
+	    } catch (Exception e) {
+	        JdbcUtil.rollback(conn);
+	        e.printStackTrace();
+	        throw new RuntimeException("수정 실패: " + e.getMessage());
+	    } finally {
+	        JdbcUtil.close(conn);
+	    }
 	}
 
 	public void deleteProduct(String productId) {

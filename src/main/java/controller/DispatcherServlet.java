@@ -12,13 +12,18 @@ import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import command.CommandHandler;
 import command.NullHandler;
-
+@MultipartConfig(
+	    fileSizeThreshold = 1024 * 1024 * 5, // 5MB
+	    maxFileSize = 1024 * 1024 * 50,      // 50MB
+	    maxRequestSize = 1024 * 1024 * 100    // 100MB
+	)
 public class DispatcherServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
      
@@ -85,6 +90,8 @@ public class DispatcherServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 1) 요청 URL 분석 -> key		
+		request.setCharacterEncoding("UTF-8");
+	    response.setCharacterEncoding("UTF-8");
 		String requestURI =  request.getRequestURI();
 		// > requestURI :                        /jspPro/board/list.do
 		//System.out.println("> requestURI : " + requestURI);
@@ -105,11 +112,24 @@ public class DispatcherServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		
-		// 4) 뷰페이지로 포워딩
-		if (viewPage != null ) {
-			RequestDispatcher dispatcher = request.getRequestDispatcher(viewPage);
-			dispatcher.forward(request, response);
+		// 4) 뷰 처리
+		// 4) 뷰페이지 처리
+		if (viewPage != null) {
+
+		    // 🔥 redirect 처리
+		    if (viewPage.startsWith("redirect:")) {
+		        String redirectPath = viewPage.substring("redirect:".length());
+		        response.sendRedirect(request.getContextPath() + redirectPath);
+		        return;
+		    }
+
+		    // 기존 forward
+		    RequestDispatcher dispatcher =
+		            request.getRequestDispatcher(viewPage);
+		    dispatcher.forward(request, response);
 		}
+
+
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

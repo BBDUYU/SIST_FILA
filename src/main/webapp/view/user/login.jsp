@@ -30,10 +30,12 @@
 			<!-- 입력 폼 - 이메일, 비밀번호 -->
 			<form id="loginForm" name="loginForm"
 				  action="${pageContext.request.contextPath}/login.htm"
-				  method="post" class="on">
+				  method="post" clasus="on">
 
 				<input type="hidden" name="rtnUrl" value="index.htm">
 				<input type="hidden" name="lgc" id="lgc" value="0">
+				
+				<input type="hidden" name="returnUrl" value="${param.returnUrl}">
 
 				<div class="inp-box">
 					<div>
@@ -54,7 +56,7 @@
 						<label for="idCheck">아이디 저장</label>
 					</div>
 
-					<div class="id-srh"><a href="/member/searchIDPW.asp" tabindex="55">아이디 / 비밀번호 찾기</a></div>
+					<div class="id-srh"><a href="<%=request.getContextPath()%>/view/user/SearchIdPw.jsp" tabindex="55">아이디 / 비밀번호 찾기</a></div>
 				</div>
 
 				<!-- 로그인 버튼 -->
@@ -76,7 +78,11 @@
 			하나의 통합아이디로 FILA의 모든 서비스를 이용하실 수 있습니다.</p>
 
 			<div class="btn-box">
-				<a href="/member/join_member.asp" class="btn_sld__bk" tabindex="59">회원가입</a>
+				<div class="btn-box">
+  <a href="<%=request.getContextPath()%>/member/join.htm"
+     class="btn_sld__bk" tabindex="59">
+     회원가입
+  </a>
 				<a href="guest.asp" class="txt__btn" tabindex="60">비회원 주문조회</a>
 			</div>
 		</section>

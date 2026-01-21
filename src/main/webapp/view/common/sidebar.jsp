@@ -61,12 +61,25 @@
     
     <div class="nav-item ${param.currentPage eq 'product' ? 'active' : ''}" 
          onclick="location.href='${pageContext.request.contextPath}/admin/productList.htm'">상품 관리</div>
-    <div class="nav-sub-item" onclick="location.href='${pageContext.request.contextPath}/admin/createProduct.htm'">ㄴ 상품 등록</div>
-    
-    <div class="nav-item ${pageName eq 'coupon' ? 'active' : ''}">쿠폰 관리</div>
-    
-    <div class="nav-item ${pageName eq 'inquiry' ? 'active' : ''}" 
+         
+    <div class="nav-item ${param.currentPage eq 'tag' ? 'active' : ''}" 
+         onclick="location.href='${pageContext.request.contextPath}/admin/tagList.htm'">태그 관리</div>
+         
+    <div class="nav-item ${param.currentPage eq 'coupon' ? 'active' : ''}"
+    	onclick="location.href='${pageContext.request.contextPath}/admin/coupon_list.htm'">쿠폰 관리</div>
+    <div class="nav-item ${param.currentPage eq 'style' ? 'active' : ''}"
+    	onclick="location.href='${pageContext.request.contextPath}/admin/styleList.htm'">스타일 관리</div>
+    <div class="nav-item ${param.currentPage eq 'inquiry' ? 'active' : ''}" 
          onclick="location.href='${pageContext.request.contextPath}/admin/inquiryList.htm'">
         1:1 문의 <span style="background: #e21836; padding: 2px 6px; border-radius: 10px; font-size: 10px;">3</span>
     </div>
+    <div class="nav-item ${pageName eq 'productQna' ? 'active' : ''}"
+    	onclick="location.href='${pageContext.request.contextPath}/admin/productQnaList.htm'">
+    	상품문의 관리
+    </div>
+
+    <div class="nav-item ${pageName eq 'notice' ? 'active' : ''}"
+	    onclick="location.href='${pageContext.request.contextPath}/admin/noticeManage.htm'">
+	    공지사항 관리
+	</div>
 </div>

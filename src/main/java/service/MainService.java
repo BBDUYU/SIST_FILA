@@ -3,11 +3,14 @@ package service;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.util.ConnectionProvider;
 import com.util.JdbcUtil;
 
+import admin.domain.StyleDTO;
+import admin.persistence.StyleDAO;
 import categories.CategoriesDAO;
 import categories.CategoriesDTO;
 import event_product.EventproductDAO;
@@ -34,10 +37,12 @@ public class MainService {
             SearchDAO sDao = SearchDAO.getInstance();
             EventproductDAO epDao = EventproductDAO.getInstance();
             MainbannerDAO ebDao = MainbannerDAO.getInstance();
-
+            StyleDAO styleDao = StyleDAO.getInstance();
+            
             // 1. 검색어 저장 (검색창 입력 시)
             if (searchItem != null && !searchItem.trim().isEmpty()) {
                 sDao.upsertKeyword(conn, searchItem.trim());
+                conn.commit();
             }
 
             // 2. 카테고리 리스트 조회
@@ -67,6 +72,12 @@ public class MainService {
             }
             dataMap.put("bannerList", bannerList);
 
+            ArrayList<CategoriesDTO> activeTags = cDao.selectActiveTagList(conn);
+            dataMap.put("activeTags", activeTags);
+            
+            List<StyleDTO> activeStyles = styleDao.selectActiveStyleList(conn);
+            dataMap.put("activeStyles", activeStyles);
+            
             return dataMap;
 
         } catch (Exception e) {

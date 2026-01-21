@@ -43,13 +43,15 @@ public class UserInfoDAO implements IUserInfo {
         }
         return list;
     }
- // UserInfoDAO.java
     @Override
     public UserInfoDTO selectOne(Connection conn, int userNum) throws SQLException {
         UserInfoDTO userDto = null;
         
         // 1. 회원 기본 정보 조회
-        String sqlUser = "SELECT * FROM USERS WHERE USER_NUMBER = ?";
+        String sqlUser = "SELECT u.*, " +
+                " (SELECT NVL(MAX(BALANCE) KEEP (DENSE_RANK LAST ORDER BY POINT_ID), 0) " +
+                "  FROM USERPOINTS WHERE USER_NUMBER = u.USER_NUMBER) as CURRENT_BALANCE " +
+                "FROM USERS u WHERE u.USER_NUMBER = ?";
         // 2. 해당 회원의 자녀 리스트 조회 (CHILD 테이블)
         String sqlChild = "SELECT CHILD_NAME, CHILD_BIRTH, CHILD_GENDER FROM CHILD WHERE USER_NUMBER = ? ORDER BY CHILD_BIRTH ASC";
 
@@ -73,6 +75,7 @@ public class UserInfoDAO implements IUserInfo {
                         .createAt(rs.getTimestamp("CREATED_AT"))
                         .gender(rs.getString("GENDER"))
                         .birthday(rs.getDate("BIRTHDAY"))
+                        .balance(rs.getInt("CURRENT_BALANCE"))
                         .build();
             }
             JdbcUtil.close(rs);
@@ -100,7 +103,6 @@ public class UserInfoDAO implements IUserInfo {
         }
         return userDto;
     }
- // UserInfoDAO.java에 추가
     public ArrayList<UserInfoDTO> selectPointList(Connection conn, int userNum) throws SQLException {
         ArrayList<UserInfoDTO> list = new ArrayList<>();
         
@@ -135,5 +137,48 @@ public class UserInfoDAO implements IUserInfo {
             JdbcUtil.close(pstmt);
         }
         return list;
+    }
+    public int getCouponCount(Connection conn, int userNum) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM USER_COUPON " +
+                     "WHERE USER_NUMBER = ? AND IS_USED = 0 AND EXPIRE_DATE > SYSDATE";
+        
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, userNum);
+            rs = pstmt.executeQuery();
+            return rs.next() ? rs.getInt(1) : 0;
+        } finally {
+            JdbcUtil.close(rs);
+            JdbcUtil.close(pstmt);
+        }
+    }
+
+ // 1. 위시리스트 개수 조회
+    public int getWishCount(Connection conn, int userNum) throws SQLException {
+        // 테이블명: WISHLIST, 컬럼명: USER_NUMBER
+        String sql = "SELECT COUNT(*) FROM WISHLIST WHERE USER_NUMBER = ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userNum);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        }
+    }
+
+    // 2. 총 주문 건수 조회
+    public int getOrderCount(Connection conn, int userNum) throws SQLException {
+        // 테이블명: ORDERS, 컬럼명: USER_NUMBER
+        String sql = "SELECT COUNT(*) FROM ORDERS WHERE USER_NUMBER = ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userNum);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        }
     }
 }

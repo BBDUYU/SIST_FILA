@@ -1,181 +1,185 @@
 package admin.command;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
-import com.oreilly.servlet.MultipartRequest;
-import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.util.ConnectionProvider;
 
 import admin.domain.CreateproductDTO;
 import admin.persistence.CreateproductDAO;
 import admin.service.ProductService;
+import categories.CategoriesDAO;
+import categories.CategoriesDTO;
 import command.CommandHandler;
+import net.sf.json.JSONObject;
 
 public class ProductCreateHandler implements CommandHandler {
 
     @Override
     public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
-    	String command = request.getServletPath();
+        String command = request.getServletPath();
         boolean isEdit = command.contains("editProduct");
-        
-        // GET 방식: 등록 페이지 데이터 준비 및 이동
+
+        // --- [GET] 등록/수정 페이지 이동 ---
         if (request.getMethod().equalsIgnoreCase("GET")) {
-        	ProductService service = ProductService.getInstance(); 
-            
-            service.getAdminFullFormData(request);            
+            ProductService service = ProductService.getInstance();
+            service.getAdminFullFormData(request);
+
+            try (Connection conn = ConnectionProvider.getConnection()) {
+                CategoriesDAO categoryDao = CategoriesDAO.getInstance();
+                ArrayList<CategoriesDTO> tagList = categoryDao.selectTagList(conn);
+                request.setAttribute("tagList", tagList);
+            }
+
             if (isEdit) {
-                // 수정 모드일 때: 기존 상품 정보를 불러와서 request에 담기
                 String productId = request.getParameter("id");
                 CreateproductDTO product = ProductService.getInstance().getProductDetail(productId);
                 request.setAttribute("product", product);
                 ArrayList<CreateproductDTO> imageList = service.getProductImages(productId);
                 request.setAttribute("imageList", imageList);
-                
-                // 3. [추가] 기존 선택된 사이즈 ID 리스트 (DAO에 구현 필요)
-                // request.setAttribute("productSizes", service.getProductSizeIds(productId));
-                
-                // 4. [추가] 기존 선택된 카테고리 정보 (DAO에 구현 필요)
-                // request.setAttribute("productCategories", service.getProductCategories(productId));
                 request.setAttribute("mode", "edit");
-                return "/view/admin/product_edit.jsp"; // 수정 페이지로 이동
+                List<Map<String, Object>> productCategories = service.getProductCategories(productId);
+                request.setAttribute("productCategories", productCategories);
+                return "/view/admin/product_edit.jsp";
             }
             request.setAttribute("mode", "create");
             return "/view/admin/product_create.jsp";
-        } 
-        
-        // POST 방식: 실제 상품 등록 처리
+        }
+
+        // --- [POST] AJAX 상품 등록/수정 처리 ---
         else {
-            String rootPath = request.getServletContext().getRealPath("/upload/products");
-            String tempPath = rootPath + File.separator + "temp";
-            
-            File tempDir = new File(tempPath);
-            if (!tempDir.exists()) tempDir.mkdirs();
-
-            int maxSize = 1024 * 1024 * 100; // 100MB
-            MultipartRequest multi = new MultipartRequest(request, tempPath, maxSize, "UTF-8", new DefaultFileRenamePolicy());
-
-            ProductService service = ProductService.getInstance();
-            CreateproductDAO dao = CreateproductDAO.getInstance();
+            // AJAX 응답을 위한 JSON 설정
+            response.setContentType("application/json; charset=UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            PrintWriter out = response.getWriter();
+            JSONObject jsonResponse = new JSONObject();
 
             try (Connection conn = ConnectionProvider.getConnection()) {
-                String[] categoryIds = multi.getParameterValues("category_ids");
+                ProductService service = ProductService.getInstance();
+                CreateproductDAO dao = CreateproductDAO.getInstance();
+
+                // 1. 파라미터 수집 (MultipartConfig 설정 시 일반 request로 가능)
+                String[] categoryIds = request.getParameterValues("category_ids");
+                String[] tagIds = request.getParameterValues("tag_ids");
+                String styleParam = request.getParameter("styleId");
+                String sectionParam = request.getParameter("sectionId");
                 
-                String styleParam = multi.getParameter("styleId");
-                String sectionParam = multi.getParameter("sectionId");
                 int styleId = (styleParam != null && !styleParam.isEmpty()) ? Integer.parseInt(styleParam) : 0;
                 int sectionId = (sectionParam != null && !sectionParam.isEmpty()) ? Integer.parseInt(sectionParam) : 0;
-                
-                int mainCateId = Integer.parseInt(categoryIds[0]);
-                
-                // 2. 상품 ID 결정 (수정은 기존 ID 사용, 등록은 신규 생성)
-                String productId = isEdit ? multi.getParameter("product_id") : dao.generateProductId(conn, mainCateId);
-                
+                int mainCateId = (categoryIds != null && categoryIds.length > 0) ? Integer.parseInt(categoryIds[0]) : 0;
+
+                // 2. 상품 ID 결정
+                String productId = isEdit ? request.getParameter("product_id") : dao.generateProductId(conn, mainCateId);
+
                 // 3. 상품 기본 정보 DTO 생성
                 CreateproductDTO product = CreateproductDTO.builder()
                         .product_id(productId)
                         .category_id(mainCateId)
-                        .name(multi.getParameter("name"))
-                        .description(multi.getParameter("description"))
-                        .price(Integer.parseInt(multi.getParameter("price")))
-                        .discount_rate(Integer.parseInt(multi.getParameter("discount_rate")))
+                        .name(request.getParameter("name"))
+                        .description(request.getParameter("description"))
+                        .price(Integer.parseInt(request.getParameter("price")))
+                        .discount_rate(Integer.parseInt(request.getParameter("discount_rate")))
                         .build();
 
                 // 4. 파일 처리 (C:\fila_upload\product\ID 폴더로 이동)
-                ArrayList<CreateproductDTO> imageList = processFiles(multi, productId, tempPath);
-                
-                String stockStr = multi.getParameter("stock");
-                int stock = (stockStr != null && !stockStr.isEmpty()) ? Integer.parseInt(stockStr) : 10; // 기본값 10
-                String[] deleteImageIds = multi.getParameterValues("deleteImageIds"); // 추가
-                // 5. 서비스 호출 (등록과 수정을 구분해서 호출)
+                ArrayList<CreateproductDTO> imageList = processFiles(request, productId, isEdit);
+
+                // 5. 부가 정보 수집
+                String stockStr = request.getParameter("stock");
+                int stock = (stockStr != null && !stockStr.isEmpty()) ? Integer.parseInt(stockStr) : 10;
+                String[] deleteImageIds = request.getParameterValues("deleteImageIds");
+
+                // 6. 서비스 호출
                 if (isEdit) {
                     service.updateProduct(
-                    		product,             
-                            imageList,           
-                            deleteImageIds,      
-                            categoryIds,        
-                            multi.getParameter("gender_option"), 
-                            multi.getParameter("sport_option"), 
-                            multi.getParameterValues("size_options"),
-                            styleId,             
-                            sectionId,           
-                            stock                
+                            product, imageList, deleteImageIds, categoryIds, tagIds,
+                            request.getParameter("gender_option"),
+                            request.getParameter("sport_option"),
+                            request.getParameterValues("size_options"),
+                            styleId, sectionId, stock
                     );
                 } else {
                     service.createProduct(
-                        product, categoryIds, 
-                        multi.getParameter("gender_option"), 
-                        multi.getParameter("sport_option"), 
-                        multi.getParameterValues("size_options"), 
-                        imageList, styleId, sectionId,stock
+                            product, categoryIds, tagIds,
+                            request.getParameter("gender_option"),
+                            request.getParameter("sport_option"),
+                            request.getParameterValues("size_options"),
+                            imageList, styleId, sectionId, stock
                     );
                 }
-                String contextPath = request.getContextPath(); // /SIST_FILA
-                response.sendRedirect(contextPath + "/admin/productList.htm");
 
-                return null; 
+                // 성공 응답 전송
+                jsonResponse.put("status", "success");
+                jsonResponse.put("redirect", request.getContextPath() + "/admin/productList.htm");
+                out.print(jsonResponse.toString());
+
             } catch (Exception e) {
                 e.printStackTrace();
-                throw e;
+                jsonResponse.put("status", "error");
+                jsonResponse.put("message", e.getMessage());
+                out.print(jsonResponse.toString());
             }
+            return null; // AJAX 응답이므로 뷰 경로 리턴 안 함
         }
     }
 
-    private ArrayList<CreateproductDTO> processFiles(MultipartRequest multi, String productId, String tempPath) {
+    /**
+     * 서블릿 3.0 getParts()를 이용한 파일 저장 로직
+     */
+    private ArrayList<CreateproductDTO> processFiles(HttpServletRequest request, String productId, boolean isEdit) throws Exception {
         ArrayList<CreateproductDTO> imageList = new ArrayList<>();
-        String baseDiskPath = "C:\\fila_upload\\product\\" + productId + "\\";
+        String baseDiskPath = "C:/fila_upload/product/" + productId + "/";
         File saveDir = new File(baseDiskPath);
-        if (!saveDir.exists()) saveDir.mkdirs();
 
-        String[] types = {"mainImages", "modelImages", "detailImages"};
-        String[] dbTypes = {"MAIN", "MODEL", "DETAIL"};
-        int globalOrder = 1;
+        // 폴더 생성 및 기존 파일 관리
+        if (!saveDir.exists()) {
+            saveDir.mkdirs();
+        } else if (isEdit) {
+            // 수정 시 기존 파일 로직은 필요에 따라 유지/삭제 결정 (일단 예시로 보존)
+        }
 
-        for (int i = 0; i < types.length; i++) {
-            String baseName = types[i]; // "mainImages"
-            int subIdx = 1;
+        Collection<Part> parts = request.getParts();
+        int currentSortOrder = 1;
+        int mainIdx = 1, modelIdx = 1, detailIdx = 1;
 
-            // 0번부터 15번까지 무조건 다 찔러보기 (이름 뒤에 숫자가 붙든 안붙든)
-            for (int j = 0; j < 15; j++) {
-                // 검사할 이름들: mainImages, mainImages0, mainImages1, mainImages[], mainImages[]0...
-                String[] possibleNames = {
-                    baseName + j, 
-                    baseName + "[]" + j, 
-                    baseName + (j == 0 ? "" : j-1),
-                    baseName + "[]"
-                };
+        for (Part part : parts) {
+            String paramName = part.getName(); // JSP input의 name
+            String fileName = part.getSubmittedFileName();
 
-                for (String searchName : possibleNames) {
-                    String systemName = multi.getFilesystemName(searchName);
-                    if (systemName != null) {
-                        // 이미 처리한 파일인지 중복 체크를 위해 리스트 확인 필요할 수 있음
-                        // (생략 가능: renameTo가 실패하면 어차피 안들어감)
+            // 파일 파트가 아니거나 파일명이 없는 경우 건너뜀
+            if (fileName == null || fileName.isEmpty()) continue;
 
-                        String ext = systemName.substring(systemName.lastIndexOf("."));
-                        String newFileName = productId + "_" + dbTypes[i].toLowerCase() + "_" + (subIdx++) + ext;
+            // 타입 구분
+            String type = paramName.toLowerCase().contains("main") ? "MAIN" : 
+                          (paramName.toLowerCase().contains("model") ? "MODEL" : "DETAIL");
+            
+            int subIdx = type.equals("MAIN") ? mainIdx++ : (type.equals("MODEL") ? modelIdx++ : detailIdx++);
 
-                        File oldFile = new File(tempPath + File.separator + systemName);
-                        File newFile = new File(saveDir, newFileName);
+            // 새 파일명 생성
+            String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+            String newFileName = productId + "_" + type.toLowerCase() + "_" + subIdx + ext;
+            
+            // 물리 디스크 저장
+            part.write(baseDiskPath + newFileName);
+            System.out.println("✅ 물리 저장 성공: " + baseDiskPath + newFileName);
 
-                        if (oldFile.renameTo(newFile)) {
-                            imageList.add(CreateproductDTO.builder()
-                                    .product_id(productId)
-                                    .image_url(baseDiskPath + newFileName)
-                                    .image_type(dbTypes[i])
-                                    .is_main(dbTypes[i].equals("MAIN") && subIdx == 2 ? 1 : 0)
-                                    .sort_order(globalOrder++)
-                                    .build());
-                            System.out.println("성공! 파일 발견: " + searchName + " -> " + newFileName);
-                            break; // 하나 찾았으면 다음 j로
-                        }
-                    }
-                }
-            }
+            // DB 저장을 위한 DTO 생성
+            imageList.add(CreateproductDTO.builder()
+                    .product_id(productId)
+                    .image_url(baseDiskPath + newFileName)
+                    .image_type(type)
+                    .is_main(type.equals("MAIN") && subIdx == 1 ? 1 : 0)
+                    .sort_order(currentSortOrder++)
+                    .build());
         }
         return imageList;
     }

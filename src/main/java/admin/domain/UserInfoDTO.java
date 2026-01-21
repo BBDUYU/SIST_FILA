@@ -1,11 +1,13 @@
 package admin.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import order.domain.OrderDTO;
 
 @Data
 @AllArgsConstructor
@@ -70,6 +72,8 @@ public class UserInfoDTO {
 	private Date usedat;
 	private Date expireddate;
 	private Date receivedat;
+	private String coupon_name;          
+	private String discount_type;
 	
 	//문의 내역
 	private int inquiryid;
@@ -84,5 +88,10 @@ public class UserInfoDTO {
 	// UserInfoDTO.java 내부에 추가
 	private java.util.List<UserInfoDTO> childList;
 	private java.util.List<UserInfoDTO> pointList;
+	private java.util.List<UserInfoDTO> couponList;
+	private List<OrderDTO> orderList;
 	
+	private int couponCount; // 보유 쿠폰 개수
+	private int wishCount;   // 위시리스트 상품 개수
+	private int orderCount;  // 총 주문 건수
 }

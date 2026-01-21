@@ -21,7 +21,6 @@ public class EventproductDAO {
         ResultSet rs = null;
 
         try {
-            // 1. 이벤트 이름 (IS_ACTIVE가 1인 것: 1, 2, 5번 조회됨)
             String sqlEvent = "SELECT EVENT_NAME, SLUG, EVENT_ID FROM EVENT " +
                               "WHERE IS_ACTIVE = 1 " + 
                               "ORDER BY EVENT_ID DESC";
@@ -37,11 +36,8 @@ public class EventproductDAO {
             }
             JdbcUtil.close(rs);
 
-            // 2. 이벤트 상품 이름 (조인 성공 시 'FILA 레이 트레이서' 등 조회됨)
-            // STATUS 조건을 빼거나 실제 존재하는 'SALE', 'NEW' 등으로 수정
             String sqlProduct = "SELECT p.NAME, p.PRODUCT_ID FROM EVENT_PRODUCT ep " +
                                 "JOIN PRODUCTS p ON ep.PRODUCT_ID = p.PRODUCT_ID " +
-                                "WHERE p.STATUS IN ('SALE', 'NEW') " + // 데이터에 맞춰 수정
                                 "AND ROWNUM <= 5";
             
             pstmt = conn.prepareStatement(sqlProduct);
@@ -64,15 +60,13 @@ public class EventproductDAO {
     public ArrayList<EventproductDTO> selectRecommendProducts(Connection conn) throws SQLException {
         ArrayList<EventproductDTO> list = new ArrayList<>();
         
-        // [수정] 서브쿼리를 통해 메인 이미지(IS_MAIN=1) 경로를 함께 가져옴
         String sql = "SELECT * FROM ( " +
-                     "  SELECT p.PRODUCT_ID, p.NAME, p.PRICE, p.DISCOUNT_RATE, " +
-                     "  (SELECT IMAGE_URL FROM PRODUCT_IMAGE pi WHERE pi.PRODUCT_ID = p.PRODUCT_ID AND pi.IS_MAIN = 1 AND ROWNUM = 1) as IMG " +
-                     "  FROM EVENT_PRODUCT ep " +
-                     "  JOIN PRODUCTS p ON ep.PRODUCT_ID = p.PRODUCT_ID " +
-                     "  WHERE p.STATUS IN ('SALE', 'NEW') " + 
-                     "  ORDER BY p.CREATED_AT DESC " +
-                     ") WHERE ROWNUM <= 12";
+                "  SELECT p.PRODUCT_ID, p.NAME, p.PRICE, p.DISCOUNT_RATE, " +
+                "  (SELECT IMAGE_URL FROM PRODUCT_IMAGE pi WHERE pi.PRODUCT_ID = p.PRODUCT_ID AND pi.IMAGE_TYPE = 'MAIN' AND ROWNUM = 1) as IMG " +
+                "  FROM EVENT_PRODUCT ep " +
+                "  JOIN PRODUCTS p ON ep.PRODUCT_ID = p.PRODUCT_ID " +
+                "  ORDER BY p.PRODUCT_ID DESC " + // EVENT_PRODUCT_ID 대신 p.PRODUCT_ID 사용
+                ") WHERE ROWNUM <= 12";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {

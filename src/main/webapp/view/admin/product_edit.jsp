@@ -1,8 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <!DOCTYPE html>
 <html>
 <head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <title>FILA Admin - 상품 수정</title>
 <style>
 :root {
@@ -142,7 +144,28 @@
 						<div id="selected-tags" style="margin-top: 15px; display: flex; gap: 8px; flex-wrap: wrap; min-height: 35px;"></div>
 						<div id="hidden-inputs"></div>
 					</div>
-
+					<div class="input-group" style="margin-top: 30px;">
+					    <label>인기 태그 지정 (중복 선택 가능)</label>
+					    <div class="opt-list" style="background: #fff; border: 1px solid var(--border-color); padding: 15px;">
+					        <c:forEach items="${tagList}" var="c">
+					            <c:if test="${c.category_id >= 4000 && c.category_id < 5000}">
+					                <label class="opt-item tag-item">
+									    <input type="checkbox" name="tag_ids" value="${c.category_id}" 
+									        <c:forEach items="${productCategories}" var="pc">
+									           <c:if test="${pc.CATEGORY_ID == c.category_id || pc.category_id == c.category_id}">
+									                checked
+									            </c:if>
+									        </c:forEach>
+									    > 
+									    <span># ${c.name}</span>
+									</label>
+					            </c:if>
+					        </c:forEach>
+					        <c:if test="${empty tagList}">
+					            <div style="font-size: 12px; color: #999;">등록된 태그가 없습니다. 태그 관리에서 먼저 등록해주세요.</div>
+					        </c:if>
+					    </div>
+					</div>
 					<div class="input-group">
 						<label>상품 옵션 설정</label>
 						<div style="background: #fff; border: 1px solid #333; padding: 20px;">
@@ -214,27 +237,29 @@
 		</form>
 	</div>
 
-	<script>
+<script>
     let selectedCategories = new Map(); 
     let currentPath = { d1: "", d2: "" };
 
     window.onload = function() {
         // 1. 기존 선택된 카테고리 태그들 복원
         <c:forEach items="${productCategories}" var="pc">
-            selectedCategories.set("${pc.category_id}", "${pc.full_path}");
+            <c:if test="${pc.category_id < 4000}">
+                selectedCategories.set("${pc.category_id}", "${not empty pc.full_path ? pc.full_path : pc.name}");
+            </c:if>
         </c:forEach>
         renderCategoryUI();
         
         // 2. 사이즈 영역 복원
-        const gName = "${product.gender_name}"; // MALE, FEMALE, KIDS
-        const cType = "${product.category_type}"; // 의류, 신발 등
+        const gName = "${product.gender_name}"; 
+        const cType = "${product.category_type}"; 
         restoreSizeDisplay(gName, cType);
     };
 
     function restoreSizeDisplay(gName, cType) {
         let targetId = null;
-        if (cType.includes("신발")) targetId = (gName === "KIDS") ? 8 : 7;
-        else if (cType.includes("의류")) {
+        if (cType && cType.includes("신발")) targetId = (gName === "KIDS") ? 8 : 7;
+        else if (cType && cType.includes("의류")) {
             if (gName === "MALE") targetId = 4;
             else if (gName === "FEMALE") targetId = 5;
             else targetId = 6;
@@ -245,29 +270,40 @@
         }
     }
 
-    function markImageDelete(imageId) {
+    // 이미지 삭제 처리 (기존 이미지 박스 숨기기 및 ID 저장)
+    function markImageDelete(imageId, btn) {
         if(confirm("이 이미지를 삭제하시겠습니까? (수정 완료 시 반영됩니다)")) {
+            const imgBox = btn.closest('.img-box'); 
+            if (imgBox) {
+                // 기존 이미지 ID를 보내는 hidden input 제거 (서버에서 유지 목록에서 제외되도록)
+                const existingInput = imgBox.querySelector('input[name="existing_image_ids"]');
+                if(existingInput) existingInput.remove();
+                
+                imgBox.style.display = 'none';
+            }
+
+            // 서버로 보낼 삭제 대상 ID 리스트 추가
             const container = document.getElementById('hidden-inputs');
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'delete_image_ids';
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "deleteImageIds"; 
             input.value = imageId;
             container.appendChild(input);
-            document.getElementById('ex-img-' + imageId).remove();
         }
     }
 
     function previewImages(input, previewId) {
         const preview = document.getElementById(previewId);
-        // 수정을 위해 기존꺼 유지하고 새 미리보기만 append 하거나, 
-        // 새 파일 선택 시 새 미리보기만 다시 그리는 로직
+        const newItems = preview.querySelectorAll('.new-preview');
+        newItems.forEach(item => item.remove());
+
         if (input.files) {
             Array.from(input.files).forEach(file => {
                 const reader = new FileReader();
-                reader.onload = e => {
+                reader.onload = function(e) {
                     const div = document.createElement("div");
-                    div.className = "img-box";
-                    div.innerHTML = `<img src="\${e.target.result}">`;
+                    div.className = "img-box new-preview"; 
+                    div.innerHTML = '<img src="' + e.target.result + '">';
                     preview.appendChild(div);
                 };
                 reader.readAsDataURL(file);
@@ -313,6 +349,7 @@
     function renderCategoryUI() {
         const tagContainer = document.getElementById('selected-tags');
         const inputContainer = document.getElementById('hidden-inputs');
+        // 기존 카테고리 input만 삭제
         inputContainer.querySelectorAll('input[name="category_ids"]').forEach(i => i.remove());
         tagContainer.innerHTML = ""; 
         selectedCategories.forEach((path, id) => {
@@ -352,54 +389,36 @@
     }
 
     function registProduct() {
-        const form = document.getElementById("productForm"); 
-        const targetIds = ['mainImgs', 'modelImgs', 'detailImgs'];
-        const paramNames = ['mainImages', 'modelImages', 'detailImages'];
+        const form = document.getElementById("productForm");
+        if (!form.name.value) { alert("제품명을 입력하세요."); form.name.focus(); return; }
 
-        targetIds.forEach((id, idx) => {
-            const fileInput = document.getElementById(id);
-            const files = fileInput.files;
-            if (files.length > 0) {
-                for (let i = 0; i < files.length; i++) {
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(files[i]);
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'file';
-                    hiddenInput.name = paramNames[idx].replace('[]', '') + i;
-                    hiddenInput.files = dataTransfer.files;
-                    hiddenInput.style.display = 'none';
-                    form.appendChild(hiddenInput);
+        const formData = new FormData(form);
+
+        $.ajax({
+            url: form.action,
+            type: 'POST',
+            data: formData,
+            processData: false, 
+            contentType: false, 
+            dataType: 'json',
+            beforeSend: function() {
+                $(".submit-btn").prop("disabled", true).text("수정 중...");
+            },
+            success: function(res) {
+                if (res.status === "success") {
+                    alert("상품 정보가 수정되었습니다.");
+                    location.href = res.redirect;
+                } else {
+                    alert("수정 실패: " + (res.message || "알 수 없는 오류"));
+                    $(".submit-btn").prop("disabled", false).text("상품 수정 완료");
                 }
-                fileInput.removeAttribute('name'); 
+            },
+            error: function() {
+                alert("서버 통신 중 오류가 발생했습니다.");
+                $(".submit-btn").prop("disabled", false).text("상품 수정 완료");
             }
         });
-        form.submit();
     }
-    let deleteImageIds = [];
-
-    function markImageDelete(imageId, btn) { // btn 인자 확인!
-        if(confirm("이 이미지를 삭제하시겠습니까?")) {
-            // 1. 전달받은 버튼(btn)을 기준으로 부모 박스를 찾아 숨김
-            const imgBox = btn.closest('.img-box'); 
-            if (imgBox) {
-                imgBox.style.display = 'none';
-                // 기존 전송 데이터 비활성화
-                const hiddenExisting = imgBox.querySelector('input[name="existing_image_ids"]');
-                if(hiddenExisting) hiddenExisting.disabled = true;
-            }
-
-            // 2. 서버로 보낼 삭제 ID 리스트 생성
-            const container = document.getElementById('hidden-inputs');
-            if (container) {
-                const input = document.createElement("input");
-                input.type = "hidden";
-                input.name = "deleteImageIds"; 
-                input.value = imageId;
-                container.appendChild(input);
-                console.log("삭제 목록 추가됨 ID:", imageId);
-            }
-        }
-    }
-	</script>
+</script>
 </body>
 </html>

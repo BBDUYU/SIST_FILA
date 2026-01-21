@@ -1,9 +1,10 @@
 package products.service;
 
+import java.io.File;
 import java.sql.Connection;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,7 +24,41 @@ public class ProductService {
         return instance;
     }
 
-    // ★ 핸들러가 호출할 핵심 메서드
+    // -----------------------------------------------------------
+    // [추가] 1. 검색어 기반 상품 목록 조회 (핸들러에서 호출)
+    // -----------------------------------------------------------
+    public List<ProductsDTO> searchProducts(String searchItem) {
+        Connection conn = null;
+        try {
+            conn = DBConn.getConnection();
+            return ProductsDAO.getInstance().selectProductsBySearch(conn, searchItem);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        } finally {
+            DBConn.close();
+        }
+    }
+
+    // -----------------------------------------------------------
+    // [추가] 2. 매개변수 없는 전체 목록 조회 (오버로딩)
+    // -----------------------------------------------------------
+    public List<ProductsDTO> getProductList() {
+        Connection conn = null;
+        try {
+            conn = DBConn.getConnection();
+            return ProductsDAO.getInstance().selectAllProducts(conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        } finally {
+            DBConn.close();
+        }
+    }
+
+    // -----------------------------------------------------------
+    // 3. 기존 카테고리 리스트 조회 (Request 객체 제어)
+    // -----------------------------------------------------------
     public void getProductList(HttpServletRequest request) {
         Connection conn = null;
         try {
@@ -36,16 +71,14 @@ public class ProductService {
             int cateId = (cateParam != null) ? Integer.parseInt(cateParam) : 0;
             
             // 2. 제목(Title) 자동 완성 로직
-            String mainTitle = ""; // 초기화
-            String subTitle = "전체보기"; // 기본값
+            String mainTitle = ""; 
+            String subTitle = "전체보기"; 
             
             if (cateId > 0) {
                 CategoriesDTO curDto = cDao.selectCategory(conn, cateId);
                 
                 if (curDto != null) {
-                    // [A] 대분류(Main Title) 구하기
                     CategoriesDTO parent = null; 
-                    
                     if (curDto.getDepth() == 1) {
                         mainTitle = curDto.getName();
                     } else if (curDto.getDepth() == 2) {
@@ -59,10 +92,8 @@ public class ProductService {
                         }
                     }
 
-                    // [B] 소분류(Sub Title) 구하기
                     if (curDto.getDepth() == 3) {
                         if (parent == null) parent = cDao.selectCategory(conn, curDto.getParent_id());
-
                         if (parent != null && parent.getName().equalsIgnoreCase("NewFeatured")) {
                             String myName = curDto.getName();
                             if (myName.equals("베스트")) subTitle = "BEST";
@@ -71,7 +102,6 @@ public class ProductService {
                         } else {
                             if (parent != null) subTitle = parent.getName();
                         }
-                        
                     } else if (curDto.getDepth() == 2) {
                         subTitle = curDto.getName();
                     }
@@ -83,15 +113,12 @@ public class ProductService {
             // 3. 왼쪽 사이드바 기준점 잡기
             int sidebarParentId = 0;
             CategoriesDTO currentCategory = null;
-            
             if (cateId > 0) {
                 currentCategory = cDao.selectCategory(conn, cateId);
                 if (currentCategory != null) {
-                    if (currentCategory.getDepth() == 1) {
-                        sidebarParentId = cateId;
-                    } else if (currentCategory.getDepth() == 2) {
-                        sidebarParentId = cateId;
-                    } else if (currentCategory.getDepth() == 3) {
+                    if (currentCategory.getDepth() == 1) sidebarParentId = cateId;
+                    else if (currentCategory.getDepth() == 2) sidebarParentId = cateId;
+                    else if (currentCategory.getDepth() == 3) {
                         CategoriesDTO parent = cDao.selectCategory(conn, currentCategory.getParent_id());
                         sidebarParentId = parent.getCategory_id();
                     }
@@ -105,6 +132,16 @@ public class ProductService {
             } else {
                  sidebarList = cDao.selectMainCategories(conn); 
             }
+            
+            if (sidebarList != null) {
+                int totalCount = 0;
+                for (CategoriesDTO side : sidebarList) {
+                    int realCount = pDao.getProductCount(conn, side.getCategory_id());
+                    side.setProduct_count(realCount);
+                    totalCount += realCount;
+                }
+                request.setAttribute("totalSidebarCount", totalCount);
+            }
 
             // 5. 상품 리스트 조회
             List<ProductsDTO> list = null;
@@ -114,7 +151,6 @@ public class ProductService {
                 list = pDao.selectProductsByCategory(conn, cateId);
             }
             
-            // 6. JSP 전송
             request.setAttribute("productList", list);
             request.setAttribute("sidebarList", sidebarList);
             request.setAttribute("mainTitle", mainTitle); 
@@ -129,72 +165,147 @@ public class ProductService {
         }
     }
 
-    // 상세페이지
+    // 4. 상세페이지 로직
     public void getProductDetail(HttpServletRequest request) {
         Connection conn = null;
         try {
             conn = DBConn.getConnection();
             ProductsDAO pDao = ProductsDAO.getInstance();
+            CategoriesDAO cDao = CategoriesDAO.getInstance();
             
-            // 1. 파라미터 받기
+            // ReviewDAO 객체 생성
+            review.ReviewDAO reviewDao = new review.ReviewDAOImpl(conn);
+            
             String productId = request.getParameter("product_id");
-            
-            if(productId == null || productId.isEmpty()) {
-                request.setAttribute("errorMsg", "잘못된 접근입니다 (상품 ID 없음).");
-                return;
-            }
+            if(productId == null || productId.isEmpty()) return;
 
-            // 2. DB 조회
             ProductsDTO dto = pDao.getProduct(conn, productId);
-            List<ProductsOptionDTO> options = pDao.getProductOptions(conn, productId);
             
-            if (dto == null) {
-                request.setAttribute("errorMsg", "존재하지 않는 상품입니다.");
-                return;
-            }
-            
-            // 3. 할인가 계산
-            int finalPrice = dto.getPrice();
-            if(dto.getDiscount_rate() > 0) {
-                finalPrice = dto.getPrice() * (100 - dto.getDiscount_rate()) / 100;
-            }
-            
-            // 4. 옵션 분리 (색상/사이즈)
-            ProductsOptionDTO colorOption = null;
-            ProductsOptionDTO sizeOption = null;
-            
-            if(options != null) {
-                for(ProductsOptionDTO opt : options) {
-                    if(opt.getGroupName().contains("색상") || opt.getGroupName().contains("Color")) {
-                        colorOption = opt;
-                    } 
-                    else if(opt.getGroupName().contains("사이즈") || opt.getGroupName().contains("Size")) {
-                        sizeOption = opt;
+            if (dto != null) {
+                productId = dto.getProduct_id();
+                
+                // 이미지 파일 스캔 로직
+                List<String> mainImages = new ArrayList<>();
+                List<String> modelImages = new ArrayList<>();
+                List<String> detailImages = new ArrayList<>();
+                
+                File dir = new File("C:\\fila_upload\\product\\" + productId);
+                if (dir.exists() && dir.isDirectory()) {
+                    File[] files = dir.listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            String name = file.getName();
+                            if (name.contains("_main_")) mainImages.add(name);
+                            else if (name.contains("_model_")) modelImages.add(name);
+                            else if (name.contains("_detail_")) detailImages.add(name);
+                        }
                     }
                 }
-            }
-            
-            // ------------------------------------------------------------------
-            // [수정 포인트] 상품 태그(스포츠/라이프스타일) DB에서 가져오기
-            // ------------------------------------------------------------------
-            // (숫자 2는 DB의 OPTION_MASTERS 테이블에서 '스포츠/스타일' 분류 ID라고 가정함)
-            String styleTag = pDao.getProductTag(conn, productId, 2);
-            
-            if (styleTag == null) {
-                styleTag = "라이프스타일"; 
-            }
-            
-            // 5. 결과 저장 (JSP로 보냄)
-            request.setAttribute("product", dto);        
-            request.setAttribute("finalPrice", finalPrice);
-            request.setAttribute("colorOption", colorOption); 
-            request.setAttribute("sizeOption", sizeOption);
-            request.setAttribute("styleTag", styleTag); 
+                Collections.sort(mainImages);
+                Collections.sort(modelImages);
+                Collections.sort(detailImages);
 
+                List<ProductsOptionDTO> sizeOptions = pDao.getProductOptions(conn, productId);
+                List<ProductsDTO> relatedList = pDao.selectProductsByCategory(conn, dto.getCategory_id());
+
+                CategoriesDTO curDto = cDao.selectCategory(conn, dto.getCategory_id());
+                String genderTag = "FILA";
+                if (curDto != null) {
+                    String depth1Name = "";
+                    if (curDto.getDepth() == 1) depth1Name = curDto.getName();
+                    else if (curDto.getDepth() == 2) {
+                        CategoriesDTO parent = cDao.selectCategory(conn, curDto.getParent_id());
+                        if (parent != null) depth1Name = parent.getName();
+                    } else if (curDto.getDepth() == 3) {
+                        CategoriesDTO parent = cDao.selectCategory(conn, curDto.getParent_id());
+                        if (parent != null) {
+                            CategoriesDTO grandParent = cDao.selectCategory(conn, parent.getParent_id());
+                            if (grandParent != null) depth1Name = grandParent.getName();
+                        }
+                    }
+                    if ("여성".equals(depth1Name)) genderTag = "FEMALE";
+                    else if ("남성".equals(depth1Name)) genderTag = "MALE";
+                    else if (!depth1Name.isEmpty()) genderTag = depth1Name;
+                }
+
+                int finalPrice = dto.getPrice();
+                if(dto.getDiscount_rate() > 0) {
+                    finalPrice = dto.getPrice() * (100 - dto.getDiscount_rate()) / 100;
+                }
+
+                String styleTag = pDao.getProductTag(conn, productId, 2);
+                if (styleTag == null) styleTag = "라이프스타일";
+
+                // -----------------------------------------------------------
+                // [G] 추가 및 수정: 로그인한 유저 정보 확인 후 리뷰 목록 조회
+                // -----------------------------------------------------------
+                int userNumber = 0; // 기본값 (비로그인)
+                
+                // 세션 가져오기
+                javax.servlet.http.HttpSession session = request.getSession();
+                // MemberDTO는 패키지명 포함해서 명시 (혹시 import 안 되어 있을까봐)
+                member.MemberDTO auth = (member.MemberDTO) session.getAttribute("auth");
+                
+                if (auth != null) {
+                    userNumber = auth.getUserNumber(); // 로그인했으면 번호 추출
+                }
+
+                // [수정] userNumber를 파라미터로 같이 넘김 (내 좋아요 상태 확인용)
+                List<review.ReviewDTO> reviewList = reviewDao.selectListByFilter(productId, null, userNumber, null, null);
+                java.util.Map<String, Object> reviewSummary = reviewDao.getReviewSummary(productId);
+                qna.QnaDAO qnaDao = qna.QnaDAOImpl.getInstance(); 
+                java.util.List<qna.QnaDTO> qnaList = qnaDao.selectList(productId);
+                
+                // -----------------------------------------------------------
+                // 4. JSP 전송 (Attribute 설정)
+                // -----------------------------------------------------------
+                request.setAttribute("product", dto);
+                request.setAttribute("mainImages", mainImages);
+                request.setAttribute("modelImages", modelImages);
+                request.setAttribute("detailImages", detailImages);
+                request.setAttribute("sizeOptions", sizeOptions);
+                request.setAttribute("relatedList", relatedList);
+                request.setAttribute("finalPrice", finalPrice);
+                request.setAttribute("styleTag", styleTag);
+                request.setAttribute("genderTag", genderTag);
+                
+                request.setAttribute("reviewList", reviewList);       // 리뷰 리스트 (myLike 포함됨)
+                request.setAttribute("reviewSummary", reviewSummary); // 통계 정보
+                request.setAttribute("qnaList", qnaList);
+                
+                if(sizeOptions != null && !sizeOptions.isEmpty()) {
+                    request.setAttribute("sizeOption", "Y");
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             DBConn.close();
         }
     }
+
+    public void getCartOptionInfo(HttpServletRequest request) {
+        Connection conn = null;
+        try {
+            conn = DBConn.getConnection();
+            String productId = request.getParameter("productId");
+            
+            // 1. 상품 상세 정보 가져오기
+            ProductsDTO product = ProductsDAO.getInstance().getProduct(conn, productId);
+            // 2. 해당 상품의 모든 옵션(사이즈) 가져오기
+            List<ProductsOptionDTO> sizeOptions = ProductsDAO.getInstance().getProductOptions(conn, productId);
+
+            // 3. JSP에서 쓸 수 있게 request에 세팅
+            request.setAttribute("product", product);
+            request.setAttribute("sizeOptions", sizeOptions);
+            request.setAttribute("currentSize", request.getParameter("size"));
+            request.setAttribute("currentQty", request.getParameter("qty"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBConn.close();
+        }
+    }
+
 }

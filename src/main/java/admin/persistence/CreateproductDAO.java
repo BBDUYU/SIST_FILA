@@ -1,6 +1,5 @@
 package admin.persistence;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,8 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.util.ConnectionProvider;
-import com.util.JdbcUtil;
+
 
 import admin.domain.CreateproductDTO;
 
@@ -56,7 +54,6 @@ public class CreateproductDAO {
 
 	public int insertProduct(Connection conn, CreateproductDTO dto) {
 		int result = 0;
-		// 1. 쿼리 수정: 'Y' 대신 ? 사용
 		String sql = "INSERT INTO PRODUCTS (product_id, category_id, name, description, price, "
 				+ "view_count, created_at, updated_at, status, discount_rate) "
 				+ "VALUES (?, ?, ?, ?, ?, 0, SYSDATE, SYSDATE, ?, ?)";
@@ -224,7 +221,6 @@ public class CreateproductDAO {
 		}
 	}
 
-	// 중복 코드를 줄이기 위한 헬퍼 메서드 (내부에서 사용)
 	private void insertSingleOption(PreparedStatement seq, PreparedStatement grp, PreparedStatement val, 
 			PreparedStatement mName, PreparedStatement vName, 
 			String pId, int mId, String vId) throws SQLException {
@@ -262,7 +258,7 @@ public class CreateproductDAO {
 		String sqlCombi = "INSERT INTO PRODUCT_OPTION_COMBINATIONS (COMBINATION_ID, PRODUCT_ID) VALUES (SEQ_COMBINATION.NEXTVAL, ?)";
 
 		// 16번 테이블: 재고 (기존 하드코딩된 10 대신 ? 사용)
-		String sqlStock = "INSERT INTO PRODUCT_OPTION_STOCK (STOCK_ID, COMBINATION_ID, STORE_ID, STOCK, IS_SOLDOUT) VALUES (SEQ_STOCK.NEXTVAL, ?, 1, ?, ?)";
+		String sqlStock = "INSERT INTO PRODUCT_OPTION_STOCK (STOCK_ID, COMBINATION_ID, STORE_ID, STOCK, IS_SOLDOUT) VALUES (SEQ_STOCK.NEXTVAL, ?, 4, ?, ?)";
 
 		// 15번 테이블(Combi_Value) 연결을 위한 VALUE_ID 조회 쿼리
 		String sqlFindValueId = "SELECT VALUE_ID FROM PRODUCT_OPTION_VALUES v " +
@@ -364,46 +360,46 @@ public class CreateproductDAO {
 	}
 	// 특정 상품의 기본 정보 조회
 	public CreateproductDTO selectProductById(Connection conn, String productId) throws SQLException {
-		String sql = "SELECT p.*, " +
-				"(SELECT STYLE_ID FROM STYLE_PRODUCT WHERE PRODUCT_ID = p.PRODUCT_ID) as STYLE_ID, " +
-				"(SELECT SECTION_ID FROM EVENT_PRODUCT WHERE PRODUCT_ID = p.PRODUCT_ID) as SECTION_ID, " +
-				// 3. GENDER_NAME과 GENDER_OPTION_ID (CATEGORIES 테이블 조인)
-				"c.NAME as GENDER_NAME, c.CATEGORY_ID as GENDER_ID, " +
-				// 4. CATEGORY_TYPE 추출 (2차 카테고리 이름을 가져오거나 로직으로 처리)
-				"(SELECT NAME FROM CATEGORIES WHERE CATEGORY_ID = (SELECT PARENT_ID FROM CATEGORIES WHERE CATEGORY_ID = p.CATEGORY_ID)) as CAT_TYPE, " +
-				"(SELECT SUM(STOCK) FROM PRODUCT_OPTION_STOCK pos " +
-				" JOIN PRODUCT_OPTION_COMBINATIONS poc ON pos.COMBINATION_ID = poc.COMBINATION_ID " +
-				" WHERE poc.PRODUCT_ID = p.PRODUCT_ID) as TOTAL_STOCK, " +
-				"(SELECT POV.V_MASTER_ID FROM PRODUCT_OPTION_VALUES POV " +
-				" JOIN PRODUCT_OPTION_GROUPS POG ON POV.OPTION_GROUP_ID = POG.OPTION_GROUP_ID " +
-				" WHERE POG.PRODUCT_ID = p.PRODUCT_ID AND POG.MASTER_ID = 2) as SPORT_ID " +
-				"FROM PRODUCTS p " +
-				"JOIN CATEGORIES c ON p.CATEGORY_ID = c.CATEGORY_ID " + // JOIN 추가
-				"WHERE p.PRODUCT_ID = ?";
+	    String sql = "SELECT p.*, " +
+	            // 🚩 ROWNUM = 1을 추가하여 여러 개가 있어도 첫 번째 값만 가져옵니다.
+	            "(SELECT STYLE_ID FROM STYLE_PRODUCT WHERE PRODUCT_ID = p.PRODUCT_ID AND ROWNUM = 1) as STYLE_ID, " +
+	            "(SELECT SECTION_ID FROM EVENT_PRODUCT WHERE PRODUCT_ID = p.PRODUCT_ID AND ROWNUM = 1) as SECTION_ID, " +
+	            "c.NAME as GENDER_NAME, c.CATEGORY_ID as GENDER_ID, " +
+	            "(SELECT NAME FROM CATEGORIES WHERE CATEGORY_ID = " +
+	                "(SELECT PARENT_ID FROM CATEGORIES WHERE CATEGORY_ID = p.CATEGORY_ID)) as CAT_TYPE, " +
+	            "(SELECT SUM(STOCK) FROM PRODUCT_OPTION_STOCK pos " +
+	            " JOIN PRODUCT_OPTION_COMBINATIONS poc ON pos.COMBINATION_ID = poc.COMBINATION_ID " +
+	            " WHERE poc.PRODUCT_ID = p.PRODUCT_ID) as TOTAL_STOCK, " +
+	            "(SELECT POV.V_MASTER_ID FROM PRODUCT_OPTION_VALUES POV " +
+	            " JOIN PRODUCT_OPTION_GROUPS POG ON POV.OPTION_GROUP_ID = POG.OPTION_GROUP_ID " +
+	            " WHERE POG.PRODUCT_ID = p.PRODUCT_ID AND POG.MASTER_ID = 2 AND ROWNUM = 1) as SPORT_ID " +
+	            "FROM PRODUCTS p " +
+	            "JOIN CATEGORIES c ON p.CATEGORY_ID = c.CATEGORY_ID " + 
+	            "WHERE p.PRODUCT_ID = ?";
 
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setString(1, productId);
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					return CreateproductDTO.builder()
-							.product_id(rs.getString("PRODUCT_ID"))
-							.category_id(rs.getInt("CATEGORY_ID"))
-							.name(rs.getString("NAME"))
-							.description(rs.getString("DESCRIPTION"))
-							.price(rs.getInt("PRICE"))
-							.discount_rate(rs.getInt("DISCOUNT_RATE"))
-							.style_id(rs.getInt("STYLE_ID"))
-							.section_id(rs.getInt("SECTION_ID"))
-							.sport_option_id(rs.getInt("SPORT_ID"))
-							.stock(rs.getInt("TOTAL_STOCK"))         // 추가: 재고량
-							.gender_name(rs.getString("GENDER_NAME")) // 추가: JSP JS 에러 해결용
-							.gender_option_id(rs.getInt("GENDER_ID")) // 추가: JSP 하단 hidden값용
-							.category_type(rs.getString("CAT_TYPE"))  // 추가: JSP 365행 에러 해결용
-							.build();
-				}
-			}
-		}
-		return null;
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, productId);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                return CreateproductDTO.builder()
+	                        .product_id(rs.getString("PRODUCT_ID"))
+	                        .category_id(rs.getInt("CATEGORY_ID"))
+	                        .name(rs.getString("NAME"))
+	                        .description(rs.getString("DESCRIPTION"))
+	                        .price(rs.getInt("PRICE"))
+	                        .discount_rate(rs.getInt("DISCOUNT_RATE"))
+	                        .style_id(rs.getInt("STYLE_ID"))
+	                        .section_id(rs.getInt("SECTION_ID"))
+	                        .sport_option_id(rs.getInt("SPORT_ID"))
+	                        .stock(rs.getInt("TOTAL_STOCK"))
+	                        .gender_name(rs.getString("GENDER_NAME"))
+	                        .gender_option_id(rs.getInt("GENDER_ID"))
+	                        .category_type(rs.getString("CAT_TYPE"))
+	                        .build();
+	            }
+	        }
+	    }
+	    return null;
 	}
 	// 수정 처리 (기본 정보 업데이트)
 	// CreateproductDAO.java
