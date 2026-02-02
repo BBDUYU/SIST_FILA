@@ -13,5 +13,5 @@ public class MainbannerDTO {
     private int bannerId;      
     private String bannerName;  
     private String imageUrl;    
-    private String linkUrl;     
+    private String linkUrl;
 }

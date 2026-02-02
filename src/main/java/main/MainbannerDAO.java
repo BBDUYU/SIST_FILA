@@ -24,7 +24,6 @@ public class MainbannerDAO {
     public ArrayList<MainbannerDTO> selectMainBannerList(Connection conn) {
         ArrayList<MainbannerDTO> list = new ArrayList<>();
         
-        // 테이블의 실제 컬럼명: BANNER_ID, BANNER_NAME, IMAGE_URL, LINK_URL
         String sql = "SELECT BANNER_ID, BANNER_NAME, IMAGE_URL, LINK_URL " +
                      "FROM MAIN_BANNER " +
                      "WHERE IS_ACTIVE = 'Y' " +

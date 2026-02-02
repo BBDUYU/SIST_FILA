@@ -24,7 +24,6 @@ public class SearchDAO implements ISearch{
      * 기존에 존재하면 검색 횟수 증가, 없으면 새로 추가
      */
     public void upsertKeyword(Connection conn, String keyword) throws SQLException {
-        // VALUES 절에 실제 생성하신 시퀀스명인 'SEARCH_KEYWORDS_SEQ'를 넣어야 합니다.
         String sql = "MERGE INTO SEARCH_KEYWORDS t " +
                      "USING (SELECT ? AS KEYWORD FROM dual) s " +
                      "ON (t.KEYWORD = s.KEYWORD) " +
@@ -45,7 +44,6 @@ public class SearchDAO implements ISearch{
     public ArrayList<SearchDTO> selectTopKeywords(Connection conn, int limit) throws SQLException {
         ArrayList<SearchDTO> list = new ArrayList<>();
         
-        // Oracle 11g 이하는 정렬 후 ROWNUM으로 잘라내는 서브쿼리 방식을 써야 합니다.
         String sql = "SELECT * FROM ( " +
                      "  SELECT KEYWORD_ID, KEYWORD, SEARCH_COUNT, LAST_SEARCH_DATE " +
                      "  FROM SEARCH_KEYWORDS " +
